@@ -1,0 +1,8 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "continue.disableQuickFix": true,
+    "continue.enableConsole": true,
+    "continue.enableQuickActions": true,
+    "continue.pauseCodebaseIndexOnStart": true,
+    "continue.pauseTabAutocompleteOnBattery": true
+}
