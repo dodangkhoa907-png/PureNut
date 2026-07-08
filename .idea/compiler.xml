@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Sua_Hat" />
+        <module name="purenut-shop" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Sua_Hat" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
