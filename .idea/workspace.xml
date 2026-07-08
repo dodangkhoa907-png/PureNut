@@ -94,6 +94,7 @@
         </TomcatInfo>
       </option>
       <option name="vmOptions" value="" />
+      <module name="purenut-shop" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -116,6 +117,7 @@
         </TomcatInfo>
       </option>
       <option name="vmOptions" value="" />
+      <module name="purenut-shop" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
