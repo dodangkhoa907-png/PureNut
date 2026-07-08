@@ -37,7 +37,6 @@
     }
     .ban-avatar .av-dot{position:absolute;bottom:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#2BAC62;border:3px solid #11335E}
     .ban-info h1{font-family:var(--fd);font-size:24px;font-weight:700;margin-bottom:2px}
-    .ban-info .ban-id{font-size:12.5px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:6px}
     .ban-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     .ban-meta span{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.65)}
     .ban-meta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
@@ -176,6 +175,21 @@
     .order-track{padding:12px 16px;background:linear-gradient(135deg,rgba(122,90,248,.03),transparent);border-radius:12px;margin-top:8px}
     .order-track .track-timeline{border-top:none;padding:8px 0 0}
 
+    /* ── Overview Order Cards ── */
+    .ov-order-card{
+        border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px;
+        transition:all .2s;background:#fff;
+    }
+    .ov-order-card:last-child{margin-bottom:0}
+    .ov-order-card:hover{border-color:rgba(27,79,158,.15);box-shadow:0 6px 20px -8px rgba(0,0,0,.08)}
+    .ov-order-card.ov-shipping{border-color:rgba(122,90,248,.2);background:linear-gradient(135deg,rgba(122,90,248,.02),transparent)}
+    .ov-order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .ov-order-id{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink)}
+    .ov-order-id svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .ov-order-id .ov-truck{stroke:#7A5AF8;animation:truck-bounce 2s ease-in-out infinite}
+    .ov-order-detail{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--ink-soft);padding-bottom:4px}
+    .ov-order-card .order-track{margin-top:4px}
+
     /* ── Order Table ── */
     .o-table{width:100%;border-collapse:separate;border-spacing:0}
     .o-table th{padding:13px 16px;text-align:left;font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid rgba(27,79,158,.1);background:rgba(27,79,158,.02)}
@@ -287,6 +301,38 @@
     .ov-msg.err{display:flex;background:rgba(206,46,46,.06);color:var(--red);border:1px solid rgba(206,46,46,.1)}
     .ov-msg.ok{display:flex;background:rgba(43,172,98,.06);color:#2BAC62;border:1px solid rgba(43,172,98,.1)}
 
+    /* Avatar section */
+    .ov-avatar-section{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;padding-bottom:22px;border-bottom:1.5px solid var(--line)}
+    .ov-avatar-wrap{
+        position:relative;cursor:pointer;width:96px;height:96px;border-radius:50%;
+        transition:transform .2s;
+    }
+    .ov-avatar-wrap:hover{transform:scale(1.05)}
+    .ov-avatar{
+        width:96px;height:96px;border-radius:50%;overflow:hidden;
+        background:linear-gradient(135deg,#1B4F9E,#2A5FB8);
+        display:flex;align-items:center;justify-content:center;
+        box-shadow:0 8px 28px -8px rgba(27,79,158,.4);
+        border:3.5px solid #fff;
+    }
+    .ov-avatar img{width:100%;height:100%;object-fit:cover}
+    .ov-avatar-initial{
+        font-family:var(--fd);font-size:38px;font-weight:700;color:#fff;
+        text-transform:uppercase;user-select:none;
+    }
+    .ov-avatar-cam{
+        position:absolute;bottom:0;right:0;
+        width:32px;height:32px;border-radius:50%;
+        background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+        display:flex;align-items:center;justify-content:center;
+        border:2.5px solid #fff;
+        box-shadow:0 3px 10px rgba(0,0,0,.2);
+        transition:transform .2s;
+    }
+    .ov-avatar-wrap:hover .ov-avatar-cam{transform:scale(1.1)}
+    .ov-avatar-cam svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .ov-avatar-hint{font-size:12px;color:var(--ink-soft);margin-top:10px;font-weight:500}
+
     /* Address cards */
     .addr-card{padding:18px 20px;background:linear-gradient(135deg,#FDFBF7,#FBF6EC);border-radius:16px;margin-bottom:10px;position:relative;border:1px solid rgba(233,220,190,.4);transition:border-color .15s}
     .addr-card:hover{border-color:var(--navy)}
@@ -317,13 +363,15 @@
     .sec-info strong{color:var(--navy);font-weight:700}
 
     /* ── Mobile strip ── */
-    .mob-strip{display:none;gap:8px;overflow-x:auto;padding:0 20px;margin:14px auto 0;max-width:var(--container);-webkit-overflow-scrolling:touch}
+    .mob-strip{display:none;gap:8px;overflow-x:auto;padding:0 16px 8px;margin:14px auto 0;max-width:var(--container);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .mob-strip::-webkit-scrollbar{display:none}
     .mob-btn{
         flex-shrink:0;display:inline-flex;align-items:center;gap:7px;
-        padding:10px 18px;border-radius:99px;background:#fff;border:1.5px solid var(--line);
-        font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;cursor:pointer;transition:all .15s;
+        padding:10px 16px;border-radius:99px;background:#fff;border:1.5px solid var(--line);
+        font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;cursor:pointer;transition:all .15s;
+        text-decoration:none;
     }
-    .mob-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .mob-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .mob-btn.active{background:linear-gradient(135deg,#1B4F9E,#2A5FB8);color:#fff;border-color:#1B4F9E;box-shadow:0 4px 14px -4px rgba(27,79,158,.4)}
 
     @media(max-width:900px){
@@ -337,15 +385,81 @@
         .track-banner-inner{flex-wrap:wrap}.track-btn{margin-left:0;margin-top:8px;width:100%;text-align:center}
         .track-timeline{overflow-x:auto;padding-bottom:8px}
         .ov-panel{width:100%;max-width:100%;border-radius:20px 20px 0 0;max-height:92vh;margin-top:auto}
+        .ov-header{padding:16px 18px}
+        .ov-tab{padding:8px 14px;font-size:13px}
+        .ov-body{padding:20px 18px}
+        .ov-input{padding:12px 14px;font-size:14px;border-radius:12px}
+        .ov-btn{padding:12px 24px;font-size:14px;width:100%}
+        .ov-avatar-wrap{width:76px;height:76px}
+        .ov-avatar-section{margin-bottom:18px;padding-bottom:16px}
     }
     @media(max-width:560px){
-        .acc-stats{gap:8px;padding:0 14px}
-        .st-card{padding:16px 14px;gap:10px}.st-val{font-size:17px}
-        .acc-card{padding:20px 18px}
-        .ban-avatar{width:64px;height:64px;font-size:26px}
-        .ban-info h1{font-size:20px}
-        .o-table th,.o-table td{padding:11px 10px;font-size:12.5px}
-        .track-timeline .tl-label{font-size:10px}
+        .acc-stats{grid-template-columns:repeat(2,1fr);gap:8px;padding:0 14px;margin-top:-20px}
+        .st-card{padding:12px 10px;gap:6px;border-radius:12px}.st-val{font-size:16px}
+        .st-ic{width:36px;height:36px;border-radius:9px}.st-ic svg{width:18px;height:18px}
+        .st-lb{font-size:10.5px}
+        .acc-card{padding:16px 12px;border-radius:14px}
+        .acc-card-h{flex-direction:column;align-items:flex-start;gap:6px}
+        .acc-card-t{font-size:15px}
+        .ban-avatar{width:46px;height:46px;font-size:18px;border-width:2px}
+        .ban-avatar .av-dot{width:11px;height:11px;border-width:2px}
+        .ban-info h1{font-size:16px}
+        .ban-inner{gap:12px}
+        .ban-meta{gap:5px;flex-wrap:wrap}
+        .ban-meta span{font-size:10.5px}
+        .ban-meta svg{width:11px;height:11px}
+        .acc-banner{padding:16px 12px 36px}
+        .ban-deco{display:none}
+        .acc-body{padding:0 10px;margin-top:14px}
+        .o-table th,.o-table td{padding:8px 6px;font-size:11.5px}
+        .track-timeline .tl-label{font-size:9px}
+        .ov-order-top{flex-direction:column;align-items:flex-start;gap:4px}
+        .ov-order-detail{flex-direction:column;align-items:flex-start;gap:2px}
+        .promo-row{grid-template-columns:1fr}
+        .promo-c{padding:14px 14px}
+        .promo-tt{font-size:13px}
+        .acc-empty p{font-size:13px}
+        .tier-badge{font-size:9.5px;padding:3px 9px}
+        .mob-strip{padding:0 10px 4px;gap:5px}
+        .mob-btn{padding:7px 11px;font-size:11px}
+        .mob-btn svg{width:13px;height:13px}
+        .ov-panel{border-radius:16px 16px 0 0;max-height:94vh}
+        .ov-header{padding:14px 16px}
+        .ov-tab{padding:7px 12px;font-size:12px}
+        .ov-body{padding:16px 14px}
+        .ov-field{margin-bottom:14px}
+        .ov-label{font-size:10.5px;margin-bottom:5px}
+        .ov-input{padding:10px 12px;font-size:13px;border-radius:10px}
+        .ov-btn{padding:10px 20px;font-size:13px}
+        .ov-avatar-wrap{width:64px;height:64px}
+        .ov-avatar{width:64px;height:64px;border-width:2.5px}
+        .ov-avatar-initial{font-size:26px}
+        .ov-avatar-cam{width:26px;height:26px;border-width:2px}
+        .ov-avatar-cam svg{width:12px;height:12px}
+        .ov-avatar-hint{font-size:10.5px;margin-top:6px}
+        .ov-avatar-section{margin-bottom:14px;padding-bottom:12px}
+        .addr-card{padding:14px 14px;border-radius:12px}
+        .addr-card .addr-name{font-size:13px}
+        .addr-card .addr-detail{font-size:12px}
+        .addr-add-form{padding:16px}
+        .sec-info{padding:14px 16px;gap:10px;border-radius:12px}
+        .sec-info svg{width:20px;height:20px}
+        .sec-info p{font-size:12.5px}
+        .ov-close{width:34px;height:34px;font-size:17px}
+    }
+    @media(max-width:400px){
+        .acc-stats{gap:6px;padding:0 10px}
+        .st-card{padding:10px 8px;gap:4px}.st-val{font-size:14px}
+        .st-ic{width:30px;height:30px;border-radius:8px}.st-ic svg{width:16px;height:16px}
+        .st-lb{font-size:9.5px}
+        .ban-avatar{width:40px;height:40px;font-size:16px}
+        .ban-info h1{font-size:14.5px}
+        .ban-meta span{font-size:9.5px}
+        .acc-banner{padding:14px 10px 32px}
+        .acc-body{padding:0 8px;margin-top:12px}
+        .acc-card{padding:14px 10px;border-radius:12px}
+        .mob-strip{padding:0 8px 4px;gap:4px}
+        .mob-btn{padding:6px 9px;font-size:10.5px}
     }
     </style>
 </head>
@@ -365,7 +479,6 @@
         </div>
         <div class="ban-info">
             <h1>${sessionScope.user.fullName}</h1>
-            <div class="ban-id">Account #${sessionScope.user.userId} · Đang hoạt động</div>
             <div class="ban-meta">
                 <span class="tier-badge tier-${memberTier}">
                     <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
@@ -397,6 +510,8 @@
     <button class="mob-btn active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan</button>
     <button class="mob-btn" data-tab="orders"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>Đơn hàng</button>
     <button class="mob-btn" data-tab="taste"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Khẩu vị</button>
+    <button class="mob-btn" onclick="openOverlay()"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Tài khoản</button>
+    <a class="mob-btn" href="${pageContext.request.contextPath}/logout" style="color:var(--red);border-color:rgba(206,46,46,.2)"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Đăng xuất</a>
 </div>
 
 <!-- ════════ BODY ════════ -->
@@ -441,32 +556,86 @@
         </a>
     </div>
 
-    <!-- Live Tracking Banner -->
-    <c:forEach var="o" items="${orderHistory}">
-        <c:if test="${o.status == 'SHIPPING'}">
-            <div class="acc-card track-banner">
-                <div class="track-banner-inner">
-                    <div class="track-icon">
-                        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                    </div>
-                    <div class="track-info">
-                        <div class="track-title">Đơn hàng #${o.orderId} đang trên đường đến với bạn!</div>
-                        <div class="track-sub">Dự kiến giao trong hôm nay</div>
-                    </div>
-                    <a href="#" data-tab="orders" class="track-btn">Xem chi tiết</a>
-                </div>
-                <div class="track-timeline">
-                    <div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>
-                    <div class="tl-line done"></div>
-                    <div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đang chuẩn bị</div></div>
-                    <div class="tl-line done"></div>
-                    <div class="tl-step active"><div class="tl-dot"></div><div class="tl-label">Đang giao</div></div>
-                    <div class="tl-line"></div>
-                    <div class="tl-step"><div class="tl-dot"></div><div class="tl-label">Giao thành công</div></div>
-                </div>
+    <!-- Đơn hàng gần đây -->
+    <div class="acc-card">
+        <div class="acc-card-h">
+            <div class="acc-card-t">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Đơn hàng của bạn
             </div>
-        </c:if>
-    </c:forEach>
+            <c:if test="${not empty orderHistory}">
+                <a href="#" class="tab-link" data-tab="orders">Xem tất cả <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+            </c:if>
+        </div>
+
+        <c:choose>
+            <c:when test="${empty orderHistory}">
+                <div class="acc-empty">
+                    <div class="acc-empty-ic">
+                        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </div>
+                    <p>Bạn chưa có đơn hàng nào.<br><span style="font-size:13.5px;color:var(--sand)">Đặt hàng ngay để thưởng thức sữa hạt tươi mỗi ngày nhé!</span></p>
+                    <a href="${pageContext.request.contextPath}/products" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:99px;background:linear-gradient(135deg,#1B4F9E,#2A5FB8);color:#fff;font-size:14.5px;font-weight:700;box-shadow:0 8px 22px -8px rgba(27,79,158,.45);transition:transform .2s,box-shadow .2s;text-decoration:none">
+                        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Mua sắm ngay
+                    </a>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <c:set var="hasActive" value="false"/>
+                <c:forEach var="o" items="${orderHistory}">
+                    <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING'}">
+                        <c:set var="hasActive" value="true"/>
+                        <div class="ov-order-card ${o.status == 'SHIPPING' ? 'ov-shipping' : ''}">
+                            <div class="ov-order-top">
+                                <div class="ov-order-id">
+                                    <c:choose>
+                                        <c:when test="${o.status == 'SHIPPING'}">
+                                            <svg viewBox="0 0 24 24" class="ov-truck"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <span>Đơn hàng <strong>#${o.orderId}</strong></span>
+                                </div>
+                                <span class="s-pill s-${o.status}"><span class="s-dot"></span>
+                                    <c:choose>
+                                        <c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when>
+                                        <c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when>
+                                        <c:when test="${o.status == 'SHIPPING'}">Đang giao hàng</c:when>
+                                    </c:choose>
+                                </span>
+                            </div>
+                            <div class="ov-order-detail">
+                                <span><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/> · <strong class="acc-num"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</strong></span>
+                                <span style="font-size:12.5px;color:var(--ink-soft)">${o.paymentMethod == 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản'}</span>
+                            </div>
+                            <div class="order-track">
+                                <div class="track-timeline">
+                                    <div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>
+                                    <div class="tl-line done"></div>
+                                    <div class="tl-step ${o.status == 'CONFIRMED' ? 'active' : (o.status == 'SHIPPING' ? 'done' : '')}"><div class="tl-dot"></div><div class="tl-label">Đã xác nhận</div></div>
+                                    <div class="tl-line ${o.status == 'SHIPPING' ? 'done' : ''}"></div>
+                                    <div class="tl-step ${o.status == 'SHIPPING' ? 'active' : ''}"><div class="tl-dot"></div><div class="tl-label">Đang giao</div></div>
+                                    <div class="tl-line"></div>
+                                    <div class="tl-step"><div class="tl-dot"></div><div class="tl-label">Giao thành công</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+                <c:if test="${!hasActive}">
+                    <div class="acc-empty" style="padding:30px 20px">
+                        <div class="acc-empty-ic" style="width:64px;height:64px;margin-bottom:14px">
+                            <svg viewBox="0 0 24 24" style="width:28px;height:28px"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <p style="margin-bottom:10px">Tất cả đơn hàng đã hoàn thành! <a href="#" data-tab="orders" style="color:var(--navy);font-weight:700;text-decoration:underline">Xem lịch sử</a></p>
+                    </div>
+                </c:if>
+            </c:otherwise>
+        </c:choose>
+    </div>
 </div>
 
 <!-- ═══ TAB: Đơn hàng ═══ -->
@@ -596,6 +765,22 @@
             <!-- Thông tin -->
             <div id="otab-info" class="ov-pane show">
                 <div class="ov-msg" id="profileMsg"></div>
+
+                <!-- Avatar Upload -->
+                <div class="ov-avatar-section">
+                    <div class="ov-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+                        <div class="ov-avatar" id="ovAvatarPreview">
+                            <span class="ov-avatar-initial" id="avatarInitial">${fn:substring(sessionScope.user.fullName, 0, 1)}</span>
+                        </div>
+                        <div class="ov-avatar-cam">
+                            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="previewAvatar(this)">
+                    <div class="ov-avatar-hint">Nhấn vào ảnh để thay đổi</div>
+                </div>
+
+                <div class="ov-field"><label class="ov-label">Nickname (Tên hiển thị)</label><input type="text" class="ov-input" id="profNickname" value="" placeholder="Tên của bạn"></div>
                 <div class="ov-field"><label class="ov-label">Họ và tên</label><input type="text" class="ov-input" id="profName" value="${sessionScope.user.fullName}"></div>
                 <div class="ov-field"><label class="ov-label">Email</label><input type="email" class="ov-input" id="profEmail" value="${sessionScope.user.email}" readonly></div>
                 <div class="ov-field"><label class="ov-label">Số điện thoại</label><input type="tel" class="ov-input" id="profPhone" value="${sessionScope.user.phone}" pattern="0[0-9]{9,10}" maxlength="11"></div>
@@ -690,11 +875,29 @@
     }
     function showMsg(id,ok,text){var el=document.getElementById(id);el.className='ov-msg '+(ok?'ok':'err');el.textContent=text}
 
+    /* Avatar preview */
+    window.previewAvatar=function(input){
+        if(input.files && input.files[0]){
+            var reader=new FileReader();
+            reader.onload=function(e){
+                var wrap=document.getElementById('ovAvatarPreview');
+                wrap.innerHTML='<img src="'+e.target.result+'" alt="Avatar" id="avatarImg" style="width:100%;height:100%;object-fit:cover">';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
     window.saveProfile=function(){
         var n=document.getElementById('profName').value.trim(),p=document.getElementById('profPhone').value.trim();
+        var nick=document.getElementById('profNickname')?document.getElementById('profNickname').value.trim():'';
         if(!n){showMsg('profileMsg',false,'Vui lòng nhập họ tên.');return}
         if(!/^0[0-9]{9,10}$/.test(p)){showMsg('profileMsg',false,'SĐT không hợp lệ.');return}
-        post('/account/profile',{fullName:n,phone:p},function(ok,j){
+        var data={fullName:n,phone:p};
+        if(nick) data.nickname=nick;
+        /* Upload avatar nếu có */
+        var avatarFile=document.getElementById('avatarInput').files[0];
+        if(avatarFile) data.avatar=avatarFile;
+        post('/account/profile',data,function(ok,j){
             showMsg('profileMsg',ok,ok?'Đã lưu thông tin!':j.error);
             if(ok){document.querySelector('.ban-info h1').textContent=n;document.querySelector('.ban-avatar').childNodes[0].textContent=n.charAt(0)}
         });

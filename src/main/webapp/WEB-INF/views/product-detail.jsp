@@ -92,14 +92,15 @@
 .sub-badge{padding:4px 12px;border-radius:99px;font-size:11px;font-weight:800;background:linear-gradient(135deg,#2BAC62,#34D399);color:#fff;white-space:nowrap}
 
 /* ── Nutrition + Tabs ── */
-.info-tabs{display:flex;gap:4px;margin-bottom:18px;border-bottom:2px solid var(--line);padding-bottom:0}
+.info-tabs{display:flex;gap:8px;margin-bottom:18px;border-bottom:2px solid var(--line);padding-bottom:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.info-tabs::-webkit-scrollbar{display:none}
 .info-tab{
-  padding:10px 18px;font-size:13.5px;font-weight:700;color:var(--ink-soft);
-  border:none;background:none;cursor:pointer;position:relative;transition:color .15s;
+  min-width:100px;flex:0 0 auto;padding:10px 18px;font-size:13.5px;font-weight:700;color:var(--ink-soft);
+  border:none;background:none;cursor:pointer;position:relative;transition:color .15s;scroll-snap-align:start;text-align:center;
 }
 .info-tab:hover{color:var(--navy)}
 .info-tab.active{color:var(--navy)}
-.info-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2.5px;background:var(--navy);border-radius:99px}
+.info-tab.active::after{content:'';position:absolute;bottom:-2px;left:12px;right:12px;height:2.5px;background:var(--navy);border-radius:99px}
 .info-pane-tab{display:none}.info-pane-tab.show{display:block}
 
 .nutri{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:18px 22px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
@@ -160,8 +161,8 @@
 .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);background:var(--navy-darker);color:#fff;padding:14px 26px;border-radius:99px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s;z-index:200;font-size:14px;display:flex;align-items:center;gap:8px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-@media(max-width:880px){.detail{grid-template-columns:1fr;gap:30px}.gallery{position:static}.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.grid{grid-template-columns:1fr 1fr}.opt-pills{gap:4px}.opt-pill{padding:8px 14px;font-size:13px}}
+@media(max-width:880px){.detail{grid-template-columns:1fr;gap:30px}.gallery{position:static}.grid{grid-template-columns:repeat(2,1fr)}.actions{flex-direction:column}.actions .btn{width:100%}}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr}.opt-pills{gap:4px}.opt-pill{padding:8px 14px;font-size:13px}.info-tab{padding:12px 14px;min-width:88px}.info-tabs{gap:6px}.actions{gap:12px}}
 </style>
 </head>
 <body>

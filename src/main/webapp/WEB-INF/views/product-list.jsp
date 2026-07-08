@@ -33,9 +33,11 @@ body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opac
 .head>.container{position:relative;z-index:2}
 .head h1{font-size:clamp(32px,5vw,52px)}.head p{color:var(--ink-soft);margin-top:10px;font-size:17px}
 /* hộp lọc "chốt" đè lên ranh giới kem–nâu (50/50) */
-.qnav{display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:26px;position:relative;z-index:5;background:#FFFDF8;border:1px solid var(--line);border-radius:99px;padding:7px;box-shadow:0 20px 40px -18px rgba(20,30,20,.4),0 5px 14px -8px rgba(20,30,20,.22)}
-.qnav a{padding:10px 22px;border-radius:99px;font-weight:600;font-size:13.5px;color:var(--ink-soft);transition:all .2s}
-.qnav a:hover,.qnav a.on{background:var(--navy);color:#fff}
+.qnav{display:inline-flex;gap:6px;flex-wrap:nowrap;justify-content:center;margin-top:26px;position:relative;z-index:5;background:#FFFDF8;border:1px solid var(--line);border-radius:99px;padding:7px 10px;box-shadow:0 20px 40px -18px rgba(20,30,20,.4),0 5px 14px -8px rgba(20,30,20,.22);overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;}
+.qnav::-webkit-scrollbar{display:none}
+.qnav a{flex:0 0 auto;padding:10px 22px;border-radius:99px;font-weight:600;font-size:13.5px;color:var(--ink-soft);transition:all .2s;white-space:nowrap;scroll-snap-align:center}
+.qnav a:hover{background:var(--navy);color:#fff}
+.qnav a.on{background:var(--navy);color:#fff}
 
 /* ============ ZONE HERO (banner lớn cho mỗi khu) ============ */
 .zone{position:relative}
@@ -122,7 +124,22 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 @media(max-width:960px){.grid{grid-template-columns:repeat(3,1fr)}.zhero-inner{grid-template-columns:1fr;text-align:center}.zh-badges,.zh-num{justify-content:center}.zh-num::before{display:none}.zh-art{order:-1}.zh-bubble{width:190px;height:190px;font-size:88px}}
 @media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
+@media(max-width:640px){.qnav{justify-content:flex-start;padding:7px 8px;gap:8px;-webkit-overflow-scrolling:touch}.qnav a{padding:10px 16px;font-size:13px}}
+@media(max-width:520px){
+  .zhero{padding:28px 0 20px}
+  .zh-title{font-size:24px}
+  .zh-sub{font-size:13px}
+  .zh-bubble{width:140px;height:140px;font-size:64px}
+  .grid{grid-template-columns:1fr;gap:14px}
+  .card{border-radius:16px}
+  .c-body{padding:16px 14px 14px}
+  .c-name{font-size:15px}
+  .c-price{font-size:16px}
+  .filter-top{padding:10px 12px;gap:8px;flex-direction:column;align-items:stretch}
+  .filter-top select,.filter-top input{font-size:13px;padding:10px 12px}
+  .toast{font-size:13px;padding:12px 20px;min-width:auto;left:16px;right:16px;transform:translateX(0) translateY(20px);bottom:80px}
+  .toast.show{transform:translateX(0) translateY(0)}
+}
 </style>
 </head>
 <body>
@@ -137,7 +154,6 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
     <h1>Hai dòng sản phẩm, một tiêu chuẩn thuần khiết</h1>
     <p>Ghé thăm khu Đậu Nành béo bùi và khu Sữa Đặc Biệt cao cấp của chúng tôi.</p>
     <div class="qnav">
-      <a href="${ctx}/products" class="${empty currentCategory ? 'on' : ''}">Tất cả</a>
       <a href="#khu-dau">🌰 Khu Đậu Nành</a>
       <a href="#khu-sua">🥛 Khu Sữa Đặc Biệt</a>
     </div>

@@ -37,7 +37,17 @@ h1.title{font-size:clamp(28px,4vw,40px);margin-bottom:28px}
 .oi .n{font-weight:600}.oi .s{font-size:13px;color:var(--ink-soft)}
 .srow{display:flex;justify-content:space-between;margin:12px 0;font-size:15px;color:var(--ink-soft)}
 .stotal{display:flex;justify-content:space-between;font-family:var(--fd);font-weight:700;font-size:24px;color:var(--red);margin-top:8px}
-@media(max-width:860px){.grid{grid-template-columns:1fr}.summary{position:static}}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.summary{position:static}.two{grid-template-columns:1fr}}
+@media(max-width:480px){
+  .wrap{padding:24px 0 60px}
+  h1.title{font-size:24px;margin-bottom:18px}
+  .box{padding:20px 16px;border-radius:16px}
+  .box h2{font-size:18px;margin-bottom:16px;padding-bottom:10px}
+  .field input{padding:12px 13px;font-size:14px}
+  .pay{padding:12px 14px;font-size:14px}
+  .stotal{font-size:20px}
+  .btn{padding:14px 20px;font-size:15px;width:100%}
+}
 </style>
 </head>
 <body>

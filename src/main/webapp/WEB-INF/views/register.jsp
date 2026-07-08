@@ -61,6 +61,23 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
 .perk:nth-of-type(2):hover{background:#F2B705;border-color:#F2B705;color:#3a2b00}
 .perk:nth-of-type(3):hover{background:#1B4F9E;border-color:#1B4F9E}
 @media(max-width:900px){.auth{grid-template-columns:1fr}.side{display:none}.pane{padding:42px 30px}.grid2{grid-template-columns:1fr}}
+@media(max-width:560px){
+  body{padding:0;align-items:stretch;flex-direction:column}
+  .blob{display:none}
+  .back{position:fixed;top:0;left:0;right:0;z-index:20;margin:0;border-radius:0;border:none;border-bottom:1px solid var(--line);background:rgba(255,253,248,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:none;padding:14px 20px;font-size:13px;font-weight:700;color:var(--navy);gap:6px}
+  .back:hover{transform:none}
+  .auth{border-radius:0;box-shadow:none;border:none;min-height:100vh;min-height:100dvh;width:100%}
+  .pane{padding:62px 28px 40px}
+  .pane h1{font-size:26px}
+  .logo{font-size:20px;margin-bottom:18px}
+  .pane .sub{font-size:14px;margin:6px 0 24px}
+  .field{margin-bottom:16px}
+  .field label{font-size:11.5px;margin-bottom:6px}
+  .field input{padding:13px 16px;font-size:15px;border-radius:12px}
+  .hint{font-size:11.5px}
+  .submit{padding:15px;font-size:15.5px;border-radius:12px;margin-top:6px}
+  .alt{margin-top:20px;font-size:14px}
+}
 </style>
 </head>
 <body>

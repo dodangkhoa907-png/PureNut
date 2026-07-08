@@ -124,7 +124,13 @@ public class CartController extends HttpServlet {
 
         if (cartItemId > 0) {
             cartItemDao.updateQuantity(cartItemId, user.getUserId(), quantity);
-            request.getSession().setAttribute("cartCount", cartItemDao.countItems(user.getUserId()));
+            int count = cartItemDao.countItems(user.getUserId());
+            request.getSession().setAttribute("cartCount", count);
+
+            if (isAjax(request)) {
+                writeJson(response, "{\"success\":true,\"cartCount\":" + count + "}");
+                return;
+            }
         }
         response.sendRedirect(request.getContextPath() + "/cart");
     }

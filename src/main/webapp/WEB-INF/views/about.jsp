@@ -1800,6 +1800,24 @@
             padding: 30px 26px;
           }
         }
+
+        @media (max-width: 520px) {
+          .pn-book {
+            width: min(320px, 92%);
+          }
+          .pn-page-left {
+            min-height: 160px;
+          }
+          .pn-page-right {
+            min-height: 180px;
+          }
+          .pn-page-inner {
+            padding: 20px 16px;
+          }
+          .pn-cover-inner {
+            padding: 20px 16px;
+          }
+        }
       </style>
     </head>
 
@@ -2042,27 +2060,28 @@
             <!-- ===== SÁCH 3D THẬT (rb-) : đóng ở giữa → morph mở 2 trang → lật cong ===== -->
             <style>
             .rb-stage{perspective:2300px;display:flex;justify-content:center;padding:24px 0 4px}
-            .rb-book{position:relative;width:min(900px,94vw);height:620px;transform-style:preserve-3d;transform:translateX(-25%) rotateX(2deg);transition:transform 1.15s cubic-bezier(.2,.8,.25,1)}
-            .rb-book.open{transform:translateX(0) rotateX(2deg)}
+            .rb-book{position:relative;width:min(900px,94vw);height:620px;transform-style:preserve-3d;transform:translateX(-25%) rotateX(2deg) scale(.92);transition:transform 1.15s cubic-bezier(.2,.8,.25,1)}
+            .rb-book.open{transform:translateX(0) rotateX(2deg) scale(1)}
             .rb-base,.rb-leaf{position:absolute;top:0;height:100%;width:50%}
-            .rb-base{z-index:0;background:#FCF6E7;box-shadow:0 30px 56px -26px rgba(70,45,15,.5);transition:opacity .5s ease .28s}
+            .rb-base{z-index:0;background:#FCF6E7;box-shadow:0 30px 56px -26px rgba(70,45,15,.5);transition:opacity .6s ease .2s}
             .rb-base-l{left:0;border-radius:14px 0 0 14px;box-shadow:inset -22px 0 30px -26px rgba(95,65,25,.45),0 30px 56px -26px rgba(70,45,15,.5)}
             .rb-base-r{left:50%;border-radius:0 14px 14px 0;display:flex;align-items:center;justify-content:center;box-shadow:inset 22px 0 30px -26px rgba(95,65,25,.45),0 30px 56px -26px rgba(70,45,15,.5)}
             .rb-base-r .mk{font-family:var(--font-display),serif;color:rgba(120,90,45,.28);font-size:22px;letter-spacing:.1em}
-            .rb-book:not(.open) .rb-base{opacity:0}
-            .rb-book::before{content:"";position:absolute;inset:-15px -18px;border-radius:20px;background:linear-gradient(135deg,#C08536,#6E4A17);box-shadow:0 42px 74px -30px rgba(70,45,15,.65),inset 0 1px 0 rgba(255,255,255,.16);z-index:-3}
-            .rb-book::after{content:"";position:absolute;top:8px;bottom:8px;right:-5px;width:12px;border-radius:0 8px 8px 0;background:repeating-linear-gradient(90deg,#F3EAD6,#F3EAD6 1px,#DCC9A0 1px,#DCC9A0 3px);box-shadow:2px 0 7px rgba(0,0,0,.14);z-index:-2}
+            .rb-book:not(.open) .rb-base{opacity:0;transition:opacity .3s ease}
+            .rb-book::before{content:"";position:absolute;inset:-15px -18px;border-radius:20px;background:linear-gradient(135deg,#C08536,#6E4A17);box-shadow:0 42px 74px -30px rgba(70,45,15,.65),inset 0 1px 0 rgba(255,255,255,.16);z-index:-3;transition:all .8s cubic-bezier(.2,.8,.25,1)}
+            .rb-book::after{content:"";position:absolute;top:8px;bottom:8px;right:-5px;width:12px;border-radius:0 8px 8px 0;background:repeating-linear-gradient(90deg,#F3EAD6,#F3EAD6 1px,#DCC9A0 1px,#DCC9A0 3px);box-shadow:2px 0 7px rgba(0,0,0,.14);z-index:-2;transition:opacity .5s ease}
             .rb-leaf{left:50%;transform-origin:left center;transform-style:preserve-3d;transition:transform 1.15s cubic-bezier(.2,.85,.3,1);cursor:pointer}
             .rb-leaf.flipped{transform:rotateY(-180deg)}
             .rb-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:#FCF6E7;color:#6E5C3E;padding:42px 38px;display:flex;flex-direction:column;justify-content:center;gap:12px}
-            .rb-face.front{border-radius:0 14px 14px 0;box-shadow:inset 26px 0 34px -26px rgba(95,65,25,.5)}
+            .rb-face.front{border-radius:0 14px 14px 0;box-shadow:inset 26px 0 34px -26px rgba(95,65,25,.5);transition:border-radius .7s cubic-bezier(.2,.8,.25,1),box-shadow .7s cubic-bezier(.2,.8,.25,1)}
             .rb-face.back{transform:rotateY(180deg);border-radius:14px 0 0 14px;box-shadow:inset -26px 0 34px -26px rgba(95,65,25,.5)}
             .rb-gloss{position:absolute;inset:0;pointer-events:none;backface-visibility:hidden;background:linear-gradient(90deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.4));opacity:0;transition:opacity .55s}
             .rb-leaf.flipping .rb-gloss{opacity:1}
             .rb-cover{background:linear-gradient(150deg,#C88C3E,#7A5220);color:#fff;align-items:center;text-align:center;gap:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),inset 26px 0 34px -26px rgba(0,0,0,.25)}
             .rb-cover .em{font-size:60px;line-height:1}
             .rb-cover h3{font-family:var(--font-display),serif;font-weight:600;font-size:36px;color:#fff;line-height:1.06}
-            .rb-cover .t{margin-top:16px;color:#FFF0D8;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px}
+            .rb-cover .t{margin-top:16px;color:#FFF0D8;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px;animation:rbpulse 2.5s ease-in-out infinite}
+            @keyframes rbpulse{0%,100%{opacity:.7}50%{opacity:1}}
             .rb-tag{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:#B9883A}
             .rb-dv{width:44px;height:3px;border-radius:2px;background:#B9883A}
             .rb-face h4{font-family:var(--font-display),serif;font-weight:600;font-size:25px;color:#3B5D3B;line-height:1.15}
@@ -2081,25 +2100,74 @@
             .rb-folio.roll{animation:rbfolio .5s cubic-bezier(.2,.8,.25,1)}
             @keyframes rbfolio{0%{transform:translateY(9px) rotateX(-70deg);opacity:0;filter:blur(1px)}55%{transform:translateY(-3px) rotateX(8deg);opacity:1;filter:blur(0)}100%{transform:translateY(0) rotateX(0);opacity:1}}
             .rb-hint{color:#9A7A4A;font-weight:600;font-size:12.5px;transition:opacity .4s}
-            /* Lúc ĐÓNG: bìa gọn thành 1 tấm bo tròn ở giữa (không lộ khung 2 nửa) */
-            .rb-book::before,.rb-book::after,.rb-face.front{transition:all .6s cubic-bezier(.2,.8,.25,1)}
-            .rb-book:not(.open)::before{left:calc(50% - 22px);border-radius:20px}
+            /* Lúc ĐÓNG: bìa gọn thành 1 khối sách đẹp ở giữa */
+            .rb-book:not(.open)::before{left:calc(50% - 12px);right:calc(50% - 12px);top:-4px;bottom:-4px;border-radius:12px;box-shadow:0 20px 40px -15px rgba(70,45,15,.45),inset 0 1px 0 rgba(255,255,255,.2)}
             .rb-book:not(.open)::after{opacity:0}
-            .rb-book:not(.open) .rb-leaf:first-child .rb-face.front{border-radius:18px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.2),0 30px 60px -26px rgba(70,45,15,.5)}
-            /* Mũi tên gợi ý mở/lật ở rìa phải */
+            .rb-book:not(.open) .rb-leaf:first-child .rb-face.front{border-radius:10px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22),0 18px 40px -15px rgba(70,45,15,.4)}
+            .rb-book:not(.open) .rb-leaf:not(:first-child){opacity:0;pointer-events:none}
+            /* Mũi tên gợi ý mở/lật */
             .rb-cue{position:absolute;top:50%;right:-64px;width:42px;height:42px;border-radius:50%;background:#fff;color:#8A5A22;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px -8px rgba(0,0,0,.45);z-index:40;pointer-events:none;animation:rbcue 1.5s ease-in-out infinite;transition:opacity .4s}
-            @media(max-width:640px){.rb-cue{display:none}}
+            @media(max-width:640px){.rb-cue{right:-24px;width:36px;height:36px}}
             .rb-leaf.rb-drag{transition:none !important;cursor:grabbing}
             .rb-cue svg{width:20px;height:20px}
             @keyframes rbcue{0%,100%{transform:translateY(-50%) translateX(0);opacity:.9}50%{transform:translateY(-50%) translateX(7px);opacity:1}}
             .rb-book.at-end .rb-cue{opacity:0}
-            /* Con trỏ bàn tay + mép giấy cong nhẹ (page-curl) khi rê chuột — mời click */
+            .rb-book:has(.rb-drag) .rb-cue, .rb-book:has(.flipping) .rb-cue {opacity:0 !important; transition:opacity .15s}
+            .rb-book:not(.open) .rb-cue{right:-54px;animation:rbcue-closed 2s ease-in-out infinite}
+            @keyframes rbcue-closed{0%,100%{transform:translateY(-50%) translateX(0);opacity:.85}50%{transform:translateY(-50%) translateX(5px);opacity:1}}
+            /* Page curl hover */
             .rb-leaf{cursor:pointer}
-            .rb-book .rb-leaf:not(.flipped):hover{transform:rotateY(-9deg)}
+            .rb-book.open .rb-leaf:not(.flipped):hover{transform:rotateY(-9deg)}
             .rb-face.front::after{content:"";position:absolute;right:0;bottom:0;border-top:22px solid transparent;border-right:22px solid rgba(120,80,30,.2);filter:drop-shadow(-2px -2px 3px rgba(0,0,0,.15));transition:border-top-width .25s ease,border-right-width .25s ease;z-index:3}
-            .rb-book .rb-leaf:not(.flipped):hover .rb-face.front::after{border-top-width:42px;border-right-width:42px}
-            @media(max-width:760px){.rb-book{height:520px}.rb-face{padding:26px 22px}.rb-cover h3{font-size:28px}.rb-face h4{font-size:20px}.rb-face p{font-size:13px}}
-            @media(max-width:520px){.rb-book{width:96vw;height:460px}.rb-stat b{font-size:17px}}
+            .rb-book.open .rb-leaf:not(.flipped):hover .rb-face.front::after{border-top-width:42px;border-right-width:42px}
+            @media(max-width:760px){.rb-book{height:520px;width:min(900px,96vw)}.rb-book:not(.open){transform:translateX(-20%) rotateX(2deg) scale(.88)}.rb-face{padding:26px 22px}.rb-cover h3{font-size:28px}.rb-face h4{font-size:20px}.rb-face p{font-size:13px}}
+            @media(max-width:520px){
+                .rb-stage{padding:10px 10px 0;overflow:visible}
+                .rb-book{width:calc(100vw - 36px);height:320px}
+                .rb-book:not(.open){transform:translateX(-12%) rotateX(2deg) scale(.82)}
+                .rb-face{padding:14px 12px;gap:4px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+                .rb-cover{overflow:hidden}
+                .rb-cover .em{font-size:26px}
+                .rb-cover h3{font-size:17px}
+                .rb-cover .t{font-size:9px;letter-spacing:.08em;margin-top:6px}
+                .rb-cover .btn{font-size:12px !important;padding:8px 16px !important;margin-top:8px !important}
+                .rb-face h4{font-size:12.5px}
+                .rb-face p{font-size:10px;line-height:1.35}
+                .rb-tag{font-size:8.5px}
+                .rb-ico{width:26px;height:26px;border-radius:7px;font-size:13px;border-width:1.5px;margin-bottom:0}
+                .rb-stat b{font-size:11px}
+                .rb-stat span{font-size:7.5px}
+                .rb-stats{gap:3px;margin-top:1px}
+                .rb-toc-row{padding:3px 0;gap:5px}
+                .rb-toc-row span:last-child{font-size:11px !important}
+                .rb-toc-n{font-size:12px;min-width:12px}
+                .rb-dv{width:18px;height:1.5px}
+                .rb-cue{right:4px;width:28px;height:28px;z-index:50;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+                .rb-cue svg{width:14px;height:14px}
+                .rb-book:not(.open) .rb-cue{right:4px}
+                .rb-book::before{inset:-6px -6px;border-radius:10px}
+                .rb-book::after{width:5px}
+                .rb-under{margin-top:10px}
+                .rb-folio{font-size:11px}
+                .rb-hint{font-size:10px}
+                .rb-imgslot{min-height:50px;border-radius:8px}
+                .rb-face.front::after{display:none}
+                .rb-book.open .rb-leaf:not(.flipped):hover{transform:rotateY(-5deg)}
+                .rb-base-r .mk{font-size:12px}
+                .rb-base{box-shadow:0 16px 30px -16px rgba(70,45,15,.4)}
+            }
+            @media(max-width:380px){
+                .rb-book{height:280px}
+                .rb-book:not(.open){transform:translateX(-10%) rotateX(2deg) scale(.8)}
+                .rb-face{padding:10px 9px;gap:3px}
+                .rb-cover .em{font-size:22px}
+                .rb-cover h3{font-size:15px}
+                .rb-face h4{font-size:11.5px}
+                .rb-face p{font-size:9.5px;line-height:1.3}
+                .rb-ico{width:22px;height:22px;border-radius:6px;font-size:11px}
+                .rb-stats{display:none}
+                .rb-imgslot{min-height:36px}
+            }
             </style>
 
             <div class="rb-stage reveal" data-reveal>
@@ -2189,13 +2257,19 @@
               var leaves=book.querySelectorAll('.rb-leaf'); var n=leaves.length; var cur=0;
               var folio=document.getElementById('rbFolio'), hint=document.getElementById('rbHint');
               function apply(){
+                var isOpen=cur>0;
                 for(var i=0;i<n;i++){ var lf=leaves[i];
-                  if(i<cur){ lf.classList.add('flipped'); lf.style.zIndex=i+1; }
-                  else { lf.classList.remove('flipped'); lf.style.zIndex=n-i+10; } }
-                book.classList.toggle('open', cur>0);
+                  if(i<cur){ lf.classList.add('flipped'); lf.style.zIndex=i+1; lf.style.opacity='1'; lf.style.pointerEvents=''; }
+                  else { lf.classList.remove('flipped'); lf.style.zIndex=n-i+10;
+                    if(!isOpen && i>0){lf.style.opacity='0';lf.style.pointerEvents='none'}
+                    else{lf.style.opacity='1';lf.style.pointerEvents=''}
+                  }
+                }
+                book.classList.toggle('open', isOpen);
                 book.classList.toggle('at-end', cur>=n);
                 if(folio){ var txt = cur===0 ? '✦ Bìa ✦' : (cur>=n ? 'Trang '+(cur*2-1) : (cur*2-1)+' – '+(cur*2));
                   if(txt!==folio.textContent){ folio.textContent=txt; folio.classList.remove('roll'); void folio.offsetWidth; folio.classList.add('roll'); } }
+                if(hint) hint.textContent = cur===0 ? 'Chạm vào bìa để mở sách' : '';
                 if(hint) hint.style.opacity = cur===0 ? '1' : '0';
               }
               function fx(i){ var lf=leaves[i]; if(!lf)return; lf.classList.add('flipping'); setTimeout(function(){lf.classList.remove('flipping');},1150); }
@@ -2205,10 +2279,14 @@
               var pageW=function(){ return book.getBoundingClientRect().width/2 || 1; };
               var drag=null;
               function angleFor(dx,dir){ var frac=Math.max(-1,Math.min(1,dx/pageW()));
-                if(dir==='fwd') return Math.max(-180,Math.min(0,frac*180));   // 0 -> -180 khi kéo trái
-                return Math.max(-180,Math.min(0,-180+frac*180)); }            // -180 -> 0 khi kéo phải
+                if(dir==='fwd') return Math.max(-180,Math.min(0,frac*180));
+                return Math.max(-180,Math.min(0,-180+frac*180)); }
               function onDown(e){ if(e.target.closest('a'))return;
-                var r=book.getBoundingClientRect(); var right=(e.clientX-r.left > r.width/2);
+                var r=book.getBoundingClientRect();
+                if(!book.classList.contains('open')){
+                  next(); return;
+                }
+                var right=(e.clientX-r.left > r.width/2);
                 var idx,dir;
                 if(right && cur<n){ idx=cur; dir='fwd'; }
                 else if(!right && cur>0){ idx=cur-1; dir='bwd'; }
@@ -2216,7 +2294,6 @@
                 drag={leaf:leaves[idx],index:idx,dir:dir,startX:e.clientX,moved:false,angle:(dir==='bwd'?-180:0)};
                 drag.leaf.classList.add('rb-drag'); drag.leaf.style.zIndex=200;
                 book.style.userSelect='none';
-                if(dir==='fwd' && cur===0) book.classList.add('open');  // morph mở khi bắt đầu kéo bìa
                 try{ book.setPointerCapture && book.setPointerCapture(e.pointerId); }catch(_){}
               }
               function onMove(e){ if(!drag)return; var dx=e.clientX-drag.startX;
@@ -2226,9 +2303,9 @@
               function onUp(){ if(!drag)return; var d=drag; drag=null;
                 d.leaf.classList.remove('rb-drag'); d.leaf.style.transform=''; d.leaf.style.zIndex='';
                 book.style.userSelect='';
-                if(!d.moved){ cur = d.dir==='fwd' ? Math.min(n,cur+1) : Math.max(0,cur-1); }      // chạm nhẹ = lật
-                else if(d.dir==='fwd'){ if(d.angle<=-90) cur=d.index+1; }                          // kéo quá nửa = lật xong
-                else { if(d.angle>=-90) cur=d.index; }                                             // kéo lui quá nửa = mở lại
+                if(!d.moved){ cur = d.dir==='fwd' ? Math.min(n,cur+1) : Math.max(0,cur-1); }
+                else if(d.dir==='fwd'){ if(d.angle<=-90) cur=d.index+1; }
+                else { if(d.angle>=-90) cur=d.index; }
                 apply(); }
               book.addEventListener('pointerdown',onDown);
               window.addEventListener('pointermove',onMove);

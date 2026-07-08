@@ -102,6 +102,31 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 .site-cart-badge:empty{display:none}
 .site-nav-btn{padding:8px 22px;font-size:14px;flex-shrink:0}
 
+/* ── User dropdown ── */
+.site-user-wrap{position:relative}
+.site-user-dropdown{
+  display:none;position:absolute;top:100%;right:0;margin-top:8px;
+  min-width:200px;background:#fff;border-radius:14px;
+  box-shadow:0 12px 36px -8px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.04);
+  padding:6px;z-index:300;
+  animation:sudFade .18s ease;
+}
+@keyframes sudFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.site-user-wrap:hover .site-user-dropdown{display:block}
+.site-user-dropdown::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
+.sud-item{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-radius:10px;font-size:14px;font-weight:600;color:var(--ink);
+  transition:all .15s;
+}
+.sud-item:hover{background:rgba(27,79,158,.06);color:var(--navy)}
+.sud-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.55}
+.sud-item:hover svg{opacity:1}
+.sud-divider{height:1px;background:var(--line);margin:4px 10px}
+.sud-logout{color:var(--ink-soft)}
+.sud-logout:hover{background:rgba(206,46,46,.06);color:var(--red)}
+.sud-logout:hover svg{stroke:var(--red)}
+
 /* Hamburger */
 .site-nav-toggle{
   display:none;flex-direction:column;gap:5px;width:36px;height:36px;
@@ -158,11 +183,27 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 }
 .site-search-form button svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 
+/* Mobile/Desktop visibility */
+.show-on-mobile{display:none !important}
+
 /* Responsive */
 @media(max-width:720px){
   .site-nav-links{display:none}
   .site-nav-toggle{display:flex}
   .site-nav-icon.hide-mobile{display:none}
+  .hide-on-mobile{display:none !important}
+  .show-on-mobile{display:flex !important}
+}
+@media(max-width:480px){
+  .site-nav-inner{padding:0 14px;height:56px}
+  .site-logo{font-size:19px;gap:8px}
+  .site-logo-dot{width:30px;height:30px}
+  .site-logo-dot svg{width:16px;height:16px}
+  .site-nav-btn{padding:6px 14px;font-size:12.5px}
+  .site-nav-drawer{padding:12px 16px 20px;top:56px}
+  .site-search-form input{font-size:18px}
+  .site-search-close{top:16px;right:16px;width:38px;height:38px}
+  .container{padding:0 16px}
 }
 
 /* ═══════════════════════════════════════
@@ -307,21 +348,42 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
       <c:if test="${not empty sessionScope.user}">
       <a href="${pageContext.request.contextPath}/cart" class="site-nav-icon" aria-label="Giỏ hàng">
         <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span id="siteCartBadge" class="site-cart-badge">
-          <c:if test="${sessionScope.cartCount gt 0}">
-            ${sessionScope.cartCount}
-          </c:if>
-        </span>
+        <span id="siteCartBadge" class="site-cart-badge"><c:if test="${sessionScope.cartCount gt 0}">${sessionScope.cartCount}</c:if></span>
       </a>
       </c:if>
 
-      <!-- User -->
+      <!-- User (Desktop: button + hover dropdown | Mobile: icon link) -->
       <c:choose>
         <c:when test="${not empty sessionScope.user}">
-          <a href="${pageContext.request.contextPath}/account" class="btn btn-sm btn-primary site-nav-btn">Tài khoản</a>
+          <!-- Desktop: hover dropdown -->
+          <div class="site-user-wrap hide-on-mobile">
+            <a href="${pageContext.request.contextPath}/account" class="btn btn-sm btn-primary site-nav-btn">Tài khoản</a>
+            <div class="site-user-dropdown">
+              <a href="${pageContext.request.contextPath}/account" class="sud-item">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Tài khoản của tôi
+              </a>
+              <a href="${pageContext.request.contextPath}/account#orders" class="sud-item" data-tab="orders">
+                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Đơn mua
+              </a>
+              <div class="sud-divider"></div>
+              <a href="${pageContext.request.contextPath}/logout" class="sud-item sud-logout">
+                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Đăng xuất
+              </a>
+            </div>
+          </div>
+          <!-- Mobile: avatar icon -->
+          <a href="${pageContext.request.contextPath}/account" class="site-nav-icon show-on-mobile" aria-label="Tài khoản">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
         </c:when>
         <c:otherwise>
-          <a href="${pageContext.request.contextPath}/login" class="btn btn-sm btn-primary site-nav-btn">Đăng nhập</a>
+          <a href="${pageContext.request.contextPath}/login" class="btn btn-sm btn-primary site-nav-btn hide-on-mobile">Đăng nhập</a>
+          <a href="${pageContext.request.contextPath}/login" class="site-nav-icon show-on-mobile" aria-label="Đăng nhập">
+            <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          </a>
         </c:otherwise>
       </c:choose>
 
@@ -341,7 +403,10 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
   <a href="${pageContext.request.contextPath}/products">Sản phẩm</a>
   <c:choose>
     <c:when test="${not empty sessionScope.user}">
-      <a href="${pageContext.request.contextPath}/account">Tài khoản</a>
+      <a href="${pageContext.request.contextPath}/account">Tài khoản của tôi</a>
+      <a href="${pageContext.request.contextPath}/account#orders">Đơn hàng</a>
+      <a href="${pageContext.request.contextPath}/cart">Giỏ hàng</a>
+      <a href="${pageContext.request.contextPath}/logout" style="color:var(--red)">Đăng xuất</a>
     </c:when>
     <c:otherwise>
       <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>

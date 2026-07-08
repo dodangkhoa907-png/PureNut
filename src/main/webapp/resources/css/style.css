@@ -416,6 +416,16 @@ input,select{font:inherit}
 .footer-col a,.footer-col p{display:block;font-size:13.5px;color:#9FB2CC;margin-bottom:10px}
 .footer-col a:hover{color:#fff}
 .footer-bottom{text-align:center;padding:22px 0;font-size:12.5px;color:#7E92AE}
+@media(max-width:480px){
+  .footer{padding:40px 0 0}
+  .footer-grid{gap:24px;padding-bottom:30px}
+  .footer-brand p{font-size:13px}
+  .footer-col h4{font-size:13px;margin-bottom:10px}
+  .footer-col a,.footer-col p{font-size:12.5px;margin-bottom:8px}
+  .footer-bottom{padding:16px 0;font-size:11.5px}
+  .zalo-float{width:46px;height:46px;right:14px;bottom:18px}
+  .zalo-float svg{width:22px;height:22px}
+}
 
 /* ============ RESPONSIVE ============ */
 @media (max-width:980px){

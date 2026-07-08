@@ -128,6 +128,16 @@ footer{background:var(--navy-darker);color:#C9D6EA;padding:60px 0 26px}
 
 @media(max-width:900px){.hero-in,.promo,.teaser{grid-template-columns:1fr;gap:32px}.grid{grid-template-columns:repeat(2,1fr)}.trust-row,.foot-grid{grid-template-columns:repeat(2,1fr)}.hero-visual{order:-1}}
 @media(max-width:600px){.grid,.foot-grid,.trust-row{grid-template-columns:1fr}}
+@media(max-width:480px){
+  .hero{padding:80px 0 40px}
+  .hero-in h1{font-size:28px}
+  .hero-in p{font-size:14px}
+  .promo,.teaser{gap:20px}
+  .section-title{font-size:24px}
+  .card{border-radius:16px}
+  .toast{font-size:13px;padding:12px 20px;left:16px;right:16px;transform:translateX(0) translateY(20px);bottom:80px}
+  .toast.show{transform:translateX(0) translateY(0)}
+}
 </style>
 <script>window.CTX = '${ctx}';</script>
 </head>

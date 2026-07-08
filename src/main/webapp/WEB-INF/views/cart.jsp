@@ -30,11 +30,47 @@
 
 /* ── Cart Items ── */
 .cart-items{background:#fff;border-radius:22px;box-shadow:0 8px 28px -14px rgba(0,0,0,.08);border:1px solid rgba(0,0,0,.03);overflow:hidden}
-.ci-header{display:grid;grid-template-columns:2fr auto auto auto;gap:16px;padding:16px 24px;background:rgba(27,79,158,.03);border-bottom:1.5px solid rgba(27,79,158,.08);font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+.ci-header{display:grid;grid-template-columns:40px 2fr auto auto auto;gap:16px;padding:16px 24px;background:rgba(27,79,158,.03);border-bottom:1.5px solid rgba(27,79,158,.08);font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;align-items:center}
 .ci-row{
-    display:grid;grid-template-columns:2fr auto auto auto;gap:16px;align-items:center;
+    display:grid;grid-template-columns:40px 2fr auto auto auto;gap:16px;align-items:center;
     padding:20px 24px;border-bottom:1px solid rgba(0,0,0,.04);transition:background .15s;
 }
+.ci-row.unchecked{opacity:.5}
+
+/* ── Custom Checkbox (Emerald) ── */
+.ci-check-wrap{display:flex;align-items:center;justify-content:center}
+.checkbox-container{
+    display:inline-block;position:relative;width:26px;height:26px;cursor:pointer;
+    flex-shrink:0;user-select:none;transform:scale(0.75);
+}
+.checkbox-container .custom-checkbox{
+    position:absolute;opacity:0;cursor:pointer;width:0;height:0;
+}
+.checkbox-container .checkmark{
+    position:absolute;top:0;left:0;width:26px;height:26px;
+    background:#eee;border-radius:8px;
+    transition:all .25s cubic-bezier(.4,.0,.2,1);
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+}
+.checkbox-container .checkmark:after{
+    content:"";position:absolute;display:none;
+    left:9px;top:4px;width:6px;height:12px;
+    border:solid #fff;border-width:0 2.5px 2.5px 0;
+    transform:rotate(45deg);
+}
+.checkbox-container .custom-checkbox:checked ~ .checkmark{
+    background:linear-gradient(135deg,#0F0F11 0%,#242428 40%,#4A4A52 100%);
+    box-shadow:0 3px 10px -2px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.checkbox-container .custom-checkbox:checked ~ .checkmark:after{
+    display:block;
+    animation:checkAnim .25s cubic-bezier(.4,.0,.2,1) forwards;
+}
+@keyframes checkAnim{0%{height:0;opacity:0}100%{height:12px;opacity:1}}
+.checkbox-container:hover .checkmark{
+    box-shadow:0 0 0 3px rgba(0,0,0,.1),inset 0 1px 3px rgba(0,0,0,.08);
+}
+
 .ci-row:last-child{border-bottom:none}
 .ci-row:hover{background:rgba(27,79,158,.015)}
 
@@ -53,11 +89,28 @@
 .ci-meta span{display:inline-flex;align-items:center;gap:4px}
 .ci-meta .dot{color:var(--sand);margin:0 3px}
 
-/* Quantity */
-.ci-qty{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
-.ci-qty button{width:36px;height:38px;font-size:17px;font-weight:700;color:var(--navy);background:rgba(27,79,158,.03);transition:background .15s}
-.ci-qty button:hover{background:rgba(27,79,158,.08)}
-.ci-qty input{width:42px;height:38px;text-align:center;border:none;border-left:1px solid var(--line);border-right:1px solid var(--line);font-weight:700;font-size:15px;outline:none;background:transparent}
+/* ── Quantity Stepper ── */
+.ci-qty{display:inline-flex;align-items:center;gap:0;border-radius:12px;overflow:hidden;background:#fff;border:1.5px solid var(--line)}
+.ci-qty button{
+    width:38px;height:38px;font-size:18px;font-weight:700;color:var(--navy);
+    background:rgba(27,79,158,.04);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s;line-height:1;
+}
+.ci-qty button:hover{background:rgba(27,79,158,.12);color:#1B4F9E}
+.ci-qty button:active{transform:scale(.92)}
+.ci-qty input{
+    width:44px;height:38px;text-align:center;border:none;
+    border-left:1px solid var(--line);border-right:1px solid var(--line);
+    font-weight:700;font-size:15px;outline:none;background:transparent;
+    color:var(--ink);font-family:var(--fb);
+    /* Ẩn spinner mặc định */
+    -moz-appearance:textfield;
+}
+.ci-qty input::-webkit-outer-spin-button,
+.ci-qty input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+}
 
 /* Line total */
 .ci-total{font-family:'EB Garamond',var(--fd),serif;font-weight:700;font-size:17px;color:var(--ink);white-space:nowrap}
@@ -140,18 +193,92 @@
 .cart-empty p{color:var(--ink-soft);font-size:15px;margin-bottom:24px}
 
 @media(max-width:860px){
-    .cart-body{grid-template-columns:1fr}
-    .cart-summary{position:static}
+    .cart-body{grid-template-columns:1fr;gap:14px}
+    .cart-summary{position:static;border-radius:16px;padding:20px 18px}
+    .cs-eco{display:none}
+    .cs-title{font-size:15px;margin-bottom:12px;padding-bottom:10px;gap:7px}
+    .cs-title svg{width:17px;height:17px}
+    .cs-row{padding:5px 0;font-size:13px}
+    .cs-divider{margin:8px 0}
+    .cs-total-val{font-size:20px}
+    .cs-total-label{font-size:14px}
+    .cs-btn{margin-top:10px;padding:13px;font-size:14px;border-radius:14px}
+    .cs-btn.ghost{margin-top:8px;padding:11px;font-size:13px}
+    .cs-voucher input{padding:10px 14px;font-size:13px}
+    .cs-voucher button{padding:10px 16px;font-size:12px}
     .ci-header{display:none}
-    .ci-row{grid-template-columns:1fr auto;gap:10px}
-    .ci-qty,.ci-total{grid-column:1/-1}
-    .ci-del{position:absolute;top:16px;right:16px}
-    .ci-row{position:relative;padding-right:60px}
+    .ci-row{
+        display:grid;grid-template-columns:auto 1fr;gap:0 10px;
+        position:relative;padding:14px 44px 14px 14px;
+        grid-template-rows:auto auto;
+    }
+    .ci-check-wrap{grid-row:1/3;align-self:center}
+    .ci-prod{grid-column:2;display:flex;gap:10px;align-items:center;margin-bottom:8px}
+    .ci-actions-wrap{grid-column:2;display:flex;align-items:center;gap:14px}
+    .ci-total{font-size:14px}
+    .ci-del{position:absolute;top:12px;right:12px;width:32px;height:32px}
+    .ci-thumb{width:60px;height:60px;border-radius:12px}
+    .ci-name{font-size:13.5px}
+    .ci-meta{font-size:11px}
+    .ci-qty button{width:34px;height:34px;font-size:16px}
+    .ci-qty input{width:38px;height:34px;font-size:13px}
+    .cart-banner h1{font-size:22px}
+    .cart-banner .cb-count{font-size:12px}
+    .cart-banner{padding:22px 0 18px}
+    .checkbox-container{transform:scale(.7)}
 }
 @media(max-width:520px){
-    .cart-banner h1{font-size:22px}
-    .ci-thumb{width:60px;height:60px;border-radius:12px}
-    .ci-name{font-size:14px}
+    .cart-banner h1{font-size:18px}
+    .cart-banner .cb-count{font-size:11px}
+    .cart-banner{padding:16px 0 14px}
+    .cart-banner-inner{padding:0 12px;gap:10px}
+    .cart-banner-inner svg{width:24px;height:24px}
+    .cart-body{padding:0 8px;margin-top:10px;gap:10px}
+    .cart-items{border-radius:16px}
+    .ci-thumb{width:50px;height:50px;border-radius:10px}
+    .ci-thumb-emoji{font-size:24px}
+    .ci-name{font-size:12.5px}
+    .ci-meta{font-size:10px;line-height:1.3}
+    .ci-meta .dot{display:none}
+    .ci-meta span{display:inline}
+    .ci-row{padding:12px 38px 12px 10px;gap:0 8px}
+    .ci-prod{gap:8px;margin-bottom:6px}
+    .ci-qty button{width:28px;height:28px;font-size:14px}
+    .ci-qty input{width:32px;height:28px;font-size:12px}
+    .ci-qty{border-radius:8px}
+    .ci-total{font-size:13px;font-weight:700;margin-left:0}
+    .ci-del{width:28px;height:28px;top:10px;right:8px;border-radius:8px}
+    .ci-del svg{width:13px;height:13px}
+    .cart-summary{padding:16px 14px;border-radius:14px}
+    .cs-title{font-size:14px;margin-bottom:8px;padding-bottom:6px}
+    .cs-row{font-size:12px;padding:4px 0}
+    .cs-total-val{font-size:18px}
+    .cs-total-label{font-size:13px}
+    .cs-btn.primary{margin-top:8px;padding:12px;font-size:13px;border-radius:12px}
+    .cs-btn.ghost{margin-top:6px;padding:10px;font-size:12px;border-radius:12px}
+    .cs-btn svg{width:15px;height:15px}
+    .cs-voucher{flex-direction:column;gap:6px;margin-bottom:14px}
+    .cs-voucher input{padding:10px 12px;font-size:12px;border-radius:10px}
+    .cs-voucher button{width:100%;padding:10px;font-size:12px;border-radius:10px}
+    .checkbox-container{transform:scale(.65)}
+}
+@media(max-width:380px){
+    .cart-banner h1{font-size:16px}
+    .cart-banner{padding:14px 0 12px}
+    .ci-thumb{width:44px;height:44px;border-radius:8px}
+    .ci-name{font-size:11.5px}
+    .ci-meta{font-size:9.5px}
+    .ci-row{padding:10px 34px 10px 8px}
+    .ci-qty button{width:26px;height:26px;font-size:13px}
+    .ci-qty input{width:28px;height:26px;font-size:11px}
+    .ci-total{font-size:12px;margin-left:8px}
+    .ci-del{width:26px;height:26px;top:8px;right:6px}
+    .cart-summary{padding:14px 12px}
+    .cs-title{font-size:13px}
+    .cs-row{font-size:11px}
+    .cs-total-val{font-size:16px}
+    .cs-total-label{font-size:12px}
+    .cs-btn.primary{padding:11px;font-size:12px}
 }
 </style>
 </head>
@@ -165,7 +292,7 @@
 <div class="cart-banner">
     <div class="cart-banner-inner">
         <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <h1>Giỏ hàng của bạn<c:if test="${not empty cartItems}"><span class="cb-count">(${cartItems.size()} sản phẩm)</span></c:if></h1>
+        <h1>Giỏ hàng của bạn<c:if test="${not empty cartItems}"><span class="cb-count">(${sessionScope.cartCount} sản phẩm)</span></c:if></h1>
     </div>
 </div>
 
@@ -186,15 +313,17 @@
     <!-- Items -->
     <div class="cart-items">
         <div class="ci-header">
+            <div class="ci-check-wrap"><label class="checkbox-container"><input class="custom-checkbox" id="checkAll" type="checkbox" checked><span class="checkmark"></span></label></div>
             <span>Sản phẩm</span><span>Số lượng</span><span>Thành tiền</span><span></span>
         </div>
         <c:forEach var="item" items="${cartItems}">
-            <div class="ci-row">
+            <div class="ci-row" data-price="${item.productPrice}" data-qty="${item.quantity}" data-id="${item.cartItemId}">
+                <div class="ci-check-wrap"><label class="checkbox-container"><input class="custom-checkbox ci-item-check" type="checkbox" checked><span class="checkmark"></span></label></div>
                 <div class="ci-prod">
                     <div class="ci-thumb" style="background:${not empty item.bgColorHex ? item.bgColorHex : '#E9DCBE'}">
                         <c:choose>
                             <c:when test="${not empty item.imageUrl}">
-                                <img src="${ctx}${item.imageUrl}" alt="${item.productName}">
+                                <img src="${ctx}${item.imageUrl}" alt="${item.productName}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=ci-thumb-emoji>🥛</span>'">
                             </c:when>
                             <c:otherwise>
                                 <span class="ci-thumb-emoji">🥛</span>
@@ -210,15 +339,17 @@
                         </div>
                     </div>
                 </div>
-                <form action="${ctx}/cart/update" method="POST" class="qty-form" style="margin:0">
-                    <input type="hidden" name="cartItemId" value="${item.cartItemId}">
-                    <div class="ci-qty">
-                        <button type="button" class="q-minus">−</button>
-                        <input type="number" name="quantity" min="1" value="${item.quantity}">
-                        <button type="button" class="q-plus">+</button>
-                    </div>
-                </form>
-                <div class="ci-total">${item.formattedTotalPrice} đ</div>
+                <div class="ci-actions-wrap" style="display:contents">
+                    <form action="${ctx}/cart/update" method="POST" class="qty-form" style="margin:0">
+                        <input type="hidden" name="cartItemId" value="${item.cartItemId}">
+                        <div class="ci-qty">
+                            <button type="button" class="q-minus">−</button>
+                            <input type="number" name="quantity" min="1" value="${item.quantity}">
+                            <button type="button" class="q-plus">+</button>
+                        </div>
+                    </form>
+                    <div class="ci-total">${item.formattedTotalPrice} đ</div>
+                </div>
                 <form action="${ctx}/cart/remove" method="POST" style="margin:0">
                     <input type="hidden" name="cartItemId" value="${item.cartItemId}">
                     <button class="ci-del" title="Xóa sản phẩm">
@@ -242,7 +373,7 @@
             <button type="button" onclick="applyVoucher()">Áp dụng</button>
         </div>
 
-        <div class="cs-row"><span>Tạm tính (${cartItems.size()} sản phẩm)</span><b>${formattedTotal} đ</b></div>
+        <div class="cs-row"><span id="csSubLabel">Tạm tính (${cartItems.size()} sản phẩm)</span><b id="csSubVal">${formattedTotal} đ</b></div>
         <div class="cs-row"><span>Phí giao hàng</span><b style="color:var(--green)">Tính khi thanh toán</b></div>
         <div class="cs-row" id="discountRow" style="display:none"><span id="discountLabel">Giảm giá</span><b id="discountVal" style="color:var(--green)">-0 đ</b></div>
         <hr class="cs-divider">
@@ -251,7 +382,7 @@
             <span class="cs-total-val">${formattedTotal} đ</span>
         </div>
 
-        <a href="${ctx}/checkout" class="cs-btn primary">
+        <a href="${ctx}/checkout" class="cs-btn primary" id="checkoutBtn">
             <svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
             Tiến hành thanh toán
         </a>
@@ -270,15 +401,28 @@
 </div>
 </main>
 
-<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+<%-- Footer hidden on cart page for cleaner mobile UX --%>
 
 <script>
 (function(){
     document.querySelectorAll('.qty-form').forEach(function(f){
         var i=f.querySelector('input[name="quantity"]');
-        f.querySelector('.q-minus').addEventListener('click',function(){var v=parseInt(i.value,10)||1;if(v>1){i.value=v-1;f.submit()}});
-        f.querySelector('.q-plus').addEventListener('click',function(){i.value=(parseInt(i.value,10)||1)+1;f.submit()});
-        i.addEventListener('change',function(){if((parseInt(i.value,10)||0)<1)i.value=1;f.submit()});
+        var cid=f.querySelector('input[name="cartItemId"]').value;
+        var timer=null;
+        function sync(){
+            clearTimeout(timer);
+            timer=setTimeout(function(){
+                fetch(window.CTX+'/cart/update',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest'},
+                    body:'cartItemId='+cid+'&quantity='+i.value
+                });
+            },400);
+        }
+        f.querySelector('.q-minus').addEventListener('click',function(e){e.preventDefault();var v=parseInt(i.value,10)||1;if(v>1){i.value=v-1;recalc();sync()}});
+        f.querySelector('.q-plus').addEventListener('click',function(e){e.preventDefault();i.value=(parseInt(i.value,10)||1)+1;recalc();sync()});
+        i.addEventListener('change',function(){if((parseInt(i.value,10)||0)<1)i.value=1;recalc();sync()});
+        f.addEventListener('submit',function(e){e.preventDefault();recalc();sync()});
     });
 
     window.applyVoucher=function(){
@@ -286,6 +430,55 @@
         if(!code){alert('Vui lòng nhập mã giảm giá.');return}
         alert('Tính năng mã giảm giá đang được phát triển.');
     };
+
+    var checkAll=document.getElementById('checkAll');
+    var itemChecks=document.querySelectorAll('.ci-item-check');
+    var csSubLabel=document.getElementById('csSubLabel');
+    var csSubVal=document.getElementById('csSubVal');
+    var csTotalVal=document.querySelector('.cs-total-val');
+    var checkoutBtn=document.getElementById('checkoutBtn');
+    if(!checkAll || itemChecks.length===0) return;
+
+    function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+
+    function recalc(){
+        var total=0, count=0;
+        itemChecks.forEach(function(cb){
+            var row=cb.closest('.ci-row');
+            var price=parseFloat(row.getAttribute('data-price'))||0;
+            var qty=parseInt(row.getAttribute('data-qty'))||0;
+            var qtyInput=row.querySelector('input[name="quantity"]');
+            if(qtyInput) qty=parseInt(qtyInput.value)||qty;
+            var lineTotal=price*qty;
+            var lineTotalEl=row.querySelector('.ci-total');
+            if(lineTotalEl) lineTotalEl.textContent=fmt(lineTotal)+' đ';
+            if(cb.checked){ total+=lineTotal; count++; row.classList.remove('unchecked'); }
+            else { row.classList.add('unchecked'); }
+        });
+        if(csSubLabel) csSubLabel.textContent='Tạm tính ('+count+' sản phẩm)';
+        if(csSubVal) csSubVal.textContent=fmt(total)+' đ';
+        if(csTotalVal) csTotalVal.textContent=fmt(total)+' đ';
+        if(checkoutBtn){
+            if(count===0){
+                checkoutBtn.style.opacity='.4';checkoutBtn.style.pointerEvents='none';
+            } else {
+                checkoutBtn.style.opacity='';checkoutBtn.style.pointerEvents='';
+                var ids=[];
+                itemChecks.forEach(function(cb){ if(cb.checked) ids.push(cb.closest('.ci-row').getAttribute('data-id')); });
+                checkoutBtn.href=window.CTX+'/checkout?items='+ids.join(',');
+            }
+        }
+        var allChecked=true;
+        itemChecks.forEach(function(cb){if(!cb.checked)allChecked=false;});
+        checkAll.checked=allChecked;
+    }
+
+    checkAll.addEventListener('change',function(){
+        itemChecks.forEach(function(cb){cb.checked=checkAll.checked;});
+        recalc();
+    });
+    itemChecks.forEach(function(cb){cb.addEventListener('change',recalc);});
+    recalc();
 })();
 </script>
 </body>
