@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cấu hình riêng cho Tomcat.
+     SameSite=Lax cho cookie phiên (JSESSIONID) -> chống CSRF ở tầng cookie:
+     trình duyệt không gửi cookie theo request POST xuyên site.
+     
+     OPTIMIZATION: Disable TLD scanning của JAR không cần -> tăng tốc startup.
+     scanAllDirectories="false" = chỉ scan web app, không scan lib/
+-->
+<Context>
+    <CookieProcessor sameSiteCookies="lax"/>
+    <JarScanner scanAllDirectories="false"/>
+</Context>
