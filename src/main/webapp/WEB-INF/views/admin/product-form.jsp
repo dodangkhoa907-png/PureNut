@@ -12,6 +12,7 @@
     </div>
 
     <form action="${pageContext.request.contextPath}/admin/san-pham/${empty product ? 'them' : 'sua'}" method="POST">
+        <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
         <c:if test="${not empty product}">
             <input type="hidden" name="productId" value="${product.productId}">
         </c:if>

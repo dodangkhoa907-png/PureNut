@@ -105,8 +105,9 @@ public class CartController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/checkout");
         } else {
             String referer = request.getHeader("Referer");
-            if (referer != null) {
-                // Xoá tham số success cũ nếu có
+            String ctxUrl = request.getRequestURL().toString();
+            String origin = ctxUrl.substring(0, ctxUrl.indexOf(request.getRequestURI()));
+            if (referer != null && referer.startsWith(origin)) {
                 referer = referer.replaceAll("[&?]success=[^&]*", "");
                 String separator = referer.contains("?") ? "&" : "?";
                 response.sendRedirect(referer + separator + "success=added");

@@ -20,7 +20,10 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "CheckoutController", urlPatterns = {"/checkout", "/checkout/success"})
 public class CheckoutController extends HttpServlet {
@@ -45,10 +48,21 @@ public class CheckoutController extends HttpServlet {
             return;
         }
         
-        // Vào trang thanh toán
         User user = (User) request.getSession().getAttribute("user");
         List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
-        
+
+        String itemsParam = request.getParameter("items");
+        if (itemsParam != null && !itemsParam.trim().isEmpty()) {
+            Set<Integer> selectedIds = Arrays.stream(itemsParam.split(","))
+                    .map(String::trim)
+                    .filter(s -> s.matches("\\d+"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+            cartItems = cartItems.stream()
+                    .filter(ci -> selectedIds.contains(ci.getCartItemId()))
+                    .collect(Collectors.toList());
+        }
+
         if (cartItems.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
@@ -76,7 +90,19 @@ public class CheckoutController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         User user = (User) request.getSession().getAttribute("user");
         List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
-        
+
+        String itemsParam = request.getParameter("items");
+        if (itemsParam != null && !itemsParam.trim().isEmpty()) {
+            Set<Integer> selectedIds = Arrays.stream(itemsParam.split(","))
+                    .map(String::trim)
+                    .filter(s -> s.matches("\\d+"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+            cartItems = cartItems.stream()
+                    .filter(ci -> selectedIds.contains(ci.getCartItemId()))
+                    .collect(Collectors.toList());
+        }
+
         if (cartItems.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
@@ -117,6 +143,13 @@ public class CheckoutController extends HttpServlet {
             int orderId = orderDao.placeOrder(order, cartItems);
             if (orderId > 0) {
                 request.getSession().setAttribute("cartCount", 0);
+
+                com.purenut.shop.util.OrderEventBus.publish(
+                    new com.purenut.shop.util.OrderEventBus.OrderEvent(
+                        orderId, fullName.trim(), phone.trim(),
+                        totalAmount.longValue(), paymentMethod,
+                        System.currentTimeMillis()));
+
                 response.sendRedirect(request.getContextPath() + "/checkout/success");
             } else {
                 request.setAttribute("errorMessage", "Không thể đặt hàng, vui lòng thử lại.");

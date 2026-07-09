@@ -30,6 +30,7 @@
         </c:if>
 
         <form action="${pageContext.request.contextPath}/admin/login" method="POST">
+            <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
             <div class="admin-field">
                 <label for="email">Email quản trị</label>
                 <input type="email" id="email" name="email" placeholder="khoaddty00210@gmail.com" required autofocus>

@@ -225,7 +225,7 @@
     .cart-banner h1{font-size:22px}
     .cart-banner .cb-count{font-size:12px}
     .cart-banner{padding:22px 0 18px}
-    .checkbox-container{transform:scale(.7)}
+    .checkbox-container{transform:scale(.85)}
 }
 @media(max-width:520px){
     .cart-banner h1{font-size:18px}
@@ -320,7 +320,7 @@
             <div class="ci-row" data-price="${item.productPrice}" data-qty="${item.quantity}" data-id="${item.cartItemId}">
                 <div class="ci-check-wrap"><label class="checkbox-container"><input class="custom-checkbox ci-item-check" type="checkbox" checked><span class="checkmark"></span></label></div>
                 <div class="ci-prod">
-                    <div class="ci-thumb" style="background:${not empty item.bgColorHex ? item.bgColorHex : '#E9DCBE'}">
+                    <a href="${ctx}/products/${item.productSlug}" class="ci-thumb" style="background:${not empty item.bgColorHex ? item.bgColorHex : '#E9DCBE'}">
                         <c:choose>
                             <c:when test="${not empty item.imageUrl}">
                                 <img src="${ctx}${item.imageUrl}" alt="${item.productName}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=ci-thumb-emoji>🥛</span>'">
@@ -329,8 +329,8 @@
                                 <span class="ci-thumb-emoji">🥛</span>
                             </c:otherwise>
                         </c:choose>
-                    </div>
-                    <div>
+                    </a>
+                    <div class="ci-info">
                         <div class="ci-name"><a href="${ctx}/products/${item.productSlug}">${item.productName}</a></div>
                         <div class="ci-meta">
                             <span>Chai thủy tinh ${item.volumeMl}ml</span>
@@ -351,6 +351,7 @@
                     <div class="ci-total">${item.formattedTotalPrice} đ</div>
                 </div>
                 <form action="${ctx}/cart/remove" method="POST" style="margin:0">
+                    <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                     <input type="hidden" name="cartItemId" value="${item.cartItemId}">
                     <button class="ci-del" title="Xóa sản phẩm">
                         <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>

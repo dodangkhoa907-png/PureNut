@@ -44,6 +44,7 @@
                         </td>
                         <td>
                             <form action="${pageContext.request.contextPath}/admin/dai-ly/cap-nhat" method="POST" style="display: flex; gap: 10px;">
+                                <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                                 <input type="hidden" name="leadId" value="${lead.leadId}">
                                 <select name="status" class="form-control" style="padding: 6px; width: 130px; font-size: 13px;">
                                     <option value="PENDING" ${lead.status == 'PENDING' ? 'selected' : ''}>Chờ liên hệ</option>

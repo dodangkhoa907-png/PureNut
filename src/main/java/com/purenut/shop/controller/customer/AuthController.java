@@ -39,7 +39,9 @@ public class AuthController extends HttpServlet {
         
         if ("/logout".equals(path)) {
             if (session != null) {
-                session.invalidate();
+                session.removeAttribute("user");
+                session.removeAttribute("cartItems");
+                session.removeAttribute("cartCount");
             }
             response.sendRedirect(request.getContextPath() + "/");
             return;
@@ -99,11 +101,6 @@ public class AuthController extends HttpServlet {
             int cartCount = cartItemDao.countItems(user.getUserId());
             session.setAttribute("cartItems", cartItems);
             session.setAttribute("cartCount", cartCount);
-            
-            System.out.println("[AuthLogin] ✓ User: " + user.getEmail());
-            System.out.println("[AuthLogin] ✓ CartCount SET to: " + cartCount);
-            System.out.println("[AuthLogin] ✓ Session ID: " + session.getId());
-            System.out.println("[AuthLogin] ✓ CartCount in session: " + session.getAttribute("cartCount"));
             
             response.sendRedirect(request.getContextPath() + "/");
         } else {

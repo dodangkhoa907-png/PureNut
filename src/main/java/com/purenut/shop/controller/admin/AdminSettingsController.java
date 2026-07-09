@@ -42,7 +42,7 @@ public class AdminSettingsController extends HttpServlet {
         req.setAttribute("pageTitle", "Cài đặt & Bảo mật");
 
         HttpSession session = req.getSession();
-        User admin = (User) session.getAttribute("user");
+        User admin = (User) session.getAttribute("adminUser");
         if (admin == null) { resp.sendRedirect(req.getContextPath() + "/admin/login"); return; }
 
         String action = req.getParameter("action");

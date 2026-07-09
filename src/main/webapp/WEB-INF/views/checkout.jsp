@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="vi">
@@ -12,7 +13,7 @@
 <style>
 :root{--navy:#1B4F9E;--navy-dark:#11335E;--navy-darker:#0B2547;--red:#CE2E2E;--green:#2BAC62;--cream:#FBF6EC;--paper:#FFFDF8;--sand:#E9DCBE;--ink:#241F18;--ink-soft:#6B6357;--line:rgba(36,31,24,.1);--fd:'Fraunces',serif;--fb:'Inter',sans-serif;--r-lg:24px;--container:1120px;--shadow:0 18px 40px -18px rgba(20,30,20,.22)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--fb);background:var(--cream);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+body{font-family:var(--fb);background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:none;background:none}
 h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
 .container{max-width:var(--container);margin:0 auto;padding:0 26px}
@@ -38,15 +39,27 @@ h1.title{font-size:clamp(28px,4vw,40px);margin-bottom:28px}
 .srow{display:flex;justify-content:space-between;margin:12px 0;font-size:15px;color:var(--ink-soft)}
 .stotal{display:flex;justify-content:space-between;font-family:var(--fd);font-weight:700;font-size:24px;color:var(--red);margin-top:8px}
 @media(max-width:860px){.grid{grid-template-columns:1fr}.summary{position:static}.two{grid-template-columns:1fr}}
-@media(max-width:480px){
+@media(max-width:520px){
   .wrap{padding:24px 0 60px}
-  h1.title{font-size:24px;margin-bottom:18px}
-  .box{padding:20px 16px;border-radius:16px}
-  .box h2{font-size:18px;margin-bottom:16px;padding-bottom:10px}
-  .field input{padding:12px 13px;font-size:14px}
-  .pay{padding:12px 14px;font-size:14px}
-  .stotal{font-size:20px}
-  .btn{padding:14px 20px;font-size:15px;width:100%}
+  .container{padding:0 14px}
+  h1.title{font-size:22px;margin-bottom:16px}
+  .box{padding:18px 14px;border-radius:14px}
+  .box h2{font-size:17px;margin-bottom:14px;padding-bottom:10px}
+  .field span{font-size:12px}
+  .field input{padding:11px 12px;font-size:13px;border-radius:10px}
+  .pay{padding:11px 12px;font-size:13px;border-radius:10px}
+  .srow{font-size:13px}
+  .stotal{font-size:18px}
+  .btn{padding:13px 18px;font-size:14px;width:100%}
+  .oi .n{font-size:13px}
+  .oi .s{font-size:12px}
+}
+@media(max-width:380px){
+  h1.title{font-size:20px}
+  .box{padding:14px 12px}
+  .box h2{font-size:16px}
+  .field input{font-size:12px}
+  .stotal{font-size:16px}
 }
 </style>
 </head>
@@ -56,16 +69,18 @@ h1.title{font-size:clamp(28px,4vw,40px);margin-bottom:28px}
 <main class="wrap"><div class="container">
   <h1 class="title">Thanh toán</h1>
   <form action="${ctx}/checkout" method="POST" id="checkoutForm">
+    <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
+    <c:if test="${not empty param.items}"><input type="hidden" name="items" value="${fn:escapeXml(param.items)}"></c:if>
     <div class="grid">
       <div class="box">
         <h2>Thông tin giao hàng</h2>
-        <c:if test="${not empty errorMessage}"><div class="err">${errorMessage}</div></c:if>
+        <c:if test="${not empty errorMessage}"><div class="err"><c:out value="${errorMessage}"/></div></c:if>
         <div class="two">
-          <label class="field"><span>Họ và tên người nhận *</span><input type="text" name="fullName" value="${not empty param.fullName ? param.fullName : sessionScope.user.fullName}" required></label>
-          <label class="field"><span>Số điện thoại *</span><input type="tel" name="phone" value="${not empty param.phone ? param.phone : sessionScope.user.phone}" pattern="0[0-9]{9,10}" maxlength="11" inputmode="numeric" title="Số điện thoại bắt đầu bằng 0, gồm 10–11 chữ số" required></label>
+          <label class="field"><span>Họ và tên người nhận *</span><input type="text" name="fullName" value="${fn:escapeXml(not empty param.fullName ? param.fullName : sessionScope.user.fullName)}" required></label>
+          <label class="field"><span>Số điện thoại *</span><input type="tel" name="phone" value="${fn:escapeXml(not empty param.phone ? param.phone : sessionScope.user.phone)}" pattern="0[0-9]{9,10}" maxlength="11" inputmode="numeric" title="Số điện thoại bắt đầu bằng 0, gồm 10–11 chữ số" required></label>
         </div>
-        <label class="field"><span>Địa chỉ giao hàng *</span><input type="text" name="address" value="${param.address}" placeholder="Số nhà, đường, phường, quận, thành phố" required></label>
-        <label class="field"><span>Mã giảm giá</span><input type="text" name="couponCode" id="coupon" value="${param.couponCode}" placeholder="PURENUT20"></label>
+        <label class="field"><span>Địa chỉ giao hàng *</span><input type="text" name="address" value="${fn:escapeXml(param.address)}" placeholder="Số nhà, đường, phường, quận, thành phố" required></label>
+        <label class="field"><span>Mã giảm giá</span><input type="text" name="couponCode" id="coupon" value="${fn:escapeXml(param.couponCode)}" placeholder="PURENUT20"></label>
         <h3 style="font-size:17px;margin:24px 0 14px">Phương thức thanh toán</h3>
         <label class="pay"><input type="radio" name="paymentMethod" value="COD" ${param.paymentMethod == 'BANK_TRANSFER' ? '' : 'checked'}><span>Thanh toán khi nhận hàng (COD)</span></label>
         <label class="pay"><input type="radio" name="paymentMethod" value="BANK_TRANSFER" ${param.paymentMethod == 'BANK_TRANSFER' ? 'checked' : ''}><span>Chuyển khoản ngân hàng</span></label>

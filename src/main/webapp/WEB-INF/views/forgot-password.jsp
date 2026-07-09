@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="isOtpStep" value="${not empty resetEmail}"/>
 <!DOCTYPE html>
@@ -90,9 +91,10 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
 
     <div class="email-hint">📧 ${resetEmail}</div>
 
-    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ ${errorMessage}</div></c:if>
+    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ <c:out value="${errorMessage}"/></div></c:if>
 
     <form method="post" action="${ctx}/verify-otp" id="otpForm">
+      <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
       <div class="otp-wrap" id="otpWrap">
         <input type="text" name="d1" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" autofocus>
         <input type="text" name="d2" class="otp-box" maxlength="1" inputmode="numeric" pattern="[0-9]">
@@ -207,12 +209,13 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
     <h1>Quên mật khẩu?</h1>
     <p class="sub">Nhập email đã đăng ký — chúng tôi sẽ gửi mã OTP 6 chữ số để xác thực (hiệu lực 5 phút).</p>
 
-    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ ${errorMessage}</div></c:if>
+    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ <c:out value="${errorMessage}"/></div></c:if>
 
     <form method="post" action="${ctx}/forgot-password">
+      <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
       <div class="field">
         <label for="email">Địa chỉ email</label>
-        <input type="email" id="email" name="email" placeholder="ban@email.com" required autofocus value="${param.email}">
+        <input type="email" id="email" name="email" placeholder="ban@email.com" required autofocus value="${fn:escapeXml(param.email)}">
       </div>
       <button type="submit" class="submit">Gửi mã OTP</button>
     </form>

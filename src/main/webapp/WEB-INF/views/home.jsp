@@ -283,8 +283,8 @@ var CTX='${ctx}';
 document.addEventListener('DOMContentLoaded',function(){
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -40px'});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
-  var t=document.getElementById('navToggle'),nl=document.getElementById('navLinks');
-  t.addEventListener('click',function(){nl.classList.toggle('open');});
+  var t=document.getElementById('siteNavToggle'),nl=document.getElementById('siteNavDrawer');
+  if(t&&nl){t.addEventListener('click',function(){nl.classList.toggle('open');});}
   var chips=document.querySelectorAll('.chip'),cards=document.querySelectorAll('.pcard');
   chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.classList.remove('on');});c.classList.add('on');var f=c.dataset.f;cards.forEach(function(k){k.classList.toggle('hide',!(f==='all'||k.dataset.cat===f));});});});
   var cp=document.getElementById('coupon'),note=document.getElementById('copyNote');

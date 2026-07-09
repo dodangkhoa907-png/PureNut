@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="vi">
@@ -98,12 +99,13 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
     <p class="sub">Đăng nhập để tiếp tục mua sắm và nhận ưu đãi.</p>
 
     <c:if test="${param.reset == 'success'}"><div class="alert ok">✅ Mật khẩu đã được đặt lại thành công. Hãy đăng nhập bằng mật khẩu mới.</div></c:if>
-    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ ${errorMessage}</div></c:if>
+    <c:if test="${not empty errorMessage}"><div class="alert err">⚠️ <c:out value="${errorMessage}"/></div></c:if>
 
     <form method="post" action="${ctx}/login" autocomplete="on">
+      <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
       <div class="field">
         <label for="email">Địa chỉ email</label>
-        <div class="box"><input type="email" id="email" name="email" placeholder="ban@email.com" required autofocus value="${param.email}"></div>
+        <div class="box"><input type="email" id="email" name="email" placeholder="ban@email.com" required autofocus value="${fn:escapeXml(param.email)}"></div>
       </div>
       <div class="field">
         <label for="password">Mật khẩu</label>

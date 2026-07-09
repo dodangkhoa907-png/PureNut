@@ -60,7 +60,7 @@ public class AdminProductController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
         
-        var admin = (com.purenut.shop.model.User) req.getSession().getAttribute("user");
+        var admin = (com.purenut.shop.model.User) req.getSession().getAttribute("adminUser");
         Integer adminId = admin != null ? admin.getUserId() : null;
 
         if ("/admin/san-pham/xoa".equals(path)) {

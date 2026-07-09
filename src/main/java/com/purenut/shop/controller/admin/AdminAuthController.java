@@ -35,29 +35,24 @@ public class AdminAuthController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("[AdminAuthController] GET called");
         String path = request.getServletPath();
-        System.out.println("[AdminAuthController] Path: " + path);
         HttpSession session = request.getSession(false);
 
         if ("/admin/logout".equals(path)) {
-            System.out.println("[AdminAuthController] Processing logout");
-            if (session != null) session.invalidate();
+            if (session != null) {
+                session.removeAttribute("adminUser");
+            }
             response.sendRedirect(request.getContextPath() + "/admin/login");
             return;
         }
 
-        // Đã đăng nhập admin → vào thẳng dashboard
-        if (session != null && session.getAttribute("user") instanceof User u
+        if (session != null && session.getAttribute("adminUser") instanceof User u
                 && "ADMIN".equals(u.getRole())) {
-            System.out.println("[AdminAuthController] Admin already logged in, redirecting to dashboard");
             response.sendRedirect(request.getContextPath() + "/admin/dashboard");
             return;
         }
 
-        System.out.println("[AdminAuthController] Forwarding to login.jsp");
         request.getRequestDispatcher("/WEB-INF/views/admin/login.jsp").forward(request, response);
-        System.out.println("[AdminAuthController] Forward completed");
     }
 
     @Override
@@ -73,7 +68,7 @@ public class AdminAuthController extends HttpServlet {
         if (userOpt.isPresent() && "ADMIN".equals(userOpt.get().getRole())) {
             HttpSession session = request.getSession();
             request.changeSessionId(); // chống session fixation
-            session.setAttribute("user", userOpt.get());
+            session.setAttribute("adminUser", userOpt.get());
             com.purenut.shop.util.AuditLogger.log(request, userOpt.get().getUserId(),
                     "ADMIN_LOGIN", userOpt.get().getEmail(), "Đăng nhập khu vực quản trị");
             response.sendRedirect(request.getContextPath() + "/admin/dashboard");

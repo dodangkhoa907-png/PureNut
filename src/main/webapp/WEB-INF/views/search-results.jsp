@@ -1,11 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <title>Kết quả tìm kiếm cho "${keyword}" — PureNut</title>
+    <title>Kết quả tìm kiếm cho "${fn:escapeXml(keyword)}" — PureNut</title>
     <jsp:include page="/WEB-INF/views/layout/header.jsp" />
     <style>
         .search-page {
@@ -103,6 +104,25 @@
             color: var(--ink-soft);
             font-size: 18px;
         }
+        @media(max-width:860px){
+            .search-page{padding:100px 16px 60px}
+            .search-title{font-size:26px}
+            .search-subtitle{font-size:14px}
+            .product-grid{gap:20px}
+        }
+        @media(max-width:520px){
+            .search-page{padding:80px 12px 40px}
+            .search-title{font-size:22px}
+            .search-subtitle{font-size:13px}
+            .product-grid{grid-template-columns:1fr;gap:16px}
+            .product-img-wrap{padding:24px 16px}
+            .product-img-wrap img{height:150px}
+            .product-info{padding:16px}
+            .product-name{font-size:17px}
+            .product-price{font-size:16px}
+            .no-results{padding:40px 16px}
+            .no-results p{font-size:15px}
+        }
     </style>
 </head>
 <body>
@@ -114,7 +134,7 @@
         <div class="search-header">
             <h1 class="search-title">Kết quả tìm kiếm</h1>
             <p class="search-subtitle">
-                Tìm thấy <strong>${products.size()}</strong> sản phẩm cho từ khoá "<strong>${keyword}</strong>"
+                Tìm thấy <strong>${products.size()}</strong> sản phẩm cho từ khoá "<strong>${fn:escapeXml(keyword)}</strong>"
             </p>
         </div>
         

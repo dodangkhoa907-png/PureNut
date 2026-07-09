@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ctx" content="${pageContext.request.contextPath}">
     <title>PureNut Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,9 +54,46 @@
         .admin-header-title{font-family:var(--fd);font-size:22px;font-weight:700}
         .admin-header-title small{display:block;font-family:var(--fb);font-size:12.5px;font-weight:500;color:var(--admin-text-light);margin-top:2px}
         .admin-header-right{display:flex;align-items:center;gap:16px}
-        .hdr-ic{width:44px;height:44px;border-radius:12px;background:var(--admin-bg);display:flex;align-items:center;justify-content:center;color:var(--admin-primary);font-size:17px;position:relative;transition:background .2s}
+        .hdr-ic{width:44px;height:44px;border-radius:12px;background:var(--admin-bg);display:flex;align-items:center;justify-content:center;color:var(--admin-primary);font-size:17px;position:relative;transition:background .2s;cursor:pointer;border:none}
         .hdr-ic:hover{background:#E7EDFB}
-        .hdr-ic .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--admin-red);border:2px solid var(--admin-surface)}
+        .hdr-ic .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--admin-red);border:2px solid var(--admin-surface);display:none}
+        .hdr-ic .dot.show{display:block}
+        .noti-badge{position:absolute;top:5px;right:5px;min-width:18px;height:18px;border-radius:9px;background:var(--admin-red);color:#fff;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--admin-surface)}
+        .noti-badge.show{display:flex}
+
+        /* Notification dropdown */
+        .noti-wrap{position:relative}
+        .noti-dd{position:absolute;top:calc(100% + 8px);right:0;width:380px;background:var(--admin-surface);border-radius:16px;box-shadow:0 20px 50px -12px rgba(14,46,92,.28);border:1px solid var(--admin-border);z-index:200;display:none;overflow:hidden}
+        .noti-dd.open{display:block}
+        .noti-dd-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--admin-border)}
+        .noti-dd-title{font-family:var(--fd);font-size:16px;font-weight:700}
+        .noti-dd-clear{font-size:12px;font-weight:600;color:var(--admin-primary);cursor:pointer;border:none;background:none;padding:4px 10px;border-radius:8px;transition:background .2s}
+        .noti-dd-clear:hover{background:rgba(27,79,158,.08)}
+        .noti-dd-body{max-height:360px;overflow-y:auto}
+        .noti-dd-empty{text-align:center;padding:40px 20px;color:var(--admin-text-light);font-size:13.5px}
+        .noti-dd-empty i{font-size:32px;margin-bottom:10px;display:block;opacity:.3}
+        .noti-item{display:flex;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(224,229,242,.5);transition:background .15s;cursor:pointer;text-decoration:none;color:inherit}
+        .noti-item:hover{background:#F8FAFF}
+        .noti-item.unread{background:#F0F5FF}
+        .noti-item:last-child{border-bottom:none}
+        .noti-ic{width:40px;height:40px;border-radius:12px;background:rgba(57,101,255,.1);color:#3965FF;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .noti-ic.green{background:rgba(43,172,98,.1);color:#12B76A}
+        .noti-body{flex:1;min-width:0}
+        .noti-text{font-size:13.5px;font-weight:600;line-height:1.4;margin-bottom:3px}
+        .noti-text strong{color:var(--admin-primary)}
+        .noti-time{font-size:11.5px;color:var(--admin-text-light);font-weight:500}
+
+        /* Toast notification */
+        .admin-toast{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+        .admin-toast-item{background:var(--admin-surface);border-radius:14px;box-shadow:0 16px 40px -10px rgba(14,46,92,.3);border:1px solid var(--admin-border);padding:16px 20px;display:flex;align-items:flex-start;gap:12px;pointer-events:auto;animation:toastIn .4s cubic-bezier(.16,1,.3,1);min-width:320px;max-width:420px}
+        .admin-toast-item.out{animation:toastOut .3s ease forwards}
+        @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+        @keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+        .toast-ic{width:42px;height:42px;border-radius:12px;background:rgba(57,101,255,.1);color:#3965FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        .toast-body{flex:1}
+        .toast-title{font-size:14px;font-weight:700;margin-bottom:2px}
+        .toast-desc{font-size:12.5px;color:var(--admin-text-light);font-weight:500;line-height:1.4}
+        .toast-close{background:none;border:none;font-size:16px;color:var(--admin-text-light);cursor:pointer;padding:4px;margin:-4px -4px 0 0;line-height:1}
         .admin-user{display:flex;align-items:center;gap:12px;padding:6px 8px 6px 14px;background:var(--admin-bg);border-radius:14px}
         .admin-user .u-name{font-weight:700;font-size:14px;line-height:1.2}
         .admin-user .u-role{font-size:12px;color:var(--admin-text-light);font-weight:600}
@@ -125,17 +163,31 @@
         <header class="admin-header">
             <div class="admin-header-title">
                 ${pageTitle != null ? pageTitle : 'Dashboard'}
-                <small>Chào mừng trở lại, ${sessionScope.user.fullName}!</small>
+                <small>Chào mừng trở lại, ${sessionScope.adminUser.fullName}!</small>
             </div>
             <div class="admin-header-right">
-                <a href="${ctx}/admin/dai-ly" class="hdr-ic" title="Thông báo"><i class="fa-regular fa-bell"></i><span class="dot"></span></a>
+                <div class="noti-wrap">
+                    <button class="hdr-ic" id="notiBell" title="Thông báo"><i class="fa-regular fa-bell"></i><span class="noti-badge" id="notiBadge">0</span></button>
+                    <div class="noti-dd" id="notiDropdown">
+                        <div class="noti-dd-head">
+                            <div class="noti-dd-title"><i class="fa-regular fa-bell" style="margin-right:6px;opacity:.5"></i>Thông báo</div>
+                            <button class="noti-dd-clear" id="notiClear">Xóa tất cả</button>
+                        </div>
+                        <div class="noti-dd-body" id="notiList">
+                            <div class="noti-dd-empty" id="notiEmpty">
+                                <i class="fa-regular fa-bell-slash"></i>
+                                Chưa có thông báo mới
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <a href="${ctx}/admin/settings" class="hdr-ic" title="Cài đặt"><i class="fa-solid fa-gear"></i></a>
                 <div class="admin-user">
                     <div>
-                        <div class="u-name">${sessionScope.user.fullName}</div>
+                        <div class="u-name">${sessionScope.adminUser.fullName}</div>
                         <div class="u-role">Quản trị viên</div>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=${sessionScope.user.fullName}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
+                    <img src="https://ui-avatars.com/api/?name=${sessionScope.adminUser.fullName}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
                 </div>
             </div>
         </header>

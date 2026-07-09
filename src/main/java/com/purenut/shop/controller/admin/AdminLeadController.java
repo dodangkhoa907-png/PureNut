@@ -43,7 +43,7 @@ public class AdminLeadController extends HttpServlet {
 
             dealerLeadDao.updateStatus(leadId, status);
 
-            com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("user");
+            com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("adminUser");
             com.purenut.shop.util.AuditLogger.log(req, admin != null ? admin.getUserId() : null,
                     "UPDATE_LEAD_STATUS", "Lead #" + leadId, "Đổi trạng thái đại lý sang " + status);
 

@@ -63,8 +63,6 @@
         <session-timeout>120</session-timeout>
         <cookie-config>
             <http-only>true</http-only>
-            <!-- same-site KHÔNG phải Jakarta EE standard element -->
-            <!-- Thay bằng Tomcat context config hoặc AppFilter nếu cần SameSite=Strict -->
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>

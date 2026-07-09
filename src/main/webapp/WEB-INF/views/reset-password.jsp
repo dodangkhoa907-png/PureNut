@@ -98,9 +98,10 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
   <h1>Đặt lại mật khẩu</h1>
   <p class="sub">Tạo mật khẩu mới cho tài khoản của bạn. Sau khi đổi thành công, bạn sẽ được đưa về trang đăng nhập.</p>
 
-  <c:if test="${not empty errorMessage}"><div class="alert">⚠️ ${errorMessage}</div></c:if>
+  <c:if test="${not empty errorMessage}"><div class="alert">⚠️ <c:out value="${errorMessage}"/></div></c:if>
 
   <form method="post" action="${ctx}/reset-password" id="resetForm">
+    <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
     <div class="field">
       <label for="password">Mật khẩu mới</label>
       <div class="box">

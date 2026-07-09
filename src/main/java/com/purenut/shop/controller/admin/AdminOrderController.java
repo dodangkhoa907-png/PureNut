@@ -62,7 +62,7 @@ public class AdminOrderController extends HttpServlet {
 
             orderDao.updateOrderStatus(orderId, status);
 
-            com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("user");
+            com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("adminUser");
             com.purenut.shop.util.AuditLogger.log(req, admin != null ? admin.getUserId() : null,
                     "UPDATE_ORDER_STATUS", "Đơn #" + orderId, "Đổi trạng thái sang " + status);
 

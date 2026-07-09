@@ -56,6 +56,7 @@
                         </td>
                         <td>
                             <form action="${pageContext.request.contextPath}/admin/san-pham/noi-bat" method="POST" style="display: inline;">
+                                <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                                 <input type="hidden" name="id" value="${p.productId}">
                                 <input type="hidden" name="featured" value="${p.featured}">
                                 <button type="submit" style="background:none; border:none; cursor:pointer; color: ${p.featured ? '#FFB547' : '#E0E5F2'}; font-size: 20px;">
@@ -69,6 +70,7 @@
                                     <i class="fa-solid fa-pen"></i> Sửa
                                 </a>
                                 <form action="${pageContext.request.contextPath}/admin/san-pham/xoa" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xoá sản phẩm này?');" style="display: inline;">
+                                    <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                                     <input type="hidden" name="id" value="${p.productId}">
                                     <button type="submit" class="btn" style="background: rgba(238,93,80,0.1); color: #EE5D50; padding: 8px 12px;">
                                         <i class="fa-solid fa-trash"></i> Xoá

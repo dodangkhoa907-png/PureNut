@@ -35,12 +35,12 @@
 <div class="set-grid">
     <!-- Hồ sơ -->
     <div class="card profile">
-        <img class="ava" src="https://ui-avatars.com/api/?name=${sessionScope.user.fullName}&background=1B4F9E&color=fff&bold=true&size=128" alt="Avatar">
-        <h3>${sessionScope.user.fullName}</h3>
+        <img class="ava" src="https://ui-avatars.com/api/?name=${sessionScope.adminUser.fullName}&background=1B4F9E&color=fff&bold=true&size=128" alt="Avatar">
+        <h3>${sessionScope.adminUser.fullName}</h3>
         <div class="role"><i class="fa-solid fa-shield-halved"></i> Quản trị viên</div>
-        <div class="info-row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div class="lb">Email nhận mã</div><div class="vl">${sessionScope.user.email}</div></div></div>
-        <div class="info-row"><div class="ic"><i class="fa-solid fa-phone"></i></div><div><div class="lb">Số điện thoại</div><div class="vl">${sessionScope.user.phone}</div></div></div>
-        <div class="info-row"><div class="ic"><i class="fa-solid fa-fingerprint"></i></div><div><div class="lb">Mã tài khoản</div><div class="vl">#${sessionScope.user.userId}</div></div></div>
+        <div class="info-row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div class="lb">Email nhận mã</div><div class="vl">${sessionScope.adminUser.email}</div></div></div>
+        <div class="info-row"><div class="ic"><i class="fa-solid fa-phone"></i></div><div><div class="lb">Số điện thoại</div><div class="vl">${sessionScope.adminUser.phone}</div></div></div>
+        <div class="info-row"><div class="ic"><i class="fa-solid fa-fingerprint"></i></div><div><div class="lb">Mã tài khoản</div><div class="vl">#${sessionScope.adminUser.userId}</div></div></div>
     </div>
 
     <!-- Đổi mật khẩu -->
@@ -58,6 +58,7 @@
 
         <!-- Bước 1: gửi mã -->
         <form method="post" action="${pageContext.request.contextPath}/admin/settings" style="margin-bottom:18px">
+            <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
             <input type="hidden" name="action" value="send-code">
             <button type="submit" class="btn btn-outline" style="width:100%;justify-content:center">
                 <i class="fa-solid fa-paper-plane"></i> ${codeSent ? 'Gửi lại mã xác nhận' : 'Gửi mã xác nhận về email'}
@@ -66,6 +67,7 @@
 
         <!-- Bước 2: đổi mật khẩu -->
         <form method="post" action="${pageContext.request.contextPath}/admin/settings">
+            <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
             <input type="hidden" name="action" value="change-password">
             <div class="otp-row">
                 <div class="form-group">

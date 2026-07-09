@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*"})
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*"}, asyncSupported = true)
 public class AuthFilter implements Filter {
 
     @Override
@@ -24,7 +24,6 @@ public class AuthFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
 
         String servletPath = req.getServletPath();
-        System.out.println("[AuthFilter] Path: " + servletPath + " | Method: " + req.getMethod());
 
         if ("/admin/login".equals(servletPath) || "/cart/count".equals(servletPath)) {
             chain.doFilter(request, response);
@@ -32,28 +31,23 @@ public class AuthFilter implements Filter {
         }
 
         HttpSession session = req.getSession(false);
-        // Khu vực /admin redirect về trang đăng nhập admin, còn lại về login khách
         boolean isAdminArea = servletPath.startsWith("/admin");
         String loginUri = req.getContextPath() + (isAdminArea ? "/admin/login" : "/login");
 
-        boolean loggedIn = session != null && session.getAttribute("user") != null;
-        System.out.println("[AuthFilter] LoggedIn: " + loggedIn + " | Session: " + (session != null));
-        
-        if (loggedIn) {
-            User user = (User) session.getAttribute("user");
-            String path = req.getServletPath();
-            
-            // Nếu người dùng không phải ADMIN mà truy cập vào /admin thì chặn
-            if (path.startsWith("/admin") && !"ADMIN".equals(user.getRole())) {
-                System.out.println("[AuthFilter] Forbidden - user role: " + user.getRole());
-                res.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này.");
-                return;
+        if (isAdminArea) {
+            User admin = (session != null) ? (User) session.getAttribute("adminUser") : null;
+            if (admin != null && "ADMIN".equals(admin.getRole())) {
+                chain.doFilter(request, response);
+            } else {
+                res.sendRedirect(loginUri);
             }
-            System.out.println("[AuthFilter] User authorized: " + user.getEmail());
-            chain.doFilter(request, response);
         } else {
-            System.out.println("[AuthFilter] Redirecting to: " + loginUri);
-            res.sendRedirect(loginUri);
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+            if (user != null) {
+                chain.doFilter(request, response);
+            } else {
+                res.sendRedirect(loginUri);
+            }
         }
     }
 

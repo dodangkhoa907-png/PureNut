@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="vi">
@@ -101,21 +102,22 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
     <h1>Tạo tài khoản</h1>
     <p class="sub">Tham gia PureNut để nhận ưu đãi và thanh toán nhanh hơn.</p>
 
-    <c:if test="${not empty errorMessage}"><div class="alert">⚠️ ${errorMessage}</div></c:if>
+    <c:if test="${not empty errorMessage}"><div class="alert">⚠️ <c:out value="${errorMessage}"/></div></c:if>
 
     <form method="post" action="${ctx}/register" autocomplete="on">
+      <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
       <div class="field">
         <label for="fullName">Họ và tên *</label>
-        <div class="box"><input type="text" id="fullName" name="fullName" placeholder="Nguyễn Văn A" required autofocus value="${param.fullName}"></div>
+        <div class="box"><input type="text" id="fullName" name="fullName" placeholder="Nguyễn Văn A" required autofocus value="${fn:escapeXml(param.fullName)}"></div>
       </div>
       <div class="grid2">
         <div class="field">
           <label for="email">Email *</label>
-          <div class="box"><input type="email" id="email" name="email" placeholder="ban@email.com" required value="${param.email}"></div>
+          <div class="box"><input type="email" id="email" name="email" placeholder="ban@email.com" required value="${fn:escapeXml(param.email)}"></div>
         </div>
         <div class="field">
           <label for="phone">Số điện thoại</label>
-          <div class="box"><input type="tel" id="phone" name="phone" placeholder="09xx xxx xxx" value="${param.phone}" pattern="0[0-9]{9,10}" maxlength="11" inputmode="numeric" title="Số điện thoại bắt đầu bằng 0, gồm 10–11 chữ số"></div>
+          <div class="box"><input type="tel" id="phone" name="phone" placeholder="09xx xxx xxx" value="${fn:escapeXml(param.phone)}" pattern="0[0-9]{9,10}" maxlength="11" inputmode="numeric" title="Số điện thoại bắt đầu bằng 0, gồm 10–11 chữ số"></div>
         </div>
       </div>
       <div class="field">
