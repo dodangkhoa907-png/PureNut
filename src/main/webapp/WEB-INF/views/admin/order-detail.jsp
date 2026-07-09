@@ -179,17 +179,17 @@
             </div>
         </div>
 
-        <!-- Thông tin giao hàng -->
+        <!-- Thông tin khách hàng -->
         <div class="od-card">
             <div class="od-card-t">
-                <i class="fa-solid fa-location-dot ic-green"></i>
-                Thông tin giao hàng
+                <i class="fa-solid fa-user-circle ic-blue"></i>
+                Thông tin khách hàng
             </div>
             <div class="od-info">
                 <div class="od-info-row">
                     <div class="od-info-ic"><i class="fa-solid fa-user"></i></div>
                     <div class="od-info-body">
-                        <div class="od-info-label">Khách hàng</div>
+                        <div class="od-info-label">Người đặt hàng</div>
                         <div class="od-info-val">${order.fullName}</div>
                     </div>
                 </div>
@@ -200,6 +200,32 @@
                         <div class="od-info-val">${order.phone}</div>
                     </div>
                 </div>
+                <c:if test="${not empty customer}">
+                <div class="od-info-row">
+                    <div class="od-info-ic"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="od-info-body">
+                        <div class="od-info-label">Email</div>
+                        <div class="od-info-val">${customer.email}</div>
+                    </div>
+                </div>
+                <div class="od-info-row">
+                    <div class="od-info-ic"><i class="fa-solid fa-calendar-plus"></i></div>
+                    <div class="od-info-body">
+                        <div class="od-info-label">Ngày tạo tài khoản</div>
+                        <div class="od-info-val"><fmt:formatDate value="${customer.createdAt}" pattern="dd/MM/yyyy HH:mm"/></div>
+                    </div>
+                </div>
+                </c:if>
+            </div>
+        </div>
+
+        <!-- Thông tin giao hàng -->
+        <div class="od-card">
+            <div class="od-card-t">
+                <i class="fa-solid fa-location-dot ic-green"></i>
+                Thông tin giao hàng
+            </div>
+            <div class="od-info">
                 <div class="od-info-row">
                     <div class="od-info-ic"><i class="fa-solid fa-map-pin"></i></div>
                     <div class="od-info-body">
@@ -232,22 +258,55 @@
                     <i class="fa-solid fa-circle-check"></i> Cập nhật trạng thái thành công!
                 </div>
             </c:if>
+            <c:if test="${not empty param.error}">
+                <div class="od-alert" style="background:rgba(240,68,56,.1);color:#F04438">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <c:choose>
+                        <c:when test="${param.error == 'backward'}">Không thể quay lại trạng thái trước đó!</c:when>
+                        <c:when test="${param.error == 'final'}">Đơn hàng đã kết thúc, không thể thay đổi.</c:when>
+                        <c:when test="${param.error == 'nocancel'}">Đơn đang giao không thể huỷ.</c:when>
+                        <c:otherwise>Có lỗi xảy ra.</c:otherwise>
+                    </c:choose>
+                </div>
+            </c:if>
 
-            <form action="${pageContext.request.contextPath}/admin/don-hang/cap-nhat" method="POST" class="od-status-form">
-                <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
-                <input type="hidden" name="orderId" value="${order.orderId}">
-                <select name="status">
-                    <option value="PENDING" ${order.status == 'PENDING' ? 'selected' : ''}>&#xf017; Chờ xử lý (PENDING)</option>
-                    <option value="CONFIRMED" ${order.status == 'CONFIRMED' ? 'selected' : ''}>&#xf058; Đã xác nhận (CONFIRMED)</option>
-                    <option value="SHIPPING" ${order.status == 'SHIPPING' ? 'selected' : ''}>&#xf0d1; Đang giao hàng (SHIPPING)</option>
-                    <option value="DONE" ${order.status == 'DONE' ? 'selected' : ''}>&#xf560; Hoàn thành (DONE)</option>
-                    <option value="CANCELLED" ${order.status == 'CANCELLED' ? 'selected' : ''}>&#xf05e; Đã huỷ (CANCELLED)</option>
-                </select>
-                <button type="submit" class="btn-update">
-                    <i class="fa-solid fa-arrow-rotate-right"></i>
-                    Cập nhật trạng thái
-                </button>
-            </form>
+            <c:choose>
+                <c:when test="${order.status == 'DONE'}">
+                    <div class="od-alert od-alert-ok"><i class="fa-solid fa-circle-check"></i> Đơn hàng đã hoàn thành.</div>
+                </c:when>
+                <c:when test="${order.status == 'CANCELLED'}">
+                    <div class="od-alert" style="background:rgba(240,68,56,.1);color:#F04438"><i class="fa-solid fa-ban"></i> Đơn hàng đã bị huỷ.</div>
+                </c:when>
+                <c:otherwise>
+                    <form action="${pageContext.request.contextPath}/admin/don-hang/cap-nhat" method="POST" class="od-status-form">
+                        <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
+                        <input type="hidden" name="orderId" value="${order.orderId}">
+                        <select name="status">
+                            <c:if test="${order.status == 'PENDING'}">
+                                <option value="PENDING" selected>&#xf017; Chờ xử lý (PENDING)</option>
+                                <option value="CONFIRMED">&#xf058; Đã xác nhận (CONFIRMED)</option>
+                                <option value="SHIPPING">&#xf0d1; Đang giao hàng (SHIPPING)</option>
+                                <option value="DONE">&#xf560; Hoàn thành (DONE)</option>
+                                <option value="CANCELLED">&#xf05e; Đã huỷ (CANCELLED)</option>
+                            </c:if>
+                            <c:if test="${order.status == 'CONFIRMED'}">
+                                <option value="CONFIRMED" selected>&#xf058; Đã xác nhận (CONFIRMED)</option>
+                                <option value="SHIPPING">&#xf0d1; Đang giao hàng (SHIPPING)</option>
+                                <option value="DONE">&#xf560; Hoàn thành (DONE)</option>
+                                <option value="CANCELLED">&#xf05e; Đã huỷ (CANCELLED)</option>
+                            </c:if>
+                            <c:if test="${order.status == 'SHIPPING'}">
+                                <option value="SHIPPING" selected>&#xf0d1; Đang giao hàng (SHIPPING)</option>
+                                <option value="DONE">&#xf560; Hoàn thành (DONE)</option>
+                            </c:if>
+                        </select>
+                        <button type="submit" class="btn-update">
+                            <i class="fa-solid fa-arrow-rotate-right"></i>
+                            Cập nhật trạng thái
+                        </button>
+                    </form>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <!-- Mã đơn & thời gian -->

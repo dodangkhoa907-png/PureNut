@@ -142,7 +142,8 @@ public class CheckoutController extends HttpServlet {
         try {
             int orderId = orderDao.placeOrder(order, cartItems);
             if (orderId > 0) {
-                request.getSession().setAttribute("cartCount", 0);
+                int newCartCount = cartItemDao.countItems(user.getUserId());
+                request.getSession().setAttribute("cartCount", newCartCount);
 
                 com.purenut.shop.util.OrderEventBus.publish(
                     new com.purenut.shop.util.OrderEventBus.OrderEvent(

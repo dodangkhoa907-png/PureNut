@@ -79,10 +79,13 @@ public class OrderDaoImpl implements OrderDao {
             psOrderItem.executeBatch();
             
             // 3. Xóa CartItems
-            String sqlDeleteCart = "DELETE FROM CartItems WHERE UserID = ?";
+            String sqlDeleteCart = "DELETE FROM CartItems WHERE CartItemID = ?";
             psDeleteCart = conn.prepareStatement(sqlDeleteCart);
-            psDeleteCart.setInt(1, order.getUserId());
-            psDeleteCart.executeUpdate();
+            for (CartItem item : cartItems) {
+                psDeleteCart.setInt(1, item.getCartItemId());
+                psDeleteCart.addBatch();
+            }
+            psDeleteCart.executeBatch();
             
             // Nếu mọi thứ OK -> Commit
             conn.commit();

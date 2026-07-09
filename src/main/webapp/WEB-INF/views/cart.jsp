@@ -350,7 +350,7 @@
                     </form>
                     <div class="ci-total">${item.formattedTotalPrice} đ</div>
                 </div>
-                <form action="${ctx}/cart/remove" method="POST" style="margin:0">
+                <form action="${ctx}/cart/remove" method="POST" style="margin:0" class="del-form">
                     <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                     <input type="hidden" name="cartItemId" value="${item.cartItemId}">
                     <button class="ci-del" title="Xóa sản phẩm">
@@ -438,6 +438,55 @@
     var csSubVal=document.getElementById('csSubVal');
     var csTotalVal=document.querySelector('.cs-total-val');
     var checkoutBtn=document.getElementById('checkoutBtn');
+
+    // Handle AJAX delete
+    document.querySelectorAll('.del-form').forEach(function(f){
+        f.addEventListener('submit', function(e){
+            e.preventDefault();
+            var btn = f.querySelector('.ci-del');
+            if(btn) btn.style.opacity = '0.5';
+            var cid = f.querySelector('input[name="cartItemId"]').value;
+            var csrf = f.querySelector('input[name="_csrf"]').value;
+            fetch(window.CTX+'/cart/remove', {
+                method: 'POST',
+                headers:{'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest'},
+                body: 'cartItemId='+cid+'&_csrf='+csrf
+            }).then(function(r){
+                if(r.redirected) {
+                    // Nếu server chưa update code và trả về redirect 302, ta vẫn giả lập thành công để xóa UI
+                    return { success: true };
+                }
+                return r.json();
+            }).then(function(d){
+                if(d && d.success){
+                    var row = f.closest('.ci-row');
+                    if(row) row.remove();
+                    
+                    itemChecks = document.querySelectorAll('.ci-item-check');
+                    if(itemChecks.length === 0) {
+                        window.location.reload();
+                        return;
+                    }
+                    
+                    recalc();
+                    
+                    if (d.cartCount !== undefined) {
+                        var b1=document.getElementById('siteCartBadge');
+                        if(b1) b1.textContent = d.cartCount;
+                        var b2=document.getElementById('mobileCartBadge');
+                        if(b2) b2.textContent = d.cartCount;
+                        
+                        var headerCount = document.querySelector('.cart-banner .cb-count');
+                        if(headerCount) headerCount.textContent = '(' + d.cartCount + ' sản phẩm)';
+                    }
+                }
+            }).catch(function(err){
+                if(btn) btn.style.opacity = '1';
+                console.error(err);
+            });
+        });
+    });
+
     if(!checkAll || itemChecks.length===0) return;
 
     function fmt(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}

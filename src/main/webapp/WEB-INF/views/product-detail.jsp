@@ -193,6 +193,7 @@
   .mobile-pd-header.scrolled svg{stroke:var(--ink)}
   .mph-right{display:flex;gap:8px}
   .mph-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
+  .mph-badge:empty{display:none}
 
   /* ── Hero Gallery (full-width carousel) ── */
   .gallery{
@@ -310,7 +311,7 @@
   <div class="mph-right">
     <a href="${ctx}/cart" class="mph-cart" style="position:relative;text-decoration:none">
       <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <c:if test="${sessionScope.cartCount > 0}"><span class="mph-badge">${sessionScope.cartCount}</span></c:if>
+      <span class="mph-badge" id="mobileCartBadge"><c:if test="${sessionScope.cartCount > 0}">${sessionScope.cartCount}</c:if></span>
     </a>
   </div>
 </div>
@@ -572,7 +573,12 @@
     try{
       var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity='+q});
       if(r.redirected){window.location=r.url;return}
-      var d=await r.json();if(d&&d.success)showToast('Đã thêm vào giỏ hàng ✓');
+      var d=await r.json();
+      if(d&&d.success){
+        showToast('Đã thêm vào giỏ hàng ✓');
+        var b1=document.getElementById('siteCartBadge');if(b1)b1.textContent=d.cartCount;
+        var b2=document.getElementById('mobileCartBadge');if(b2)b2.textContent=d.cartCount;
+      }
     }catch(e){window.location=CTX+'/login'}
   }
 

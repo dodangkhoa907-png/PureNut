@@ -52,7 +52,7 @@
 
     /* ── Stats ── */
     .acc-stats{
-        display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+        display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
         max-width:var(--container);margin:-34px auto 0;padding:0 28px;position:relative;z-index:2;
     }
     .st-card{
@@ -122,7 +122,9 @@
     .promo-c{border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;color:#fff;text-decoration:none}
     .promo-c:hover{transform:translateY(-3px);box-shadow:0 14px 36px -10px rgba(0,0,0,.2)}
     .promo-c.p1{background:linear-gradient(135deg,#1B4F9E 0%,#3965FF 100%)}
-    .promo-c.p2{background:linear-gradient(135deg,#2BAC62 0%,#34D399 100%)}
+    .promo-c.p2{background:linear-gradient(135deg,#F5A524 0%,#FFD27A 100%);color:#241F18}
+    .promo-c.p2 .promo-ic{background:rgba(255,255,255,.3)}
+    .promo-c.p2 .promo-ic svg{stroke:#241F18; width: 28px; height: 28px}
     .promo-c::before{content:'';position:absolute;right:-30px;top:-30px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%}
     .promo-c::after{content:'';position:absolute;right:20px;bottom:-20px;width:60px;height:60px;background:rgba(255,255,255,.05);border-radius:50%}
     .promo-ic{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;backdrop-filter:blur(4px)}
@@ -190,14 +192,104 @@
     .ov-order-detail{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--ink-soft);padding-bottom:4px}
     .ov-order-card .order-track{margin-top:4px}
 
-    /* ── Order Table ── */
-    .o-table{width:100%;border-collapse:separate;border-spacing:0}
-    .o-table th{padding:13px 16px;text-align:left;font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid rgba(27,79,158,.1);background:rgba(27,79,158,.02)}
-    .o-table th:first-child{border-radius:12px 0 0 0}.o-table th:last-child{border-radius:0 12px 0 0}
-    .o-table td{padding:15px 16px;font-size:14px;font-weight:500;color:var(--ink);border-bottom:1px solid rgba(0,0,0,.03)}
-    .o-table tbody tr{transition:background .12s}.o-table tbody tr:hover{background:rgba(27,79,158,.02)}
-    .o-id{font-weight:800;color:var(--navy)}
-    .o-price{font-weight:700}
+    /* ── Order Cards — 3-column grid ── */
+    .o-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+    .o-card{
+        border:1.5px solid var(--line);border-radius:18px;
+        background:#fff;cursor:pointer;position:relative;overflow:visible;
+        transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s,border-color .3s;
+        transform-style:preserve-3d;
+    }
+    .o-card::before{
+        content:'';position:absolute;inset:0;border-radius:inherit;
+        background:linear-gradient(135deg,rgba(27,79,158,.04),rgba(122,90,248,.03));
+        opacity:0;transition:opacity .3s;pointer-events:none;z-index:0;
+    }
+    .o-card:hover{
+        transform:translateY(-6px) rotateX(2deg);
+        box-shadow:0 20px 44px -14px rgba(0,0,0,.14),0 6px 16px -6px rgba(27,79,158,.1);
+        border-color:rgba(27,79,158,.18);z-index:10;
+    }
+    .o-card:hover::before{opacity:1}
+
+    .o-card-body{padding:18px 18px 14px;position:relative;z-index:1}
+
+    .o-card-icon{
+        width:46px;height:46px;border-radius:14px;margin:0 auto 12px;
+        display:flex;align-items:center;justify-content:center;
+        transition:transform .4s cubic-bezier(.4,0,.2,1),box-shadow .3s;
+    }
+    .o-card:hover .o-card-icon{transform:scale(1.12) rotateY(12deg);box-shadow:0 6px 18px -6px rgba(0,0,0,.2)}
+    .o-card-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .o-card-icon.ic-pending{background:linear-gradient(135deg,#F5A524,#FFD27A)}
+    .o-card-icon.ic-confirmed{background:linear-gradient(135deg,#3965FF,#6B8AFF)}
+    .o-card-icon.ic-shipping{background:linear-gradient(135deg,#7A5AF8,#9B7DFF);animation:truck-bounce 2s ease-in-out infinite}
+    .o-card-icon.ic-done{background:linear-gradient(135deg,#12B76A,#34D399)}
+    .o-card-icon.ic-cancelled{background:linear-gradient(135deg,#CE2E2E,#EE5D50)}
+
+    .o-card-id{font-family:'EB Garamond',var(--fd),serif;font-size:17px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:4px}
+    .o-card-price{font-family:'EB Garamond',var(--fd),serif;font-size:20px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px}
+    .o-card-date{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-bottom:10px}
+    .o-card-pill{text-align:center}
+
+    /* hover tooltip dropdown */
+    .o-card-hover{
+        position:absolute;top:calc(100% + 8px);left:50%;z-index:30;
+        width:max-content;min-width:180px;max-width:240px;
+        transform:translateX(-50%) translateY(-6px);
+        background:#fff;border:1.5px solid rgba(27,79,158,.14);
+        border-radius:14px;padding:12px 16px 14px;
+        box-shadow:0 12px 32px -8px rgba(0,0,0,.15);
+        opacity:0;visibility:hidden;
+        transition:opacity .22s cubic-bezier(.4,0,.2,1),visibility .22s,transform .22s cubic-bezier(.4,0,.2,1);
+        pointer-events:none;
+    }
+    .o-card-hover::before{
+        content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+        border:7px solid transparent;border-bottom-color:#fff;
+        filter:drop-shadow(0 -2px 2px rgba(0,0,0,.06));
+    }
+    .o-card:hover .o-card-hover{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);pointer-events:auto}
+    .o-card-hover-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);margin-bottom:6px}
+    .o-card-hover-row:last-child{margin-bottom:0}
+    .o-card-hover-row svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .o-card-hover-row strong{color:var(--ink);font-weight:600}
+    .o-card-hover-cta{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;padding:7px 0;border-top:1px solid rgba(0,0,0,.05);font-size:11.5px;font-weight:700;color:var(--navy)}
+    .o-card-hover-cta svg{width:12px;height:12px;stroke:var(--navy);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+    /* detail overlay (click) */
+    .o-detail-overlay{
+        display:none;position:fixed;inset:0;z-index:9000;
+        background:rgba(11,37,71,.45);backdrop-filter:blur(6px);
+        align-items:center;justify-content:center;
+    }
+    .o-detail-overlay.open{display:flex}
+    .o-detail-panel{
+        background:#fff;border-radius:22px;width:92%;max-width:520px;padding:28px 28px 22px;
+        box-shadow:0 28px 72px -16px rgba(0,0,0,.3);
+        animation:ovSlide .28s cubic-bezier(.4,0,.2,1);
+        position:relative;
+    }
+    .o-detail-close{
+        position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;
+        border:none;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;
+        cursor:pointer;font-size:18px;color:var(--ink-soft);transition:all .15s;
+    }
+    .o-detail-close:hover{background:rgba(206,46,46,.08);color:var(--red)}
+    .o-detail-header{text-align:center;margin-bottom:20px}
+    .o-detail-header .o-card-icon{margin:0 auto 10px}
+    .o-detail-header h3{font-family:'EB Garamond',var(--fd),serif;font-size:20px;font-weight:800;color:var(--navy);margin-bottom:4px}
+    .o-detail-header .o-detail-meta{font-size:13px;color:var(--ink-soft)}
+    .o-detail-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;padding:16px;background:rgba(27,79,158,.02);border-radius:14px}
+    .o-detail-info-item{font-size:13px}
+    .o-detail-info-item .di-label{font-size:10.5px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+    .o-detail-info-item .di-val{font-weight:700;color:var(--ink)}
+    .o-detail-timeline{padding:0 8px}
+    .o-detail-timeline .track-timeline{border-top:none;padding:0}
+
+    @media(max-width:900px){.o-cards{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.o-cards{grid-template-columns:1fr;gap:12px}}
     .s-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:99px;font-size:11.5px;font-weight:700}
     .s-pill .s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
     .s-PENDING{background:rgba(245,165,36,.1);color:#D48806}.s-PENDING .s-dot{background:#D48806}
@@ -375,7 +467,7 @@
     .mob-btn.active{background:linear-gradient(135deg,#1B4F9E,#2A5FB8);color:#fff;border-color:#1B4F9E;box-shadow:0 4px 14px -4px rgba(27,79,158,.4)}
 
     @media(max-width:900px){
-        .acc-stats{grid-template-columns:repeat(2,1fr);margin-top:-24px}
+        .acc-stats{grid-template-columns:repeat(3,1fr);margin-top:-24px}
         .acc-body{grid-template-columns:1fr}
         .acc-side{display:none}
         .mob-strip{display:flex}
@@ -394,23 +486,35 @@
         .ov-avatar-section{margin-bottom:18px;padding-bottom:16px}
     }
     @media(max-width:560px){
-        .acc-stats{grid-template-columns:repeat(2,1fr);gap:8px;padding:0 14px;margin-top:-20px}
+        .acc-stats{grid-template-columns:repeat(2,1fr);gap:8px;padding:0 14px;margin-top:-5px}
+        .acc-stats .st-card:first-child{grid-column: 1 / -1}
         .st-card{padding:12px 10px;gap:6px;border-radius:12px}.st-val{font-size:16px}
         .st-ic{width:36px;height:36px;border-radius:9px}.st-ic svg{width:18px;height:18px}
         .st-lb{font-size:10.5px}
         .acc-card{padding:16px 12px;border-radius:14px}
         .acc-card-h{flex-direction:column;align-items:flex-start;gap:6px}
         .acc-card-t{font-size:15px}
-        .ban-avatar{width:46px;height:46px;font-size:18px;border-width:2px}
-        .ban-avatar .av-dot{width:11px;height:11px;border-width:2px}
-        .ban-info h1{font-size:16px}
-        .ban-inner{gap:12px}
-        .ban-meta{gap:5px;flex-wrap:wrap}
-        .ban-meta span{font-size:10.5px}
-        .ban-meta svg{width:11px;height:11px}
-        .acc-banner{padding:16px 12px 36px}
+        .ban-avatar{width:56px;height:56px;font-size:22px;border-width:2px}
+        .ban-avatar .av-dot{width:12px;height:12px;border-width:2px}
+        .ban-info h1{font-size:18px;margin-bottom:6px}
+        .ban-inner{gap:16px}
+        .ban-meta{gap:8px 12px;flex-wrap:wrap}
+        .ban-meta span{font-size:12px}
+        .ban-meta svg{width:13px;height:13px}
+        .acc-banner{padding:28px 20px 48px}
         .ban-deco{display:none}
         .acc-body{padding:0 10px;margin-top:14px}
+        
+        .o-cards{grid-template-columns:repeat(2,1fr);gap:10px}
+        .o-card{aspect-ratio: 1/1}
+        .o-card-body{padding:10px; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center}
+        .o-card-icon{width:36px;height:36px;margin-bottom:8px}
+        .o-card-icon svg{width:18px;height:18px}
+        .o-card-id{font-size:14px;margin-bottom:2px}
+        .o-card-price{font-size:15px;margin-bottom:4px}
+        .o-card-date{font-size:10px;margin-bottom:6px}
+        .o-card .s-pill{font-size:10px;padding:3px 8px}
+
         .o-table th,.o-table td{padding:8px 6px;font-size:11.5px}
         .track-timeline .tl-label{font-size:9px}
         .ov-order-top{flex-direction:column;align-items:flex-start;gap:4px}
@@ -500,7 +604,6 @@
 <!-- ════════ STATS ════════ -->
 <div class="acc-stats">
     <div class="st-card c1"><div class="st-ic c1"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div><div class="st-lb">Tổng đơn hàng</div><div class="st-val acc-num">${totalOrders}</div></div></div>
-    <div class="st-card c2"><div class="st-ic c2"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="st-lb">Tích lũy chi tiêu</div><div class="st-val acc-num"><fmt:formatNumber value="${totalSpent}" type="number" maxFractionDigits="0"/>đ</div></div></div>
     <div class="st-card c3"><div class="st-ic c3"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="st-lb">Hoàn thành</div><div class="st-val acc-num">${doneCount}</div></div></div>
     <div class="st-card c4"><div class="st-ic c4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="st-lb">Đang xử lý</div><div class="st-val acc-num">${pendingCount}</div></div></div>
 </div>
@@ -508,7 +611,7 @@
 <!-- ════════ Mobile Strip ════════ -->
 <div class="mob-strip" id="mobStrip">
     <button class="mob-btn active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan</button>
-    <button class="mob-btn" data-tab="orders"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/></svg>Đơn hàng</button>
+    <button class="mob-btn" data-tab="orders"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lịch sử</button>
     <button class="mob-btn" data-tab="taste"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Khẩu vị</button>
     <button class="mob-btn" onclick="openOverlay()"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Tài khoản</button>
     <a class="mob-btn" href="${pageContext.request.contextPath}/logout" style="color:var(--red);border-color:rgba(206,46,46,.2)"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Đăng xuất</a>
@@ -522,7 +625,7 @@
     <div class="side-lbl">Mua sắm</div>
     <ul class="side-nav">
         <li><a href="#" class="active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan</a></li>
-        <li><a href="#" data-tab="orders"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Lịch sử đơn hàng<c:if test="${pendingCount > 0}"><span class="side-badge">${pendingCount}</span></c:if></a></li>
+        <li><a href="#" data-tab="orders"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lịch sử đơn hàng<c:if test="${doneCount > 0}"><span class="side-badge" style="background:var(--navy)">${doneCount}</span></c:if></a></li>
     </ul>
     <div class="side-lbl">Cá nhân</div>
     <ul class="side-nav">
@@ -550,143 +653,132 @@
             <div class="promo-ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
             <div><div class="promo-tt">Mua sắm ngay</div><div class="promo-ds">Sữa hạt tươi mới mỗi ngày</div></div>
         </a>
-        <a href="${pageContext.request.contextPath}/about#dai-ly" class="promo-c p2">
-            <div class="promo-ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div><div class="promo-tt">Trở thành Đại lý</div><div class="promo-ds">Hợp tác kinh doanh PureNut</div></div>
-        </a>
+        <div class="promo-c p2">
+            <div class="promo-ic">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="6" fill="#FFF2C5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    
+                    <!-- Cute Eyes -->
+                    <circle cx="9.5" cy="10.5" r="1.2" fill="#241F18" stroke="none" />
+                    <circle cx="14.5" cy="10.5" r="1.2" fill="#241F18" stroke="none" />
+
+                    <!-- Clear Smile -->
+                    <path d="M9 13.5c1.5 1.5 4.5 1.5 6 0" />
+                </svg>
+            </div>
+            <div>
+                <div class="promo-tt">Xin chào!</div>
+                <div class="promo-ds">Chúc bạn một ngày tốt lành</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Đơn hàng gần đây -->
+    <!-- Đơn hàng đang xử lý -->
     <div class="acc-card">
         <div class="acc-card-h">
             <div class="acc-card-t">
-                <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                Đơn hàng của bạn
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Đơn hàng đang xử lý
             </div>
             <c:if test="${not empty orderHistory}">
-                <a href="#" class="tab-link" data-tab="orders">Xem tất cả <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+                <a href="#" class="tab-link" data-tab="orders">Lịch sử <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
             </c:if>
         </div>
 
-        <c:choose>
-            <c:when test="${empty orderHistory}">
-                <div class="acc-empty">
-                    <div class="acc-empty-ic">
-                        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    </div>
-                    <p>Bạn chưa có đơn hàng nào.<br><span style="font-size:13.5px;color:var(--sand)">Đặt hàng ngay để thưởng thức sữa hạt tươi mỗi ngày nhé!</span></p>
-                    <a href="${pageContext.request.contextPath}/products" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:99px;background:linear-gradient(135deg,#1B4F9E,#2A5FB8);color:#fff;font-size:14.5px;font-weight:700;box-shadow:0 8px 22px -8px rgba(27,79,158,.45);transition:transform .2s,box-shadow .2s;text-decoration:none">
-                        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                        Mua sắm ngay
-                    </a>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <c:set var="hasActive" value="false"/>
-                <c:forEach var="o" items="${orderHistory}">
-                    <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING'}">
-                        <c:set var="hasActive" value="true"/>
-                        <div class="ov-order-card ${o.status == 'SHIPPING' ? 'ov-shipping' : ''}">
-                            <div class="ov-order-top">
-                                <div class="ov-order-id">
-                                    <c:choose>
-                                        <c:when test="${o.status == 'SHIPPING'}">
-                                            <svg viewBox="0 0 24 24" class="ov-truck"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <span>Đơn hàng <strong>#${o.orderId}</strong></span>
-                                </div>
-                                <span class="s-pill s-${o.status}"><span class="s-dot"></span>
-                                    <c:choose>
-                                        <c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when>
-                                        <c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when>
-                                        <c:when test="${o.status == 'SHIPPING'}">Đang giao hàng</c:when>
-                                    </c:choose>
-                                </span>
+        <c:set var="hasActive" value="false"/>
+        <c:if test="${not empty orderHistory}">
+            <div class="o-cards">
+            <c:forEach var="o" items="${orderHistory}">
+                <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING'}">
+                    <c:set var="hasActive" value="true"/>
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                        <div class="o-card-body">
+                            <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
+                                <c:choose>
+                                    <c:when test="${o.status == 'PENDING'}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></c:when>
+                                    <c:when test="${o.status == 'CONFIRMED'}"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></c:when>
+                                    <c:when test="${o.status == 'SHIPPING'}"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></c:when>
+                                </c:choose>
                             </div>
-                            <div class="ov-order-detail">
-                                <span><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/> · <strong class="acc-num"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</strong></span>
-                                <span style="font-size:12.5px;color:var(--ink-soft)">${o.paymentMethod == 'COD' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản'}</span>
-                            </div>
-                            <div class="order-track">
-                                <div class="track-timeline">
-                                    <div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>
-                                    <div class="tl-line done"></div>
-                                    <div class="tl-step ${o.status == 'CONFIRMED' ? 'active' : (o.status == 'SHIPPING' ? 'done' : '')}"><div class="tl-dot"></div><div class="tl-label">Đã xác nhận</div></div>
-                                    <div class="tl-line ${o.status == 'SHIPPING' ? 'done' : ''}"></div>
-                                    <div class="tl-step ${o.status == 'SHIPPING' ? 'active' : ''}"><div class="tl-dot"></div><div class="tl-label">Đang giao</div></div>
-                                    <div class="tl-line"></div>
-                                    <div class="tl-step"><div class="tl-dot"></div><div class="tl-label">Giao thành công</div></div>
-                                </div>
-                            </div>
+                            <div class="o-card-id">Đơn #${o.orderId}</div>
+                            <div class="o-card-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</div>
+                            <div class="o-card-date"><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/></div>
+                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}">Đang giao</c:when></c:choose></span></div>
                         </div>
-                    </c:if>
-                </c:forEach>
-                <c:if test="${!hasActive}">
-                    <div class="acc-empty" style="padding:30px 20px">
-                        <div class="acc-empty-ic" style="width:64px;height:64px;margin-bottom:14px">
-                            <svg viewBox="0 0 24 24" style="width:28px;height:28px"><polyline points="20 6 9 17 4 12"/></svg>
+                        <div class="o-card-hover">
+                            <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><strong>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</strong></div>
+                            <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><strong><fmt:formatDate value="${o.createdAt}" pattern="HH:mm dd/MM/yyyy"/></strong></div>
+                            <div class="o-card-hover-cta"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>Nhấn xem chi tiết</div>
                         </div>
-                        <p style="margin-bottom:10px">Tất cả đơn hàng đã hoàn thành! <a href="#" data-tab="orders" style="color:var(--navy);font-weight:700;text-decoration:underline">Xem lịch sử</a></p>
                     </div>
                 </c:if>
-            </c:otherwise>
-        </c:choose>
+            </c:forEach>
+            </div>
+        </c:if>
+
+        <c:if test="${!hasActive}">
+            <div class="acc-empty" style="padding:30px 20px">
+                <div class="acc-empty-ic" style="width:64px;height:64px;margin-bottom:14px">
+                    <svg viewBox="0 0 24 24" style="width:28px;height:28px"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <p style="margin-bottom:10px">Không có đơn hàng đang xử lý. <a href="#" data-tab="orders" style="color:var(--navy);font-weight:700;text-decoration:underline">Xem lịch sử</a></p>
+            </div>
+        </c:if>
     </div>
 </div>
 
-<!-- ═══ TAB: Đơn hàng ═══ -->
+<!-- ═══ TAB: Lịch sử đơn hàng (DONE + CANCELLED only) ═══ -->
 <div id="tab-orders" class="acc-tab">
     <div class="acc-card">
         <div class="acc-card-h">
-            <div class="acc-card-t"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Đơn hàng của tôi</div>
-            <c:if test="${not empty orderHistory}"><span style="font-size:13px;color:var(--ink-soft);font-weight:600">${totalOrders} đơn</span></c:if>
+            <div class="acc-card-t"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lịch sử đơn hàng</div>
+            <c:if test="${doneCount > 0}"><span style="font-size:13px;color:var(--ink-soft);font-weight:600">${doneCount} hoàn thành</span></c:if>
         </div>
-        <c:choose>
-            <c:when test="${empty orderHistory}">
-                <div class="acc-empty">
-                    <div class="acc-empty-ic"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
-                    <p>Bạn chưa có đơn hàng nào.</p>
-                    <a href="${pageContext.request.contextPath}/products" class="btn btn-primary">Mua sắm ngay</a>
+        <c:set var="hasHistory" value="false"/>
+        <c:if test="${not empty orderHistory}">
+            <div class="o-cards">
+            <c:forEach var="o" items="${orderHistory}">
+                <c:if test="${o.status == 'DONE' || o.status == 'CANCELLED'}">
+                    <c:set var="hasHistory" value="true"/>
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                        <div class="o-card-body">
+                            <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
+                                <c:choose>
+                                    <c:when test="${o.status == 'DONE'}"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></c:when>
+                                    <c:when test="${o.status == 'CANCELLED'}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></c:when>
+                                </c:choose>
+                            </div>
+                            <div class="o-card-id">Đơn #${o.orderId}</div>
+                            <div class="o-card-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</div>
+                            <div class="o-card-date"><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/></div>
+                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'DONE'}">Hoàn thành</c:when><c:when test="${o.status == 'CANCELLED'}">Đã hủy</c:when></c:choose></span></div>
+                        </div>
+                        <div class="o-card-hover">
+                            <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><strong>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</strong></div>
+                            <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><strong><fmt:formatDate value="${o.createdAt}" pattern="HH:mm dd/MM/yyyy"/></strong></div>
+                            <div class="o-card-hover-cta"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>Nhấn xem chi tiết</div>
+                        </div>
+                    </div>
+                </c:if>
+            </c:forEach>
+            </div>
+        </c:if>
+        <c:if test="${!hasHistory}">
+            <div class="acc-empty" style="padding:30px 20px">
+                <div class="acc-empty-ic" style="width:64px;height:64px;margin-bottom:14px">
+                    <svg viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 </div>
-            </c:when>
-            <c:otherwise>
-                <div style="overflow-x:auto">
-                    <table class="o-table">
-                        <thead><tr><th>Mã ĐH</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th></tr></thead>
-                        <tbody>
-                        <c:forEach var="o" items="${orderHistory}">
-                            <tr>
-                                <td class="o-id">#${o.orderId}</td>
-                                <td><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/></td>
-                                <td class="o-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</td>
-                                <td>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</td>
-                                <td><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}">Đang giao</c:when><c:when test="${o.status == 'DONE'}">Hoàn thành</c:when><c:when test="${o.status == 'CANCELLED'}">Đã hủy</c:when><c:otherwise>${o.status}</c:otherwise></c:choose></span></td>
-                            </tr>
-                            <c:if test="${o.status == 'SHIPPING' || o.status == 'CONFIRMED' || o.status == 'DONE'}">
-                            <tr><td colspan="5" style="padding:0;border:none">
-                                <div class="order-track">
-                                    <div class="track-timeline">
-                                        <div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>
-                                        <div class="tl-line done"></div>
-                                        <div class="tl-step ${o.status == 'CONFIRMED' ? 'active' : 'done'}"><div class="tl-dot"></div><div class="tl-label">Đã xác nhận</div></div>
-                                        <div class="tl-line ${o.status == 'SHIPPING' || o.status == 'DONE' ? 'done' : ''}"></div>
-                                        <div class="tl-step ${o.status == 'SHIPPING' ? 'active' : (o.status == 'DONE' ? 'done' : '')}"><div class="tl-dot"></div><div class="tl-label">Đang giao</div></div>
-                                        <div class="tl-line ${o.status == 'DONE' ? 'done' : ''}"></div>
-                                        <div class="tl-step ${o.status == 'DONE' ? 'done' : ''}"><div class="tl-dot"></div><div class="tl-label">Giao thành công</div></div>
-                                    </div>
-                                </div>
-                            </td></tr>
-                            </c:if>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-            </c:otherwise>
-        </c:choose>
+                <p style="margin-bottom:10px">Chưa có đơn hàng hoàn thành nào.</p>
+            </div>
+        </c:if>
     </div>
 </div>
 
@@ -745,6 +837,21 @@
 
 </div><!-- /acc-content -->
 </div><!-- /acc-body -->
+
+<!-- ════════ Order Detail Overlay ════════ -->
+<div class="o-detail-overlay" id="orderOverlay">
+    <div class="o-detail-panel">
+        <button class="o-detail-close" onclick="closeOrderOverlay()">&times;</button>
+        <div class="o-detail-header">
+            <div class="o-card-icon" id="ovIcon"></div>
+            <h3 id="ovTitle"></h3>
+            <div class="o-detail-meta" id="ovMeta"></div>
+        </div>
+        <div class="o-detail-info" id="ovInfo"></div>
+        <div class="o-detail-timeline" id="ovTimeline"></div>
+    </div>
+</div>
+
 </main>
 
 <!-- ════════════════════════════════
@@ -925,6 +1032,54 @@
         if(!confirm('Xóa địa chỉ này?'))return;
         post('/account/address/delete',{addressId:id},function(ok,j){if(ok){var c=document.querySelector('.addr-card[data-id="'+id+'"]');if(c)c.remove()}else showMsg('addrMsg',false,j.error)});
     };
+
+    var statusNames={PENDING:'Chờ xác nhận',CONFIRMED:'Đã xác nhận',SHIPPING:'Đang giao hàng',DONE:'Hoàn thành',CANCELLED:'Đã hủy'};
+    var statusIcons={
+        PENDING:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+        CONFIRMED:'<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        SHIPPING:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+        DONE:'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
+        CANCELLED:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+    };
+    var statusRank={PENDING:0,CONFIRMED:1,SHIPPING:2,DONE:3};
+
+    window.openOrderOverlay=function(card){
+        var s=card.dataset.status,oid=card.dataset.oid;
+        var ov=document.getElementById('orderOverlay');
+        var icon=document.getElementById('ovIcon');
+        icon.className='o-card-icon ic-'+s.toLowerCase();
+        icon.innerHTML=statusIcons[s]||'';
+        document.getElementById('ovTitle').textContent='Đơn hàng #'+oid;
+        document.getElementById('ovMeta').innerHTML='<span class="s-pill s-'+s+'"><span class="s-dot"></span>'+statusNames[s]+'</span>';
+        document.getElementById('ovInfo').innerHTML=
+            '<div class="o-detail-info-item"><div class="di-label">Tổng tiền</div><div class="di-val" style="font-size:17px;color:var(--navy);font-family:\'EB Garamond\',serif">'+card.dataset.total+'đ</div></div>'+
+            '<div class="o-detail-info-item"><div class="di-label">Ngày đặt</div><div class="di-val">'+card.dataset.date+'</div></div>'+
+            '<div class="o-detail-info-item"><div class="di-label">Thanh toán</div><div class="di-val">'+card.dataset.pay+'</div></div>'+
+            '<div class="o-detail-info-item"><div class="di-label">Trạng thái</div><div class="di-val">'+statusNames[s]+'</div></div>';
+        var tl='';
+        if(s==='CANCELLED'){
+            tl='<div class="track-timeline">'+
+                '<div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>'+
+                '<div class="tl-line" style="background:#CE2E2E"></div>'+
+                '<div class="tl-step"><div class="tl-dot" style="background:#CE2E2E;border-color:#CE2E2E"></div><div class="tl-label" style="color:#CE2E2E">Đã hủy</div></div>'+
+                '</div>';
+        } else {
+            var rank=statusRank[s]||0;
+            var steps=[{l:'Đơn mới',r:0},{l:'Đã xác nhận',r:1},{l:'Đang giao',r:2},{l:'Giao thành công',r:3}];
+            tl='<div class="track-timeline">';
+            for(var i=0;i<steps.length;i++){
+                var cls=steps[i].r<rank?'done':(steps[i].r===rank?'active':'');
+                tl+='<div class="tl-step '+cls+'"><div class="tl-dot"></div><div class="tl-label">'+steps[i].l+'</div></div>';
+                if(i<steps.length-1) tl+='<div class="tl-line '+(steps[i].r<rank?'done':'')+'"></div>';
+            }
+            tl+='</div>';
+        }
+        document.getElementById('ovTimeline').innerHTML=tl;
+        ov.classList.add('open');
+    };
+    window.closeOrderOverlay=function(){document.getElementById('orderOverlay').classList.remove('open')};
+    document.getElementById('orderOverlay').addEventListener('click',function(e){if(e.target===this)closeOrderOverlay()});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeOrderOverlay();closeOverlay()}});
 
     var allergyToNut={dau_phong:'dau_phong',hanh_nhan:'hanh_nhan'};
 

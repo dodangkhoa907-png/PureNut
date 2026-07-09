@@ -142,7 +142,13 @@ public class CartController extends HttpServlet {
         int cartItemId = Validators.parsePositiveInt(request.getParameter("cartItemId"), 0);
         if (cartItemId > 0) {
             cartItemDao.delete(cartItemId, user.getUserId());
-            request.getSession().setAttribute("cartCount", cartItemDao.countItems(user.getUserId()));
+            int count = cartItemDao.countItems(user.getUserId());
+            request.getSession().setAttribute("cartCount", count);
+            
+            if (isAjax(request)) {
+                writeJson(response, "{\"success\":true,\"cartCount\":" + count + "}");
+                return;
+            }
         }
         response.sendRedirect(request.getContextPath() + "/cart");
     }
