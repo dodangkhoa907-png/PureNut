@@ -450,7 +450,18 @@ input,select{font:inherit}
   .nav-toggle{display:flex}
   .nav-actions .btn-sm{display:none}
   .hero{padding-top:120px}
-  .featured-grid,.product-grid,.testi-grid,.gallery-row{grid-template-columns:1fr}
+  .featured-grid,.testi-grid,.gallery-row{grid-template-columns:1fr}
+  .product-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .prod-img{height:100px}
+  .prod-img svg{width:38%;height:38%}
+  .prod-body{padding:10px 12px 14px}
+  .prod-body h3{font-size:13.5px;margin-bottom:2px}
+  .prod-tag{font-size:10.5px;margin-bottom:6px}
+  .prod-meta{font-size:10.5px;gap:4px;margin-bottom:8px}
+  .prod-foot .prod-price{font-size:14.5px}
+  .prod-foot .prod-price small{font-size:10px}
+  .prod-foot .btn-add{width:32px;height:32px;border-radius:9px}
+  .prod-foot .btn-add svg{width:16px;height:16px}
   .compare-cards{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr;gap:30px}
   .certs-row{justify-content:flex-start}

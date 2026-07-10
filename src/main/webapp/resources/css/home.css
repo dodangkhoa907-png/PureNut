@@ -201,6 +201,16 @@ input,select{font:inherit}
   .nav-links.is-open{transform:translateY(0);opacity:1;pointer-events:auto}
   .nav-links a{width:100%;padding:12px 0;border-bottom:1px solid var(--line)}
   .nav-toggle{display:flex}
-  .product-grid{grid-template-columns:1fr 1fr;gap:14px}
+  .product-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .prod-img{height:100px}
+  .prod-img svg{width:36%;height:36%}
+  .prod-body{padding:10px 12px 14px}
+  .prod-body h3{font-size:13.5px;margin-bottom:2px}
+  .prod-flavor{font-size:10.5px;margin-bottom:4px}
+  .prod-meta{font-size:10.5px;gap:4px;margin-bottom:8px}
+  .prod-foot .prod-price{font-size:14.5px}
+  .prod-foot .prod-price small{font-size:10px}
+  .prod-foot .btn-add{width:32px;height:32px;border-radius:9px}
+  .prod-tag-corner{font-size:9px;padding:3px 8px;top:8px;left:8px}
   .footer-grid{grid-template-columns:1fr;gap:28px}
 }
