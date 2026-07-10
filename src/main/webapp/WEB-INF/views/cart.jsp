@@ -112,6 +112,9 @@
     -webkit-appearance:none;margin:0;
 }
 
+/* Actions wrapper — contents on desktop to fill grid columns */
+.ci-actions-wrap{display:contents}
+
 /* Line total */
 .ci-total{font-family:'EB Garamond',var(--fd),serif;font-weight:700;font-size:17px;color:var(--ink);white-space:nowrap}
 
@@ -214,8 +217,8 @@
     }
     .ci-check-wrap{grid-row:1/3;align-self:center}
     .ci-prod{grid-column:2;display:flex;gap:10px;align-items:center;margin-bottom:8px}
-    .ci-actions-wrap{grid-column:2;display:flex;align-items:center;gap:14px}
-    .ci-total{font-size:14px}
+    .ci-actions-wrap{grid-column:2;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .ci-total{font-size:14px;margin-left:auto}
     .ci-del{position:absolute;top:12px;right:12px;width:32px;height:32px}
     .ci-thumb{width:60px;height:60px;border-radius:12px}
     .ci-name{font-size:13.5px}
@@ -339,7 +342,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="ci-actions-wrap" style="display:contents">
+                <div class="ci-actions-wrap">
                     <form action="${ctx}/cart/update" method="POST" class="qty-form" style="margin:0">
                         <input type="hidden" name="cartItemId" value="${item.cartItemId}">
                         <div class="ci-qty">

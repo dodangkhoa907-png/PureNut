@@ -116,11 +116,15 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Order> findAllOrders() {
         List<Order> list = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM Orders ORDER BY CreatedAt DESC";
+        String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
+                     "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
+                     "o.CancelReason, o.CancelledAt, u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
+                     "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
+                     "ORDER BY o.CreatedAt DESC";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            
+
             while (rs.next()) {
                 Order o = new Order();
                 o.setOrderId(rs.getInt("OrderID"));
@@ -133,6 +137,10 @@ public class OrderDaoImpl implements OrderDao {
                 o.setStatus(rs.getString("Status"));
                 o.setCouponCode(rs.getString("CouponCode"));
                 o.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                o.setCancelReason(rs.getNString("CancelReason"));
+                o.setCancelledAt(rs.getTimestamp("CancelledAt"));
+                o.setEmail(rs.getString("UserEmail"));
+                o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -162,6 +170,8 @@ public class OrderDaoImpl implements OrderDao {
                     o.setStatus(rs.getString("Status"));
                     o.setCouponCode(rs.getString("CouponCode"));
                     o.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    o.setCancelReason(rs.getNString("CancelReason"));
+                    o.setCancelledAt(rs.getTimestamp("CancelledAt"));
                     list.add(o);
                 }
             }
@@ -197,10 +207,12 @@ public class OrderDaoImpl implements OrderDao {
                         o.setStatus(rs.getString("Status"));
                         o.setCouponCode(rs.getString("CouponCode"));
                         o.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                        o.setCancelReason(rs.getNString("CancelReason"));
+                        o.setCancelledAt(rs.getTimestamp("CancelledAt"));
                     }
                 }
             }
-            
+
             // Lấy OrderItems
             if (o != null) {
                 List<com.purenut.shop.model.OrderItem> items = new java.util.ArrayList<>();
@@ -239,5 +251,130 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public int cancelOrder(int orderId, int userId, String reason) throws Exception {
+        Connection conn = null;
+        try {
+            conn = Database.getConnection();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT Status, UserID FROM Orders WHERE OrderID = ?")) {
+                ps.setInt(1, orderId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) throw new IllegalStateException("Đơn hàng không tồn tại");
+                    if (rs.getInt("UserID") != userId) throw new SecurityException("Không có quyền hủy đơn này");
+                    String st = rs.getString("Status");
+                    if (!"PENDING".equals(st) && !"CONFIRMED".equals(st))
+                        throw new IllegalStateException("Không thể hủy đơn ở trạng thái " + st);
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE Orders SET Status='CANCELLED', CancelReason=?, CancelledAt=GETDATE() WHERE OrderID=?")) {
+                ps.setNString(1, reason);
+                ps.setInt(2, orderId);
+                ps.executeUpdate();
+            }
+
+            restoreStock(conn, orderId);
+            conn.commit();
+            return 1;
+        } catch (Exception e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            throw e;
+        } finally {
+            if (conn != null) { conn.setAutoCommit(true); conn.close(); }
+        }
+    }
+
+    @Override
+    public int requestCancelOrder(int orderId, int userId, String reason) throws Exception {
+        try (Connection con = Database.getConnection()) {
+            try (PreparedStatement ps = con.prepareStatement(
+                    "SELECT Status, UserID FROM Orders WHERE OrderID = ?")) {
+                ps.setInt(1, orderId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) throw new IllegalStateException("Đơn hàng không tồn tại");
+                    if (rs.getInt("UserID") != userId) throw new SecurityException("Không có quyền hủy đơn này");
+                    String st = rs.getString("Status");
+                    if (!"PENDING".equals(st) && !"CONFIRMED".equals(st))
+                        throw new IllegalStateException("Không thể hủy đơn ở trạng thái " + st);
+                }
+            }
+            try (PreparedStatement ps = con.prepareStatement(
+                    "UPDATE Orders SET Status='PENDING_CANCEL', CancelReason=? WHERE OrderID=?")) {
+                ps.setNString(1, reason);
+                ps.setInt(2, orderId);
+                return ps.executeUpdate();
+            }
+        }
+    }
+
+    @Override
+    public int approveCancelOrder(int orderId) throws Exception {
+        Connection conn = null;
+        try {
+            conn = Database.getConnection();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT Status FROM Orders WHERE OrderID = ?")) {
+                ps.setInt(1, orderId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) throw new IllegalStateException("Đơn hàng không tồn tại");
+                    String st = rs.getString("Status");
+                    if ("DONE".equals(st) || "CANCELLED".equals(st))
+                        throw new IllegalStateException("Đơn đã kết thúc, không thể hủy");
+                    if ("SHIPPING".equals(st))
+                        throw new IllegalStateException("Đơn đang giao, không thể hủy");
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE Orders SET Status='CANCELLED', CancelledAt=GETDATE() WHERE OrderID=?")) {
+                ps.setInt(1, orderId);
+                ps.executeUpdate();
+            }
+
+            restoreStock(conn, orderId);
+            conn.commit();
+            return 1;
+        } catch (Exception e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            throw e;
+        } finally {
+            if (conn != null) { conn.setAutoCommit(true); conn.close(); }
+        }
+    }
+
+    @Override
+    public int rejectCancelOrder(int orderId) throws Exception {
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "UPDATE Orders SET Status='CONFIRMED', CancelReason=NULL WHERE OrderID=? AND Status='PENDING_CANCEL'")) {
+            ps.setInt(1, orderId);
+            return ps.executeUpdate();
+        }
+    }
+
+    private void restoreStock(Connection conn, int orderId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "SELECT ProductID, Quantity FROM OrderItems WHERE OrderID = ?")) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                try (PreparedStatement upd = conn.prepareStatement(
+                        "UPDATE Products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?")) {
+                    while (rs.next()) {
+                        upd.setInt(1, rs.getInt("Quantity"));
+                        upd.setInt(2, rs.getInt("ProductID"));
+                        upd.addBatch();
+                    }
+                    upd.executeBatch();
+                }
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@
             <param-name>ignore</param-name>
             <param-value>false</param-value>
         </init-param>
+        <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
@@ -77,14 +78,5 @@
         <mime-type>font/woff</mime-type>
     </mime-mapping>
 
-    <!-- Error pages -->
-    <error-page>
-        <error-code>404</error-code>
-        <location>/WEB-INF/views/error/404.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>500</error-code>
-        <location>/WEB-INF/views/error/500.jsp</location>
-    </error-page>
 
 </web-app>

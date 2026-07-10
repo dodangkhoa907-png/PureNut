@@ -7,8 +7,10 @@ import com.purenut.shop.dao.impl.OrderDaoImpl;
 import com.purenut.shop.dao.impl.UserAddressDaoImpl;
 import com.purenut.shop.dao.impl.UserDaoImpl;
 import com.purenut.shop.model.Order;
+import com.purenut.shop.model.Order;
 import com.purenut.shop.model.User;
 import com.purenut.shop.model.UserAddress;
+import com.purenut.shop.util.AuditLogger;
 import com.purenut.shop.util.Passwords;
 import com.purenut.shop.util.Validators;
 
@@ -26,7 +28,8 @@ import java.util.List;
 
 @WebServlet(name = "AccountController",
         urlPatterns = {"/account", "/account/profile", "/account/password",
-                       "/account/address", "/account/address/delete", "/account/address/default"})
+                       "/account/address", "/account/address/delete", "/account/address/default",
+                       "/account/order/cancel"})
 public class AccountController extends HttpServlet {
 
     private OrderDao orderDao;
@@ -58,7 +61,7 @@ public class AccountController extends HttpServlet {
                 totalSpent = totalSpent.add(o.getTotalAmount());
                 doneCount++;
             }
-            if ("PENDING".equals(o.getStatus()) || "CONFIRMED".equals(o.getStatus()) || "SHIPPING".equals(o.getStatus())) {
+            if ("PENDING".equals(o.getStatus()) || "CONFIRMED".equals(o.getStatus()) || "SHIPPING".equals(o.getStatus()) || "PENDING_CANCEL".equals(o.getStatus())) {
                 pendingCount++;
             }
         }
@@ -94,6 +97,7 @@ public class AccountController extends HttpServlet {
             case "/account/address"         -> handleAddAddress(req, resp, user);
             case "/account/address/delete"  -> handleDeleteAddress(req, resp, user);
             case "/account/address/default" -> handleSetDefaultAddress(req, resp, user);
+            case "/account/order/cancel"    -> handleCancelOrder(req, resp, user);
             default -> resp.sendRedirect(req.getContextPath() + "/account");
         }
     }
@@ -188,6 +192,59 @@ public class AccountController extends HttpServlet {
 
         boolean ok = addressDao.delete(addressId, user.getUserId());
         writeJson(resp, ok ? 200 : 400, ok ? "{\"success\":true}" : "{\"error\":\"Không thể xóa.\"}");
+    }
+
+    private void handleCancelOrder(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        String oidStr = req.getParameter("orderId");
+        String reason = req.getParameter("reason");
+
+        if (oidStr == null || reason == null || reason.trim().isEmpty()) {
+            writeJson(resp, 400, "{\"error\":\"Vui lòng chọn lý do hủy.\"}");
+            return;
+        }
+
+        int orderId;
+        try { orderId = Integer.parseInt(oidStr.trim()); } catch (NumberFormatException e) {
+            writeJson(resp, 400, "{\"error\":\"ID đơn hàng không hợp lệ.\"}");
+            return;
+        }
+
+        Order order = orderDao.findOrderById(orderId);
+        if (order == null) {
+            writeJson(resp, 404, "{\"error\":\"Đơn hàng không tồn tại.\"}");
+            return;
+        }
+        if (order.getUserId() != user.getUserId()) {
+            writeJson(resp, 403, "{\"error\":\"Bạn không có quyền hủy đơn này.\"}");
+            return;
+        }
+
+        String st = order.getStatus();
+        if (!"PENDING".equals(st) && !"CONFIRMED".equals(st)) {
+            writeJson(resp, 400, "{\"error\":\"Không thể hủy đơn ở trạng thái hiện tại.\"}");
+            return;
+        }
+
+        try {
+            if ("COD".equals(order.getPaymentMethod())) {
+                orderDao.cancelOrder(orderId, user.getUserId(), reason.trim());
+                AuditLogger.log(req, user.getUserId(), "CANCEL_ORDER",
+                        "Đơn #" + orderId, reason.trim());
+                writeJson(resp, 200, "{\"success\":true,\"message\":\"Đã hủy đơn hàng thành công.\"}");
+            } else {
+                orderDao.requestCancelOrder(orderId, user.getUserId(), reason.trim());
+                AuditLogger.log(req, user.getUserId(), "REQUEST_CANCEL_ORDER",
+                        "Đơn #" + orderId, reason.trim());
+                writeJson(resp, 200, "{\"success\":true,\"pending\":true,\"message\":\"Yêu cầu hủy đã được gửi. Vui lòng chờ admin duyệt hoàn tiền.\"}");
+            }
+        } catch (SecurityException e) {
+            writeJson(resp, 403, "{\"error\":\"" + escJson(e.getMessage()) + "\"}");
+        } catch (IllegalStateException e) {
+            writeJson(resp, 400, "{\"error\":\"" + escJson(e.getMessage()) + "\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            writeJson(resp, 500, "{\"error\":\"Có lỗi hệ thống. Vui lòng thử lại.\"}");
+        }
     }
 
     private void handleSetDefaultAddress(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {

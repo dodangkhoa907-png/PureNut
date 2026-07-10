@@ -69,6 +69,19 @@
 .od-pill-SHIPPING{background:rgba(122,90,248,.1);color:#7A5AF8}
 .od-pill-DONE{background:rgba(43,172,98,.1);color:#12B76A}
 .od-pill-CANCELLED{background:rgba(240,68,56,.1);color:#F04438}
+.od-pill-PENDING_CANCEL{background:rgba(234,179,8,.12);color:#B45309}
+
+.od-cancel-reason{padding:16px 18px;border-radius:12px;margin-bottom:18px;border:1px solid}
+.od-cancel-reason.warn{background:rgba(234,179,8,.06);border-color:rgba(234,179,8,.2)}
+.od-cancel-reason.red{background:rgba(240,68,56,.06);border-color:rgba(240,68,56,.15)}
+.od-cancel-reason-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.od-cancel-reason-val{font-size:14px;font-weight:600}
+.od-approve-actions{display:flex;gap:10px;margin-top:14px}
+.od-approve-actions button{flex:1;padding:12px;border:none;border-radius:12px;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-approve{background:linear-gradient(135deg,#12B76A,#0E9F5A);color:#fff}
+.btn-approve:hover{transform:translateY(-1px);box-shadow:0 6px 18px -6px rgba(18,183,106,.4)}
+.btn-reject{background:rgba(255,255,255,.08);color:var(--admin-text-light);border:1px solid var(--admin-border)!important}
+.btn-reject:hover{background:rgba(255,255,255,.12)}
 
 @media(max-width:860px){
   .od-grid{grid-template-columns:1fr}
@@ -83,13 +96,14 @@
 <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;flex-wrap:wrap">
     <h2 style="font-family:var(--fd);font-size:22px;font-weight:800;margin:0">Đơn hàng #${order.orderId}</h2>
     <span class="od-pill od-pill-${order.status}">
-        <i class="fa-solid ${order.status == 'PENDING' ? 'fa-clock' : order.status == 'CONFIRMED' ? 'fa-circle-check' : order.status == 'SHIPPING' ? 'fa-truck-fast' : order.status == 'DONE' ? 'fa-check-double' : 'fa-ban'}"></i>
+        <i class="fa-solid ${order.status == 'PENDING' ? 'fa-clock' : order.status == 'CONFIRMED' ? 'fa-circle-check' : order.status == 'SHIPPING' ? 'fa-truck-fast' : order.status == 'DONE' ? 'fa-check-double' : order.status == 'PENDING_CANCEL' ? 'fa-hourglass-half' : 'fa-ban'}"></i>
         <c:choose>
             <c:when test="${order.status == 'PENDING'}">Chờ xử lý</c:when>
             <c:when test="${order.status == 'CONFIRMED'}">Đã xác nhận</c:when>
             <c:when test="${order.status == 'SHIPPING'}">Đang giao hàng</c:when>
             <c:when test="${order.status == 'DONE'}">Hoàn thành</c:when>
             <c:when test="${order.status == 'CANCELLED'}">Đã huỷ</c:when>
+            <c:when test="${order.status == 'PENDING_CANCEL'}">Chờ duyệt hủy</c:when>
         </c:choose>
     </span>
     <span style="font-size:13px;color:var(--admin-text-light);margin-left:auto">
@@ -98,7 +112,7 @@
 </div>
 
 <!-- Timeline trạng thái -->
-<c:if test="${order.status != 'CANCELLED'}">
+<c:if test="${order.status != 'CANCELLED' && order.status != 'PENDING_CANCEL'}">
 <div class="od-card" style="margin-bottom:22px">
     <div class="od-tl">
         <div class="od-tl-step done">
@@ -139,6 +153,21 @@
         <div class="od-tl-step cancelled">
             <div class="od-tl-dot"><i class="fa-solid fa-ban" style="font-size:12px"></i></div>
             <div class="od-tl-label">Đã huỷ</div>
+        </div>
+    </div>
+</div>
+</c:if>
+<c:if test="${order.status == 'PENDING_CANCEL'}">
+<div class="od-card" style="margin-bottom:22px">
+    <div class="od-tl">
+        <div class="od-tl-step done">
+            <div class="od-tl-dot"><i class="fa-solid fa-file-lines" style="font-size:12px"></i></div>
+            <div class="od-tl-label">Đơn mới</div>
+        </div>
+        <div class="od-tl-line" style="background:#EAB308"></div>
+        <div class="od-tl-step active">
+            <div class="od-tl-dot" style="background:#EAB308;border-color:#EAB308"><i class="fa-solid fa-hourglass-half" style="font-size:11px"></i></div>
+            <div class="od-tl-label">Chờ duyệt hủy</div>
         </div>
     </div>
 </div>
@@ -265,8 +294,18 @@
                         <c:when test="${param.error == 'backward'}">Không thể quay lại trạng thái trước đó!</c:when>
                         <c:when test="${param.error == 'final'}">Đơn hàng đã kết thúc, không thể thay đổi.</c:when>
                         <c:when test="${param.error == 'nocancel'}">Đơn đang giao không thể huỷ.</c:when>
+                        <c:when test="${param.error == 'system'}">Có lỗi hệ thống, vui lòng thử lại.</c:when>
                         <c:otherwise>Có lỗi xảy ra.</c:otherwise>
                     </c:choose>
+                </div>
+            </c:if>
+
+            <c:if test="${not empty order.cancelReason}">
+                <div class="od-cancel-reason ${order.status == 'PENDING_CANCEL' ? 'warn' : 'red'}">
+                    <div class="od-cancel-reason-label" style="color:${order.status == 'PENDING_CANCEL' ? '#B45309' : '#F04438'}">
+                        <i class="fa-solid fa-comment-dots" style="margin-right:4px"></i>Lý do hủy từ khách hàng
+                    </div>
+                    <div class="od-cancel-reason-val" style="color:var(--admin-text)">${order.cancelReason}</div>
                 </div>
             </c:if>
 
@@ -276,6 +315,27 @@
                 </c:when>
                 <c:when test="${order.status == 'CANCELLED'}">
                     <div class="od-alert" style="background:rgba(240,68,56,.1);color:#F04438"><i class="fa-solid fa-ban"></i> Đơn hàng đã bị huỷ.</div>
+                </c:when>
+                <c:when test="${order.status == 'PENDING_CANCEL'}">
+                    <div class="od-alert" style="background:rgba(234,179,8,.08);color:#B45309">
+                        <i class="fa-solid fa-hourglass-half"></i> Khách hàng yêu cầu hủy đơn. Vui lòng duyệt hoặc từ chối.
+                    </div>
+                    <div class="od-approve-actions">
+                        <form action="${pageContext.request.contextPath}/admin/don-hang/duyet-huy" method="POST" style="flex:1;display:flex">
+                            <input type="hidden" name="orderId" value="${order.orderId}">
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit" class="btn-approve" style="width:100%">
+                                <i class="fa-solid fa-check" style="margin-right:5px"></i>Duyệt hủy + Hoàn tiền
+                            </button>
+                        </form>
+                        <form action="${pageContext.request.contextPath}/admin/don-hang/duyet-huy" method="POST" style="flex:1;display:flex">
+                            <input type="hidden" name="orderId" value="${order.orderId}">
+                            <input type="hidden" name="action" value="reject">
+                            <button type="submit" class="btn-reject" style="width:100%">
+                                <i class="fa-solid fa-xmark" style="margin-right:5px"></i>Từ chối hủy
+                            </button>
+                        </form>
+                    </div>
                 </c:when>
                 <c:otherwise>
                     <form action="${pageContext.request.contextPath}/admin/don-hang/cap-nhat" method="POST" class="od-status-form">

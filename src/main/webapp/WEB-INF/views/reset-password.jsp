@@ -12,7 +12,7 @@
 <style>
 :root{--navy:#1B4F9E;--navy-dark:#11335E;--navy-darker:#0B2547;--red:#CE2E2E;--green:#2BAC62;--cream:#FBF6EC;--paper:#FFFDF8;--ink:#241F18;--ink-soft:#6B6357;--line:rgba(36,31,24,.12);--fd:'Fraunces',serif;--fb:'Inter',sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--fb);background:var(--cream);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--fb);background:var(--cream);color:var(--ink);min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:28px;-webkit-font-smoothing:antialiased}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:none}
 .blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;z-index:0;animation:drift 14s ease-in-out infinite}
@@ -22,66 +22,90 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
 .back{position:fixed;top:22px;left:24px;z-index:20;display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);padding:10px 20px;border-radius:99px;font-weight:600;font-size:13.5px;color:var(--ink-soft);box-shadow:0 10px 26px -14px rgba(20,30,20,.3);transition:transform .2s,color .2s}
 .back:hover{transform:translateX(-3px);color:var(--navy)}
 @keyframes cardIn{from{opacity:0;transform:translateY(36px) scale(.97)}to{opacity:1;transform:none}}
-.card{position:relative;z-index:5;width:min(480px,100%);background:var(--paper);border-radius:28px;border:1px solid var(--line);box-shadow:0 40px 90px -36px rgba(20,80,40,.35);padding:46px 44px;animation:cardIn .7s cubic-bezier(.16,1,.3,1);text-align:center}
-.badge{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#35C878,#187A43);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;box-shadow:0 18px 34px -14px rgba(43,172,98,.55);animation:bob 5s ease-in-out infinite}
+.card{position:relative;z-index:5;width:min(480px,100%);background:var(--paper);border-radius:28px;border:1px solid var(--line);box-shadow:0 40px 90px -36px rgba(20,80,40,.35);padding:42px 40px;animation:cardIn .7s cubic-bezier(.16,1,.3,1);text-align:center}
+.badge{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#35C878,#187A43);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;box-shadow:0 18px 34px -14px rgba(43,172,98,.55);animation:bob 5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-h1{font-family:var(--fd);font-weight:600;font-size:28px}
-.sub{color:var(--ink-soft);margin:10px 0 24px;font-size:14.5px;line-height:1.6}
-.alert{border-radius:14px;padding:13px 16px;font-size:13.5px;font-weight:600;margin-bottom:16px;display:flex;gap:9px;text-align:left;background:#FCE9E9;color:#A31F1F;border:1px solid #F3C2C2}
-.field{text-align:left;margin-bottom:16px}
-.field label{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+h1{font-family:var(--fd);font-weight:600;font-size:26px}
+.sub{color:var(--ink-soft);margin:8px 0 22px;font-size:13.5px;line-height:1.6}
+.alert{border-radius:14px;padding:12px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:flex;gap:9px;text-align:left;background:#FCE9E9;color:#A31F1F;border:1px solid #F3C2C2}
+.field{text-align:left;margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
 .field .box{position:relative}
-.field input{width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:#FFF;font:inherit;font-size:15px;transition:border-color .2s,box-shadow .2s}
-.field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 4px rgba(43,172,98,.12)}
-.field input.err-border{border-color:var(--red);box-shadow:0 0 0 4px rgba(206,46,46,.08)}
-.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;color:var(--ink-soft);display:flex;padding:4px}
+.field input{width:100%;padding:13px 44px 13px 14px;border-radius:12px;border:1.5px solid var(--line);background:#FFF;font:inherit;font-size:14px;transition:border-color .2s,box-shadow .2s}
+.field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(43,172,98,.12)}
+.field input.err-border{border-color:var(--red);box-shadow:0 0 0 3px rgba(206,46,46,.08)}
+.eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;color:var(--ink-soft);display:flex;padding:4px}
 
 /* ── Steps indicator ── */
-.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px}
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:20px}
 .step-dot{width:10px;height:10px;border-radius:50%;background:var(--line);transition:all .3s}
 .step-dot.active{width:28px;border-radius:99px;background:var(--green)}
 .step-dot.done{background:var(--green)}
-.step-line{width:32px;height:2px;background:var(--line);margin:0 4px}
+.step-line{width:28px;height:2px;background:var(--line);margin:0 4px}
 .step-line.done{background:var(--green)}
 
 /* ── Password strength bar ── */
-.strength-wrap{margin-top:10px}
-.strength-track{display:flex;gap:4px}
-.strength-seg{flex:1;height:4px;border-radius:99px;background:var(--line);transition:background .3s}
-.strength-label{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
-.strength-text{font-size:11px;font-weight:700;transition:color .3s}
+.strength-wrap{margin-top:8px}
+.strength-track{display:flex;gap:3px}
+.strength-seg{flex:1;height:3px;border-radius:99px;background:var(--line);transition:background .3s}
+.strength-label{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.strength-text{font-size:10px;font-weight:700;transition:color .3s}
 .strength-pct{font-size:10px;color:var(--ink-soft);font-weight:600}
 
 /* ── Password rules checklist ── */
-.pw-rules{background:#F8F6F1;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-top:12px;text-align:left}
-.pw-rules-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
-.pw-rule{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px;font-weight:500;color:var(--ink-soft);transition:color .3s}
+.pw-rules{background:#F8F6F1;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;text-align:left}
+.pw-rules-title{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.pw-rule{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12.5px;font-weight:500;color:var(--ink-soft);transition:color .3s}
 .pw-rule + .pw-rule{border-top:1px solid rgba(36,31,24,.06)}
 .pw-rule.pass{color:var(--green)}
 .pw-rule.fail{color:var(--ink-soft)}
-
-.pw-rule .icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;transition:all .3s;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft)}
+.pw-rule .icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;transition:all .3s;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft)}
 .pw-rule.pass .icon{background:var(--green);border-color:var(--green);color:#fff;transform:scale(1);animation:popIn .3s cubic-bezier(.34,1.56,.64,1)}
 .pw-rule.fail .icon{transform:scale(.9)}
 @keyframes popIn{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
 
 /* ── Match indicator ── */
-.match-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;font-weight:600;min-height:20px;transition:all .3s}
+.match-row{display:flex;align-items:center;gap:7px;margin-top:6px;font-size:12px;font-weight:600;min-height:18px;transition:all .3s}
 .match-row.ok{color:var(--green)}
 .match-row.bad{color:var(--red)}
-.match-row .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.match-row .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
 .match-row.ok .dot{background:var(--green)}
 .match-row.bad .dot{background:var(--red)}
 
 /* ── Submit ── */
-.submit{width:100%;margin-top:20px;padding:15px;border-radius:14px;background:linear-gradient(135deg,#2BAC62,#187A43);color:#fff;font-weight:700;font-size:15.5px;box-shadow:0 16px 30px -14px rgba(43,172,98,.6);transition:transform .2s,opacity .2s}
+.submit{width:100%;margin-top:16px;padding:14px;border-radius:12px;background:linear-gradient(135deg,#2BAC62,#187A43);color:#fff;font-weight:700;font-size:15px;box-shadow:0 16px 30px -14px rgba(43,172,98,.6);transition:transform .2s,opacity .2s}
 .submit:hover:not(:disabled){transform:translateY(-2px)}
 .submit:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ══════════ Mobile ══════════ */
+@media(max-width:520px){
+  body{padding:16px 12px;align-items:flex-start;padding-top:68px}
+  .back{top:14px;left:14px;padding:8px 14px;font-size:12px}
+  .card{padding:24px 18px;border-radius:20px}
+  .badge{width:60px;height:60px;font-size:26px;margin-bottom:12px}
+  h1{font-size:21px}
+  .sub{font-size:12.5px;margin:6px 0 16px}
+  .steps{margin-bottom:16px}
+  .step-dot{width:8px;height:8px}
+  .step-dot.active{width:22px}
+  .step-line{width:18px}
+  .field{margin-bottom:12px}
+  .field label{font-size:10px;margin-bottom:5px}
+  .field input{padding:11px 40px 11px 12px;font-size:13px;border-radius:10px}
+  .pw-rules{padding:10px 12px;border-radius:10px;margin-top:8px}
+  .pw-rules-title{font-size:9px;margin-bottom:6px}
+  .pw-rule{font-size:11.5px;padding:4px 0;gap:7px}
+  .pw-rule .icon{width:18px;height:18px;font-size:10px}
+  .strength-wrap{margin-top:6px}
+  .submit{margin-top:14px;padding:12px;font-size:14px;border-radius:10px}
+  .match-row{font-size:11px;margin-top:5px}
+  .alert{padding:10px 12px;font-size:12px;border-radius:10px}
+}
 </style>
 </head>
 <body>
 <span class="blob b1"></span><span class="blob b2"></span>
-<a href="${ctx}/login" class="back">← Về đăng nhập</a>
+<a href="${ctx}/login" class="back">&larr; Về đăng nhập</a>
 
 <div class="card">
   <div class="steps">
@@ -106,10 +130,9 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
       <label for="password">Mật khẩu mới</label>
       <div class="box">
         <input type="password" id="password" name="password" placeholder="••••••••" required autofocus autocomplete="new-password">
-        <button type="button" class="eye" onclick="togglePw('password',this)" aria-label="Hiện mật khẩu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button type="button" class="eye" onclick="togglePw('password',this)" aria-label="Hiện mật khẩu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
 
-      <!-- Strength bar -->
       <div class="strength-wrap">
         <div class="strength-track">
           <span class="strength-seg" id="seg0"></span>
@@ -124,27 +147,26 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
         </div>
       </div>
 
-      <!-- Rules checklist -->
       <div class="pw-rules">
         <div class="pw-rules-title">Yêu cầu mật khẩu</div>
         <div class="pw-rule fail" id="rule-len">
-          <span class="icon">—</span>
+          <span class="icon">&mdash;</span>
           <span>Ít nhất <b>8 ký tự</b></span>
         </div>
         <div class="pw-rule fail" id="rule-upper">
-          <span class="icon">—</span>
+          <span class="icon">&mdash;</span>
           <span>Có chữ <b>hoa</b> (A-Z)</span>
         </div>
         <div class="pw-rule fail" id="rule-lower">
-          <span class="icon">—</span>
+          <span class="icon">&mdash;</span>
           <span>Có chữ <b>thường</b> (a-z)</span>
         </div>
         <div class="pw-rule fail" id="rule-digit">
-          <span class="icon">—</span>
+          <span class="icon">&mdash;</span>
           <span>Có <b>chữ số</b> (0-9)</span>
         </div>
         <div class="pw-rule fail" id="rule-special">
-          <span class="icon">—</span>
+          <span class="icon">&mdash;</span>
           <span>Có <b>ký tự đặc biệt</b> (!@#$...)</span>
         </div>
       </div>
@@ -154,7 +176,7 @@ h1{font-family:var(--fd);font-weight:600;font-size:28px}
       <label for="confirmPassword">Xác nhận mật khẩu mới</label>
       <div class="box">
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required autocomplete="new-password">
-        <button type="button" class="eye" onclick="togglePw('confirmPassword',this)" aria-label="Hiện mật khẩu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button type="button" class="eye" onclick="togglePw('confirmPassword',this)" aria-label="Hiện mật khẩu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <div class="match-row" id="matchRow"></div>
     </div>
@@ -216,7 +238,6 @@ function togglePw(id, btn){
       if(ok) passed++;
     }
 
-    // Strength bar
     if(!v){
       segs.forEach(function(s){ s.style.background = ''; });
       strengthText.textContent = '';
@@ -238,7 +259,6 @@ function togglePw(id, btn){
     var v1 = pw.value;
     var v2 = confirm.value;
 
-    // Count passed rules
     var allPass = true;
     for(var key in rules){
       if(!rules[key].test(v1)){ allPass = false; break; }

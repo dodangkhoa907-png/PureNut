@@ -290,7 +290,7 @@ public class PasswordResetController extends HttpServlet {
             + "</td></tr>"
             // Footer
             + "<tr><td style='background:#F5F0E5;padding:20px 40px;text-align:center;border-top:1px solid rgba(36,31,24,.08)'>"
-            + "<p style='margin:0;font-size:12px;color:#6B6357'>© 2025 PureNut — Sữa hạt thuần khiết từ hạt Việt 🌰</p>"
+            + "<p style='margin:0;font-size:12px;color:#6B6357'>© 2026 PureNut — Sữa hạt thuần khiết từ hạt Việt 🌰</p>"
             + "</td></tr>"
             + "</table></td></tr></table></body></html>";
 

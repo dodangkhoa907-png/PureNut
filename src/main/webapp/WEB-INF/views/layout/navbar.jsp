@@ -129,9 +129,10 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 
 /* Hamburger */
 .site-nav-toggle{
-  display:none;flex-direction:column;gap:5px;width:36px;height:36px;
+  display:none;flex-direction:column;gap:5px;width:44px;height:44px;
+  border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
   border-radius:50%;align-items:center;justify-content:center;padding:0;
-  transition:background .2s;
+  transition:background .2s;touch-action:manipulation;
 }
 .site-nav-toggle:hover{background:var(--line)}
 .site-nav-toggle span{width:18px;height:2px;background:var(--ink);border-radius:2px;display:block;transition:transform .25s,opacity .25s}
@@ -139,7 +140,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 /* Mobile nav drawer */
 .site-nav-drawer{
   display:none;
-  position:fixed;top:64px;left:0;right:0;z-index:199;
+  position:fixed;top:64px;left:0;right:0;z-index:201;
   background:rgba(251,246,236,.98);backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
   flex-direction:column;padding:16px 28px 24px;gap:4px;
@@ -434,18 +435,23 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
   var toggle = document.getElementById('siteNavToggle');
   var drawer = document.getElementById('siteNavDrawer');
   if(toggle && drawer){
-    toggle.addEventListener('click', function(){
-      var open = drawer.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open);
+    function toggleMenu(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var isOpen = drawer.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
       var spans = toggle.querySelectorAll('span');
-      if(open){
+      if(isOpen){
         spans[0].style.transform='rotate(45deg) translate(5px,5px)';
         spans[1].style.opacity='0';
         spans[2].style.transform='rotate(-45deg) translate(5px,-5px)';
       } else {
         spans[0].style.transform='';spans[1].style.opacity='';spans[2].style.transform='';
       }
-    });
+    }
+    toggle.addEventListener('click', toggleMenu);
+    toggle.addEventListener('touchend', toggleMenu);
   }
   // ESC để đóng search
   document.addEventListener('keydown',function(e){

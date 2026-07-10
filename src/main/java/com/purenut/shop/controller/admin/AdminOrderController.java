@@ -19,7 +19,8 @@ import java.util.Set;
 @WebServlet(urlPatterns = {
     "/admin/don-hang",
     "/admin/don-hang/chi-tiet",
-    "/admin/don-hang/cap-nhat"
+    "/admin/don-hang/cap-nhat",
+    "/admin/don-hang/duyet-huy"
 })
 public class AdminOrderController extends HttpServlet {
 
@@ -27,10 +28,12 @@ public class AdminOrderController extends HttpServlet {
     private final UserDao userDao = new UserDaoImpl();
 
     private static final Set<String> ALLOWED_STATUS =
-            Set.of("PENDING", "CONFIRMED", "SHIPPING", "DONE", "CANCELLED");
+            Set.of("PENDING", "CONFIRMED", "SHIPPING", "DONE", "CANCELLED", "PENDING_CANCEL");
 
-    private static final Map<String, Integer> STATUS_RANK = Map.of(
-            "PENDING", 0, "CONFIRMED", 1, "SHIPPING", 2, "DONE", 3, "CANCELLED", 99
+    private static final Map<String, Integer> STATUS_RANK = Map.ofEntries(
+            Map.entry("PENDING", 0), Map.entry("CONFIRMED", 1),
+            Map.entry("SHIPPING", 2), Map.entry("DONE", 3),
+            Map.entry("PENDING_CANCEL", 98), Map.entry("CANCELLED", 99)
     );
 
     @Override
@@ -60,7 +63,14 @@ public class AdminOrderController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
-        
+        com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("adminUser");
+        int adminId = admin != null ? admin.getUserId() : 0;
+
+        if ("/admin/don-hang/duyet-huy".equals(path)) {
+            handleApproveRejectCancel(req, resp, adminId);
+            return;
+        }
+
         if ("/admin/don-hang/cap-nhat".equals(path)) {
             Integer orderId = parseIntOrNull(req.getParameter("orderId"));
             String status = req.getParameter("status");
@@ -93,13 +103,48 @@ public class AdminOrderController extends HttpServlet {
                 return;
             }
 
-            orderDao.updateOrderStatus(orderId, status);
+            if ("CANCELLED".equals(status)) {
+                try {
+                    orderDao.approveCancelOrder(orderId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    resp.sendRedirect(req.getContextPath() + "/admin/don-hang/chi-tiet?id=" + orderId + "&error=system");
+                    return;
+                }
+            } else {
+                orderDao.updateOrderStatus(orderId, status);
+            }
 
-            com.purenut.shop.model.User admin = (com.purenut.shop.model.User) req.getSession().getAttribute("adminUser");
-            com.purenut.shop.util.AuditLogger.log(req, admin != null ? admin.getUserId() : null,
+            com.purenut.shop.util.AuditLogger.log(req, adminId,
                     "UPDATE_ORDER_STATUS", "Đơn #" + orderId, "Đổi trạng thái sang " + status);
 
             resp.sendRedirect(req.getContextPath() + "/admin/don-hang/chi-tiet?id=" + orderId + "&success=true");
+        }
+    }
+
+    private void handleApproveRejectCancel(HttpServletRequest req, HttpServletResponse resp, int adminId) throws IOException {
+        Integer orderId = parseIntOrNull(req.getParameter("orderId"));
+        String action = req.getParameter("action");
+
+        if (orderId == null || action == null) {
+            resp.sendRedirect(req.getContextPath() + "/admin/don-hang?error=BadInput");
+            return;
+        }
+
+        try {
+            if ("approve".equals(action)) {
+                orderDao.approveCancelOrder(orderId);
+                com.purenut.shop.util.AuditLogger.log(req, adminId,
+                        "APPROVE_CANCEL", "Đơn #" + orderId, "Duyệt hủy + hoàn tiền");
+            } else if ("reject".equals(action)) {
+                orderDao.rejectCancelOrder(orderId);
+                com.purenut.shop.util.AuditLogger.log(req, adminId,
+                        "REJECT_CANCEL", "Đơn #" + orderId, "Từ chối yêu cầu hủy");
+            }
+            resp.sendRedirect(req.getContextPath() + "/admin/don-hang/chi-tiet?id=" + orderId + "&success=true");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendRedirect(req.getContextPath() + "/admin/don-hang/chi-tiet?id=" + orderId + "&error=system");
         }
     }
 

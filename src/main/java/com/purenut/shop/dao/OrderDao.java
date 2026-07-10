@@ -27,4 +27,16 @@ public interface OrderDao {
 
     /** Admin: Cập nhật trạng thái đơn hàng */
     int updateOrderStatus(int orderId, String status);
+
+    /** Khách hàng COD: Hủy đơn ngay + hoàn kho */
+    int cancelOrder(int orderId, int userId, String reason) throws Exception;
+
+    /** Khách hàng trả trước: Gửi yêu cầu hủy → PENDING_CANCEL */
+    int requestCancelOrder(int orderId, int userId, String reason) throws Exception;
+
+    /** Admin duyệt hủy đơn trả trước → CANCELLED + hoàn kho */
+    int approveCancelOrder(int orderId) throws Exception;
+
+    /** Admin từ chối hủy → trả về CONFIRMED */
+    int rejectCancelOrder(int orderId) throws Exception;
 }

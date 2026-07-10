@@ -227,6 +227,7 @@
     .o-card-icon.ic-shipping{background:linear-gradient(135deg,#7A5AF8,#9B7DFF);animation:truck-bounce 2s ease-in-out infinite}
     .o-card-icon.ic-done{background:linear-gradient(135deg,#12B76A,#34D399)}
     .o-card-icon.ic-cancelled{background:linear-gradient(135deg,#CE2E2E,#EE5D50)}
+    .o-card-icon.ic-pending_cancel{background:linear-gradient(135deg,#EAB308,#FCD34D)}
 
     .o-card-id{font-family:'EB Garamond',var(--fd),serif;font-size:17px;font-weight:800;color:var(--navy);text-align:center;margin-bottom:4px}
     .o-card-price{font-family:'EB Garamond',var(--fd),serif;font-size:20px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px}
@@ -288,6 +289,52 @@
     .o-detail-timeline{padding:0 8px}
     .o-detail-timeline .track-timeline{border-top:none;padding:0}
 
+    /* ── Shipping 3D Box Animation ── */
+    .ship-anim{text-align:center;padding:18px 0 8px;display:none}
+    .ship-anim.show{display:block}
+    .ship-anim-text{font-family:'EB Garamond',var(--fd),serif;font-size:16px;font-weight:700;color:#7A5AF8;margin-top:16px;position:relative;z-index:10}
+    .ship-anim-sub{font-size:11.5px;color:var(--ink-soft);margin-top:4px;position:relative;z-index:10}
+    .ship-dots::after{content:'';animation:ship-d 1.4s infinite steps(4)}
+    @keyframes ship-d{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+    .mini-loader{--duration:3s;--primary:#7A5AF8;--primary-light:#9B7DFF;--primary-rgba:rgba(122,90,248,0);width:120px;height:192px;position:relative;transform-style:preserve-3d;margin:0 auto;zoom:.5}
+    .mini-loader:before,.mini-loader:after{--r:20.5deg;content:"";width:320px;height:140px;position:absolute;right:32%;bottom:-11px;background:#fff;transform:translateZ(200px) rotate(var(--r));animation:ml-mask var(--duration) linear forwards infinite;pointer-events:none}
+    .mini-loader:after{--r:-20.5deg;right:auto;left:32%}
+    .mini-loader .ml-ground{position:absolute;left:-50px;bottom:-120px;transform-style:preserve-3d;transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}
+    .mini-loader .ml-ground div{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0);width:200px;height:200px;background:var(--primary);background:linear-gradient(45deg,var(--primary) 0%,var(--primary) 50%,var(--primary-light) 50%,var(--primary-light) 100%);transform-style:preserve-3d;animation:ml-ground var(--duration) linear forwards infinite}
+    .mini-loader .ml-ground div:before,.mini-loader .ml-ground div:after{--rx:90deg;--ry:0deg;--x:44px;--y:162px;--z:-50px;content:"";width:156px;height:300px;opacity:0;background:linear-gradient(var(--primary),var(--primary-rgba));position:absolute;transform:rotateX(var(--rx)) rotateY(var(--ry)) translate(var(--x),var(--y)) translateZ(var(--z));animation:ml-gs var(--duration) linear forwards infinite}
+    .mini-loader .ml-ground div:after{--rx:90deg;--ry:90deg;--x:0;--y:177px;--z:150px}
+    .mini-loader .ml-box{--x:0;--y:0;position:absolute;animation:var(--duration) linear forwards infinite;transform:translate(var(--x),var(--y))}
+    .mini-loader .ml-box div{background-color:var(--primary);width:48px;height:48px;position:relative;transform-style:preserve-3d;animation:var(--duration) ease forwards infinite;transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}
+    .mini-loader .ml-box div:before,.mini-loader .ml-box div:after{--rx:90deg;--ry:0deg;--z:24px;--y:-24px;--x:0;content:"";position:absolute;background-color:inherit;width:inherit;height:inherit;transform:rotateX(var(--rx)) rotateY(var(--ry)) translate(var(--x),var(--y)) translateZ(var(--z));filter:brightness(var(--b,1.2))}
+    .mini-loader .ml-box div:after{--rx:0deg;--ry:90deg;--x:24px;--y:0;--b:1.4}
+    .mini-loader .ml-b0{--x:-220px;--y:-120px;left:58px;top:108px;animation-name:ml-m0}.mini-loader .ml-b0 div{animation-name:ml-s0}
+    .mini-loader .ml-b1{--x:-260px;--y:120px;left:25px;top:120px;animation-name:ml-m1}.mini-loader .ml-b1 div{animation-name:ml-s1}
+    .mini-loader .ml-b2{--x:120px;--y:-190px;left:58px;top:64px;animation-name:ml-m2}.mini-loader .ml-b2 div{animation-name:ml-s2}
+    .mini-loader .ml-b3{--x:280px;--y:-40px;left:91px;top:120px;animation-name:ml-m3}.mini-loader .ml-b3 div{animation-name:ml-s3}
+    .mini-loader .ml-b4{--x:60px;--y:200px;left:58px;top:132px;animation-name:ml-m4}.mini-loader .ml-b4 div{animation-name:ml-s4}
+    .mini-loader .ml-b5{--x:-220px;--y:-120px;left:25px;top:76px;animation-name:ml-m5}.mini-loader .ml-b5 div{animation-name:ml-s5}
+    .mini-loader .ml-b6{--x:-260px;--y:120px;left:91px;top:76px;animation-name:ml-m6}.mini-loader .ml-b6 div{animation-name:ml-s6}
+    .mini-loader .ml-b7{--x:-240px;--y:200px;left:58px;top:87px;animation-name:ml-m7}.mini-loader .ml-b7 div{animation-name:ml-s7}
+    @keyframes ml-m0{12%{transform:translate(var(--x),var(--y))}25%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s0{6%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}14%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m1{16%{transform:translate(var(--x),var(--y))}29%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s1{10%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}18%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m2{20%{transform:translate(var(--x),var(--y))}33%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s2{14%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}22%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m3{24%{transform:translate(var(--x),var(--y))}37%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s3{18%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}26%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m4{28%{transform:translate(var(--x),var(--y))}41%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s4{22%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}30%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m5{32%{transform:translate(var(--x),var(--y))}45%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s5{26%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}34%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m6{36%{transform:translate(var(--x),var(--y))}49%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s6{30%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}38%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-m7{40%{transform:translate(var(--x),var(--y))}53%,52%{transform:translate(0,0)}80%{transform:translate(0,-32px)}90%,100%{transform:translate(0,188px)}}
+    @keyframes ml-s7{34%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(0)}42%,100%{transform:rotateY(-47deg) rotateX(-15deg) rotateZ(15deg) scale(1)}}
+    @keyframes ml-ground{0%,65%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0)}75%,90%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(1)}100%{transform:rotateX(90deg) rotateY(0deg) translate(-48px,-120px) translateZ(100px) scale(0)}}
+    @keyframes ml-gs{0%,70%{opacity:0}75%,87%{opacity:.2}100%{opacity:0}}
+    @keyframes ml-mask{0%,65%{opacity:0}66%,100%{opacity:1}}
+
     @media(max-width:900px){.o-cards{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.o-cards{grid-template-columns:1fr;gap:12px}}
     .s-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:99px;font-size:11.5px;font-weight:700}
@@ -297,6 +344,65 @@
     .s-SHIPPING{background:rgba(122,90,248,.1);color:#7A5AF8}.s-SHIPPING .s-dot{background:#7A5AF8}
     .s-DONE{background:rgba(43,172,98,.1);color:#12B76A}.s-DONE .s-dot{background:#12B76A}
     .s-CANCELLED{background:rgba(206,46,46,.1);color:#CE2E2E}.s-CANCELLED .s-dot{background:#CE2E2E}
+    .s-PENDING_CANCEL{background:rgba(234,179,8,.12);color:#B45309}.s-PENDING_CANCEL .s-dot{background:#EAB308}
+
+    /* ── Cancel Section ── */
+    .cancel-section{text-align:center;margin-top:18px;padding-top:16px;border-top:1px dashed rgba(0,0,0,.08)}
+    .cancel-btn{
+        display:inline-flex;align-items:center;gap:7px;
+        padding:10px 28px;border-radius:12px;font-size:13.5px;font-weight:700;
+        color:#CE2E2E;background:transparent;border:1.5px solid #CE2E2E;
+        cursor:pointer;transition:all .2s
+    }
+    .cancel-btn:hover{background:#CE2E2E;color:#fff}
+    .cancel-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .pending-cancel-notice{
+        text-align:center;margin-top:18px;padding:14px 18px;
+        border-radius:12px;background:rgba(234,179,8,.08);
+        border:1px solid rgba(234,179,8,.2);font-size:13px;color:#92400E
+    }
+
+    /* ── Cancel Modal ── */
+    .cancel-modal{
+        position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;
+        display:none;align-items:center;justify-content:center;
+        background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+        opacity:0;transition:opacity .25s
+    }
+    .cancel-modal.open{display:flex;opacity:1}
+    .cm-panel{
+        background:#fff;border-radius:20px;padding:32px;width:92%;max-width:420px;
+        box-shadow:0 24px 64px rgba(0,0,0,.18);position:relative;
+        transform:translateY(20px);transition:transform .3s
+    }
+    .cancel-modal.open .cm-panel{transform:translateY(0)}
+    .cm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;background:var(--cream);border-radius:50%;cursor:pointer;font-size:18px;color:var(--ink-soft);display:flex;align-items:center;justify-content:center}
+    .cm-title{font-family:var(--fd);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px}
+    .cm-sub{font-size:13px;color:var(--ink-soft);margin-bottom:18px}
+    .cm-reasons label{
+        display:flex;align-items:center;gap:10px;
+        padding:11px 14px;border-radius:10px;margin-bottom:8px;
+        cursor:pointer;font-size:13.5px;color:var(--ink);
+        border:1.5px solid rgba(0,0,0,.06);transition:all .15s
+    }
+    .cm-reasons label:hover{border-color:var(--navy);background:rgba(27,79,158,.03)}
+    .cm-reasons input[type=radio]{accent-color:var(--navy);width:16px;height:16px;flex-shrink:0}
+    .cm-reasons input[type=radio]:checked + span{font-weight:600}
+    .cm-other{display:none;margin-top:4px}
+    .cm-other textarea{
+        width:100%;min-height:70px;resize:vertical;border:1.5px solid rgba(0,0,0,.1);
+        border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;
+        outline:none;transition:border-color .2s
+    }
+    .cm-other textarea:focus{border-color:var(--navy)}
+    .cm-actions{display:flex;gap:10px;margin-top:18px}
+    .cm-actions button{flex:1;padding:11px;border-radius:12px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+    .cm-cancel-back{background:var(--cream);color:var(--ink)}
+    .cm-cancel-confirm{background:#CE2E2E;color:#fff}
+    .cm-cancel-confirm:disabled{opacity:.5;cursor:not-allowed}
+    .cm-msg{text-align:center;padding:12px;border-radius:10px;font-size:13px;margin-top:12px;display:none}
+    .cm-msg.success{display:block;background:rgba(43,172,98,.1);color:#12B76A}
+    .cm-msg.error{display:block;background:rgba(206,46,46,.1);color:#CE2E2E}
 
     /* ── Taste Profile ── */
     .taste-section{margin-bottom:22px}
@@ -697,7 +803,7 @@
         <c:if test="${not empty orderHistory}">
             <div class="o-cards">
             <c:forEach var="o" items="${orderHistory}">
-                <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING'}">
+                <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING' || o.status == 'PENDING_CANCEL'}">
                     <c:set var="hasActive" value="true"/>
                     <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
                         <div class="o-card-body">
@@ -706,12 +812,13 @@
                                     <c:when test="${o.status == 'PENDING'}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></c:when>
                                     <c:when test="${o.status == 'CONFIRMED'}"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></c:when>
                                     <c:when test="${o.status == 'SHIPPING'}"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></c:when>
+                                    <c:when test="${o.status == 'PENDING_CANCEL'}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></c:when>
                                 </c:choose>
                             </div>
                             <div class="o-card-id">Đơn #${o.orderId}</div>
                             <div class="o-card-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</div>
                             <div class="o-card-date"><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/></div>
-                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}">Đang giao</c:when></c:choose></span></div>
+                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}">Đang giao</c:when><c:when test="${o.status == 'PENDING_CANCEL'}">Chờ duyệt hủy</c:when></c:choose></span></div>
                         </div>
                         <div class="o-card-hover">
                             <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><strong>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</strong></div>
@@ -849,6 +956,52 @@
         </div>
         <div class="o-detail-info" id="ovInfo"></div>
         <div class="o-detail-timeline" id="ovTimeline"></div>
+        <div class="cancel-section" id="cancelSection" style="display:none">
+            <button class="cancel-btn" onclick="showCancelModal()">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                Hủy đơn hàng
+            </button>
+        </div>
+        <div class="pending-cancel-notice" id="pendingCancelNotice" style="display:none">
+            Yêu cầu hủy đã được gửi. Đang chờ admin duyệt hoàn tiền.
+        </div>
+        <div class="ship-anim" id="shipAnim">
+            <div class="mini-loader">
+                <div class="ml-box ml-b0"><div></div></div>
+                <div class="ml-box ml-b1"><div></div></div>
+                <div class="ml-box ml-b2"><div></div></div>
+                <div class="ml-box ml-b3"><div></div></div>
+                <div class="ml-box ml-b4"><div></div></div>
+                <div class="ml-box ml-b5"><div></div></div>
+                <div class="ml-box ml-b6"><div></div></div>
+                <div class="ml-box ml-b7"><div></div></div>
+                <div class="ml-ground"><div></div></div>
+            </div>
+            <p class="ship-anim-text">Đơn hàng đang trên đường đến bạn<span class="ship-dots"></span></p>
+            <p class="ship-anim-sub">Shipper sẽ liên hệ khi gần đến nơi</p>
+        </div>
+    </div>
+</div>
+
+<!-- ════════ Cancel Reason Modal ════════ -->
+<div class="cancel-modal" id="cancelModal">
+    <div class="cm-panel">
+        <button class="cm-close" onclick="closeCancelModal()">&times;</button>
+        <div class="cm-title">Lý do hủy đơn hàng</div>
+        <div class="cm-sub">Vui lòng cho chúng tôi biết lý do bạn muốn hủy</div>
+        <div class="cm-reasons">
+            <label><input type="radio" name="cancelReason" value="Đổi ý không muốn mua nữa"><span>Đổi ý không muốn mua nữa</span></label>
+            <label><input type="radio" name="cancelReason" value="Muốn thay đổi sản phẩm / số lượng"><span>Muốn thay đổi sản phẩm / số lượng</span></label>
+            <label><input type="radio" name="cancelReason" value="Tìm được giá tốt hơn ở nơi khác"><span>Tìm được giá tốt hơn ở nơi khác</span></label>
+            <label><input type="radio" name="cancelReason" value="Thời gian giao hàng quá lâu"><span>Thời gian giao hàng quá lâu</span></label>
+            <label><input type="radio" name="cancelReason" value="other"><span>Khác</span></label>
+        </div>
+        <div class="cm-other" id="cmOther"><textarea id="cmOtherText" placeholder="Nhập lý do của bạn..."></textarea></div>
+        <div class="cm-actions">
+            <button class="cm-cancel-back" onclick="closeCancelModal()">Quay lại</button>
+            <button class="cm-cancel-confirm" id="cmConfirmBtn" disabled onclick="submitCancel()">Xác nhận hủy</button>
+        </div>
+        <div class="cm-msg" id="cmMsg"></div>
     </div>
 </div>
 
@@ -1033,15 +1186,17 @@
         post('/account/address/delete',{addressId:id},function(ok,j){if(ok){var c=document.querySelector('.addr-card[data-id="'+id+'"]');if(c)c.remove()}else showMsg('addrMsg',false,j.error)});
     };
 
-    var statusNames={PENDING:'Chờ xác nhận',CONFIRMED:'Đã xác nhận',SHIPPING:'Đang giao hàng',DONE:'Hoàn thành',CANCELLED:'Đã hủy'};
+    var statusNames={PENDING:'Chờ xác nhận',CONFIRMED:'Đã xác nhận',SHIPPING:'Đang giao hàng',DONE:'Hoàn thành',CANCELLED:'Đã hủy',PENDING_CANCEL:'Chờ duyệt hủy'};
     var statusIcons={
         PENDING:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
         CONFIRMED:'<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
         SHIPPING:'<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
         DONE:'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
-        CANCELLED:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+        CANCELLED:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        PENDING_CANCEL:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
     };
     var statusRank={PENDING:0,CONFIRMED:1,SHIPPING:2,DONE:3};
+    var currentCancelOid=null;
 
     window.openOrderOverlay=function(card){
         var s=card.dataset.status,oid=card.dataset.oid;
@@ -1063,6 +1218,12 @@
                 '<div class="tl-line" style="background:#CE2E2E"></div>'+
                 '<div class="tl-step"><div class="tl-dot" style="background:#CE2E2E;border-color:#CE2E2E"></div><div class="tl-label" style="color:#CE2E2E">Đã hủy</div></div>'+
                 '</div>';
+        } else if(s==='PENDING_CANCEL'){
+            tl='<div class="track-timeline">'+
+                '<div class="tl-step done"><div class="tl-dot"></div><div class="tl-label">Đơn mới</div></div>'+
+                '<div class="tl-line" style="background:#EAB308"></div>'+
+                '<div class="tl-step active"><div class="tl-dot" style="background:#EAB308;border-color:#EAB308"></div><div class="tl-label" style="color:#B45309">Chờ duyệt hủy</div></div>'+
+                '</div>';
         } else {
             var rank=statusRank[s]||0;
             var steps=[{l:'Đơn mới',r:0},{l:'Đã xác nhận',r:1},{l:'Đang giao',r:2},{l:'Giao thành công',r:3}];
@@ -1075,11 +1236,71 @@
             tl+='</div>';
         }
         document.getElementById('ovTimeline').innerHTML=tl;
+        var shipAnim=document.getElementById('shipAnim');
+        if(shipAnim) shipAnim.className='ship-anim'+(s==='SHIPPING'?' show':'');
+        var cancelSec=document.getElementById('cancelSection');
+        var pendingNotice=document.getElementById('pendingCancelNotice');
+        if(cancelSec) cancelSec.style.display=(s==='PENDING'||s==='CONFIRMED')?'block':'none';
+        if(pendingNotice) pendingNotice.style.display=(s==='PENDING_CANCEL')?'block':'none';
+        currentCancelOid=oid;
         ov.classList.add('open');
     };
     window.closeOrderOverlay=function(){document.getElementById('orderOverlay').classList.remove('open')};
     document.getElementById('orderOverlay').addEventListener('click',function(e){if(e.target===this)closeOrderOverlay()});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeOrderOverlay();closeOverlay()}});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeCancelModal();closeOrderOverlay();closeOverlay()}});
+
+    window.showCancelModal=function(){
+        var m=document.getElementById('cancelModal');
+        m.querySelectorAll('input[name=cancelReason]').forEach(function(r){r.checked=false});
+        document.getElementById('cmOther').style.display='none';
+        document.getElementById('cmOtherText').value='';
+        document.getElementById('cmConfirmBtn').disabled=true;
+        var msg=document.getElementById('cmMsg');msg.className='cm-msg';msg.textContent='';
+        m.classList.add('open');
+    };
+    window.closeCancelModal=function(){document.getElementById('cancelModal').classList.remove('open')};
+    document.getElementById('cancelModal').addEventListener('click',function(e){if(e.target===this)closeCancelModal()});
+
+    document.querySelectorAll('input[name=cancelReason]').forEach(function(r){
+        r.addEventListener('change',function(){
+            var isOther=this.value==='other';
+            document.getElementById('cmOther').style.display=isOther?'block':'none';
+            document.getElementById('cmConfirmBtn').disabled=isOther&&!document.getElementById('cmOtherText').value.trim();
+        });
+    });
+    document.getElementById('cmOtherText').addEventListener('input',function(){
+        var sel=document.querySelector('input[name=cancelReason]:checked');
+        document.getElementById('cmConfirmBtn').disabled=!(sel&&(sel.value!=='other'||this.value.trim()));
+    });
+
+    window.submitCancel=function(){
+        var sel=document.querySelector('input[name=cancelReason]:checked');
+        if(!sel)return;
+        var reason=sel.value==='other'?document.getElementById('cmOtherText').value.trim():sel.value;
+        if(!reason)return;
+        var btn=document.getElementById('cmConfirmBtn');
+        btn.disabled=true;btn.textContent='Đang xử lý...';
+        fetch(CTX+'/account/order/cancel',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest'},
+            body:'orderId='+currentCancelOid+'&reason='+encodeURIComponent(reason)
+        }).then(function(r){return r.json()}).then(function(d){
+            var msg=document.getElementById('cmMsg');
+            if(d.success){
+                msg.className='cm-msg success';
+                msg.textContent=d.message;
+                setTimeout(function(){closeCancelModal();closeOrderOverlay();location.reload()},1500);
+            } else {
+                msg.className='cm-msg error';
+                msg.textContent=d.error||'Có lỗi xảy ra';
+                btn.disabled=false;btn.textContent='Xác nhận hủy';
+            }
+        }).catch(function(){
+            var msg=document.getElementById('cmMsg');
+            msg.className='cm-msg error';msg.textContent='Lỗi kết nối. Vui lòng thử lại.';
+            btn.disabled=false;btn.textContent='Xác nhận hủy';
+        });
+    };
 
     var allergyToNut={dau_phong:'dau_phong',hanh_nhan:'hanh_nhan'};
 

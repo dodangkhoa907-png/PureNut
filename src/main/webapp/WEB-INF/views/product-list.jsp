@@ -130,7 +130,18 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
   .zh-title{font-size:24px}
   .zh-sub{font-size:13px}
   .zh-bubble{width:140px;height:140px;font-size:64px}
-  .grid{grid-template-columns:1fr;gap:14px}
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .p-thumb{aspect-ratio:4/3}
+  .p-thumb svg{width:34%;height:34%}
+  .p-body{padding:10px 12px 12px}
+  .p-body h4{font-size:13.5px;margin-bottom:2px}
+  .p-body .meta{font-size:10px;margin-bottom:8px}
+  .p-foot{padding-top:8px}
+  .p-price{font-size:15px}
+  .p-price small{font-size:10px}
+  .add-btn{height:36px;border-radius:10px;font-size:12px;margin-top:8px;gap:5px}
+  .add-btn svg{width:16px;height:16px}
+  .p-tag{font-size:9px;padding:3px 7px;top:8px;left:8px}
   .card{border-radius:16px}
   .c-body{padding:16px 14px 14px}
   .c-name{font-size:15px}

@@ -15,8 +15,12 @@ public class Order {
     private String status;
     private String couponCode;
     private Date createdAt;
-    
-    private List<OrderItem> items; // Danh sách chi tiết
+    private String cancelReason;
+    private Date cancelledAt;
+    private String email;
+    private Date accountCreatedAt;
+
+    private List<OrderItem> items;
 
     public Order() {}
 
@@ -49,6 +53,18 @@ public class Order {
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+
+    public Date getCancelledAt() { return cancelledAt; }
+    public void setCancelledAt(Date cancelledAt) { this.cancelledAt = cancelledAt; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public Date getAccountCreatedAt() { return accountCreatedAt; }
+    public void setAccountCreatedAt(Date accountCreatedAt) { this.accountCreatedAt = accountCreatedAt; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }
