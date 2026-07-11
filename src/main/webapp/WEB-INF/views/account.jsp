@@ -688,7 +688,7 @@
             <span class="av-dot"></span>
         </div>
         <div class="ban-info">
-            <h1>${sessionScope.user.fullName}</h1>
+            <h1><c:out value="${sessionScope.user.fullName}"/></h1>
             <div class="ban-meta">
                 <span class="tier-badge tier-${memberTier}">
                     <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
@@ -700,7 +700,7 @@
                     </c:choose>
                 </span>
                 <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${sessionScope.user.email}</span>
-                <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${sessionScope.user.phone}</span>
+                <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><c:out value="${sessionScope.user.phone}"/></span>
                 <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Từ <fmt:formatDate value="${sessionScope.user.createdAt}" pattern="MM/yyyy"/></span>
             </div>
         </div>
@@ -1041,9 +1041,9 @@
                 </div>
 
                 <div class="ov-field"><label class="ov-label">Nickname (Tên hiển thị)</label><input type="text" class="ov-input" id="profNickname" value="" placeholder="Tên của bạn"></div>
-                <div class="ov-field"><label class="ov-label">Họ và tên</label><input type="text" class="ov-input" id="profName" value="${sessionScope.user.fullName}"></div>
+                <div class="ov-field"><label class="ov-label">Họ và tên</label><input type="text" class="ov-input" id="profName" value="${fn:escapeXml(sessionScope.user.fullName)}"></div>
                 <div class="ov-field"><label class="ov-label">Email</label><input type="email" class="ov-input" id="profEmail" value="${sessionScope.user.email}" readonly></div>
-                <div class="ov-field"><label class="ov-label">Số điện thoại</label><input type="tel" class="ov-input" id="profPhone" value="${sessionScope.user.phone}" pattern="0[0-9]{9,10}" maxlength="11"></div>
+                <div class="ov-field"><label class="ov-label">Số điện thoại</label><input type="tel" class="ov-input" id="profPhone" value="${fn:escapeXml(sessionScope.user.phone)}" pattern="0[0-9]{9,10}" maxlength="11"></div>
                 <div class="ov-field"><label class="ov-label">Ngày tham gia</label><input type="text" class="ov-input" value="<fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/>" readonly></div>
                 <button class="ov-btn primary" onclick="saveProfile()">Lưu thay đổi</button>
             </div>
@@ -1055,8 +1055,8 @@
                     <c:forEach var="addr" items="${addresses}">
                         <div class="addr-card" data-id="${addr.addressId}">
                             <div class="addr-label">${addr.label}<c:if test="${addr.isDefault()}"><span class="def-badge">Mặc định</span></c:if></div>
-                            <div class="addr-name">${addr.recipientName} · ${addr.phone}</div>
-                            <div class="addr-detail">${addr.fullAddress}</div>
+                            <div class="addr-name"><c:out value="${addr.recipientName}"/> · <c:out value="${addr.phone}"/></div>
+                            <div class="addr-detail"><c:out value="${addr.fullAddress}"/></div>
                             <div class="addr-actions"><button title="Xóa" onclick="deleteAddr(${addr.addressId})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>
                         </div>
                     </c:forEach>
@@ -1066,10 +1066,10 @@
                     <div class="form-title"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--navy);fill:none;stroke-width:2;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Thêm địa chỉ mới</div>
                     <div class="addr-row" style="margin-bottom:14px">
                         <div class="ov-field" style="margin-bottom:0"><label class="ov-label">Nhãn</label><select class="ov-input" id="addrLabel"><option>Nhà riêng</option><option>Công ty</option><option>Khác</option></select></div>
-                        <div class="ov-field" style="margin-bottom:0"><label class="ov-label">Người nhận</label><input type="text" class="ov-input" id="addrName" placeholder="${sessionScope.user.fullName}"></div>
+                        <div class="ov-field" style="margin-bottom:0"><label class="ov-label">Người nhận</label><input type="text" class="ov-input" id="addrName" placeholder="${fn:escapeXml(sessionScope.user.fullName)}"></div>
                     </div>
                     <div class="addr-row" style="margin-bottom:14px">
-                        <div class="ov-field" style="margin-bottom:0"><label class="ov-label">SĐT</label><input type="tel" class="ov-input" id="addrPhone" placeholder="${sessionScope.user.phone}" pattern="0[0-9]{9,10}"></div>
+                        <div class="ov-field" style="margin-bottom:0"><label class="ov-label">SĐT</label><input type="tel" class="ov-input" id="addrPhone" placeholder="${fn:escapeXml(sessionScope.user.phone)}" pattern="0[0-9]{9,10}"></div>
                         <div class="ov-field" style="margin-bottom:0"><label class="ov-label">Tỉnh / Thành phố</label><input type="text" class="ov-input" id="addrProvince" placeholder="TP. Hồ Chí Minh"></div>
                     </div>
                     <div class="addr-row" style="margin-bottom:14px">

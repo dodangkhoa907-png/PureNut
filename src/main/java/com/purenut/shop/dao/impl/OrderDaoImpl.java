@@ -321,7 +321,7 @@ public class OrderDaoImpl implements OrderDao {
             conn.setAutoCommit(false);
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT Status FROM Orders WHERE OrderID = ?")) {
+                    "SELECT Status FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE OrderID = ?")) {
                 ps.setInt(1, orderId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) throw new IllegalStateException("Đơn hàng không tồn tại");

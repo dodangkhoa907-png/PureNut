@@ -94,8 +94,8 @@ public class PasswordResetController extends HttpServlet {
         Optional<User> userOpt = userDao.findByEmail(email);
 
         if (userOpt.isEmpty()) {
-            req.setAttribute("errorMessage", "Nếu email này tồn tại trong hệ thống, mã OTP đã được gửi.");
-            req.getRequestDispatcher("/WEB-INF/views/forgot-password.jsp").forward(req, resp);
+            req.getSession().setAttribute("reset_generic_msg", true);
+            resp.sendRedirect(req.getContextPath() + "/forgot-password?sent=true");
             return;
         }
 

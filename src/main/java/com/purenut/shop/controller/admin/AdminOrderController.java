@@ -90,7 +90,7 @@ public class AdminOrderController extends HttpServlet {
             int curRank = STATUS_RANK.getOrDefault(curStatus, -1);
             int newRank = STATUS_RANK.getOrDefault(status, -1);
 
-            if ("DONE".equals(curStatus) || "CANCELLED".equals(curStatus)) {
+            if ("DONE".equals(curStatus) || "CANCELLED".equals(curStatus) || "PENDING_CANCEL".equals(curStatus)) {
                 resp.sendRedirect(req.getContextPath() + "/admin/don-hang/chi-tiet?id=" + orderId + "&error=final");
                 return;
             }

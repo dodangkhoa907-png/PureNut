@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="vi">
@@ -205,10 +206,10 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
           <article class="pcard reveal">
             <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${not empty p.bgColorHex ? p.bgColorHex : '#E7C9A0'}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
             <div class="p-body">
-              <a href="${ctx}/products/${p.slug}"><h4>${p.name}</h4></a>
+              <a href="${ctx}/products/${p.slug}"><h4><c:out value="${p.name}"/></h4></a>
               <div class="meta">${p.volumeMl}ml · ${p.kcalPer100ml} kcal/100ml</div>
               <div class="p-foot"><span class="p-price">${p.formattedPrice}<small> đ</small></span></div>
-              <c:choose><c:when test="${p.stockQuantity>0}"><button class="add-btn" data-id="${p.productId}" data-name="${p.name}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Thêm vào giỏ</span></button></c:when><c:otherwise><button class="add-btn" disabled>Hết hàng</button></c:otherwise></c:choose>
+              <c:choose><c:when test="${p.stockQuantity>0}"><button class="add-btn" data-id="${p.productId}" data-name="${fn:escapeXml(p.name)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Thêm vào giỏ</span></button></c:when><c:otherwise><button class="add-btn" disabled>Hết hàng</button></c:otherwise></c:choose>
             </div>
           </article>
         </c:if></c:forEach>
@@ -257,10 +258,10 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
           <article class="pcard reveal">
             <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${not empty p.bgColorHex ? p.bgColorHex : '#BFE0F2'}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
             <div class="p-body">
-              <a href="${ctx}/products/${p.slug}"><h4>${p.name}</h4></a>
+              <a href="${ctx}/products/${p.slug}"><h4><c:out value="${p.name}"/></h4></a>
               <div class="meta">${p.volumeMl}ml · ${p.kcalPer100ml} kcal/100ml</div>
               <div class="p-foot"><span class="p-price">${p.formattedPrice}<small> đ</small></span></div>
-              <c:choose><c:when test="${p.stockQuantity>0}"><button class="add-btn" data-id="${p.productId}" data-name="${p.name}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Thêm vào giỏ</span></button></c:when><c:otherwise><button class="add-btn" disabled>Hết hàng</button></c:otherwise></c:choose>
+              <c:choose><c:when test="${p.stockQuantity>0}"><button class="add-btn" data-id="${p.productId}" data-name="${fn:escapeXml(p.name)}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Thêm vào giỏ</span></button></c:when><c:otherwise><button class="add-btn" disabled>Hết hàng</button></c:otherwise></c:choose>
             </div>
           </article>
         </c:if></c:forEach>

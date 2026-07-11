@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/admin/layout/header.jsp" />
 
@@ -30,10 +31,10 @@
             <tbody>
                 <c:forEach var="lead" items="${leads}">
                     <tr>
-                        <td><strong>${lead.fullName}</strong></td>
+                        <td><strong><c:out value="${lead.fullName}"/></strong></td>
                         <td>
-                            <div style="font-size: 14px;">${lead.phone}</div>
-                            <div style="font-size: 13px; color: var(--admin-text-light);">${lead.email}</div>
+                            <div style="font-size: 14px;"><c:out value="${lead.phone}"/></div>
+                            <div style="font-size: 13px; color: var(--admin-text-light);"><c:out value="${lead.email}"/></div>
                         </td>
                         <td>${lead.city}</td>
                         <td><fmt:formatDate value="${lead.createdAt}" pattern="dd/MM/yyyy" /></td>

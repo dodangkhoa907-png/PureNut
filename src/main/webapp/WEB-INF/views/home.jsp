@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="vi">
@@ -219,12 +220,12 @@ footer{background:var(--navy-darker);color:#C9D6EA;padding:60px 0 26px}
           </div>
         </a>
         <div class="p-body">
-          <a href="${ctx}/products/${p.slug}"><h3>${p.name}</h3></a>
+          <a href="${ctx}/products/${p.slug}"><h3><c:out value="${p.name}"/></h3></a>
           <div class="meta">${p.categoryName} · ${p.volumeMl}ml · ${p.kcalPer100ml} kcal</div>
           <div class="p-foot">
             <span class="p-price">${p.formattedPrice}<small> đ</small></span>
             <c:choose>
-              <c:when test="${p.stockQuantity > 0}"><button class="add-btn" data-id="${p.productId}" data-name="${p.name}" aria-label="Thêm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></c:when>
+              <c:when test="${p.stockQuantity > 0}"><button class="add-btn" data-id="${p.productId}" data-name="${fn:escapeXml(p.name)}" aria-label="Thêm"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></c:when>
               <c:otherwise><button class="add-btn" disabled>—</button></c:otherwise>
             </c:choose>
           </div>

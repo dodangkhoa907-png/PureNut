@@ -48,6 +48,10 @@ public class CartController extends HttpServlet {
 
         if ("/cart".equals(path)) {
             User user = (User) request.getSession().getAttribute("user");
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
 
             List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
 
@@ -107,7 +111,7 @@ public class CartController extends HttpServlet {
             String referer = request.getHeader("Referer");
             String ctxUrl = request.getRequestURL().toString();
             String origin = ctxUrl.substring(0, ctxUrl.indexOf(request.getRequestURI()));
-            if (referer != null && referer.startsWith(origin)) {
+            if (referer != null && (referer.startsWith(origin + "/") || referer.equals(origin))) {
                 referer = referer.replaceAll("[&?]success=[^&]*", "");
                 String separator = referer.contains("?") ? "&" : "?";
                 response.sendRedirect(referer + separator + "success=added");

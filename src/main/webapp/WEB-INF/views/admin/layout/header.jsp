@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="uri" value="${requestScope['jakarta.servlet.forward.servlet_path']}"/>
 <!DOCTYPE html>
@@ -163,7 +164,7 @@
         <header class="admin-header">
             <div class="admin-header-title">
                 ${pageTitle != null ? pageTitle : 'Dashboard'}
-                <small>Chào mừng trở lại, ${sessionScope.adminUser.fullName}!</small>
+                <small>Chào mừng trở lại, <c:out value="${sessionScope.adminUser.fullName}"/>!</small>
             </div>
             <div class="admin-header-right">
                 <div class="noti-wrap">
@@ -184,10 +185,10 @@
                 <a href="${ctx}/admin/settings" class="hdr-ic" title="Cài đặt"><i class="fa-solid fa-gear"></i></a>
                 <div class="admin-user">
                     <div>
-                        <div class="u-name">${sessionScope.adminUser.fullName}</div>
+                        <div class="u-name"><c:out value="${sessionScope.adminUser.fullName}"/></div>
                         <div class="u-role">Quản trị viên</div>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=${sessionScope.adminUser.fullName}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
+                    <img src="https://ui-avatars.com/api/?name=${fn:escapeXml(sessionScope.adminUser.fullName)}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
                 </div>
             </div>
         </header>

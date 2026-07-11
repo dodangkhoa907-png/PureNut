@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/admin/layout/header.jsp" />
 
@@ -219,14 +220,14 @@
                     <div class="od-info-ic"><i class="fa-solid fa-user"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Người đặt hàng</div>
-                        <div class="od-info-val">${order.fullName}</div>
+                        <div class="od-info-val"><c:out value="${order.fullName}"/></div>
                     </div>
                 </div>
                 <div class="od-info-row">
                     <div class="od-info-ic"><i class="fa-solid fa-phone"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Số điện thoại</div>
-                        <div class="od-info-val">${order.phone}</div>
+                        <div class="od-info-val"><c:out value="${order.phone}"/></div>
                     </div>
                 </div>
                 <c:if test="${not empty customer}">
@@ -259,7 +260,7 @@
                     <div class="od-info-ic"><i class="fa-solid fa-map-pin"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Địa chỉ</div>
-                        <div class="od-info-val">${order.address}</div>
+                        <div class="od-info-val"><c:out value="${order.address}"/></div>
                     </div>
                 </div>
                 <div class="od-info-row">
@@ -305,7 +306,7 @@
                     <div class="od-cancel-reason-label" style="color:${order.status == 'PENDING_CANCEL' ? '#B45309' : '#F04438'}">
                         <i class="fa-solid fa-comment-dots" style="margin-right:4px"></i>Lý do hủy từ khách hàng
                     </div>
-                    <div class="od-cancel-reason-val" style="color:var(--admin-text)">${order.cancelReason}</div>
+                    <div class="od-cancel-reason-val" style="color:var(--admin-text)"><c:out value="${order.cancelReason}"/></div>
                 </div>
             </c:if>
 
