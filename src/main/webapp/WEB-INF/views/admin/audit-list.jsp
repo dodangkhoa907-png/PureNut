@@ -93,27 +93,27 @@
                     </c:if>
                     <tr data-cat="${logCat}">
                         <td style="white-space:nowrap"><fmt:formatDate value="${log.createdAt}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
-                        <td><strong>${empty log.userName ? 'Hệ thống' : log.userName}</strong></td>
-                        <td><span class="act-badge act-${log.action != 'LOGIN' && log.action != 'ADMIN_LOGIN' && log.action != 'CHANGE_PASSWORD' && log.action != 'UPDATE_ORDER_STATUS' ? 'DEFAULT' : log.action}">${log.action}</span></td>
-                        <td>${log.target}</td>
+                        <td><strong><c:out value="${empty log.userName ? 'Hệ thống' : log.userName}"/></strong></td>
+                        <td><span class="act-badge act-${log.action != 'LOGIN' && log.action != 'ADMIN_LOGIN' && log.action != 'CHANGE_PASSWORD' && log.action != 'UPDATE_ORDER_STATUS' ? 'DEFAULT' : log.action}"><c:out value="${log.action}"/></span></td>
+                        <td><c:out value="${log.target}"/></td>
                         <td>
                             <c:choose>
                                 <c:when test="${log.action == 'UPDATE_ORDER_STATUS' && fn:contains(log.detail, 'CONFIRMED')}">
-                                    <span class="audit-status as-CONFIRMED"><i class="fa-solid fa-circle-check"></i> ${log.detail}</span>
+                                    <span class="audit-status as-CONFIRMED"><i class="fa-solid fa-circle-check"></i> <c:out value="${log.detail}"/></span>
                                 </c:when>
                                 <c:when test="${log.action == 'UPDATE_ORDER_STATUS' && fn:contains(log.detail, 'SHIPPING')}">
-                                    <span class="audit-status as-SHIPPING"><i class="fa-solid fa-truck-fast"></i> ${log.detail}</span>
+                                    <span class="audit-status as-SHIPPING"><i class="fa-solid fa-truck-fast"></i> <c:out value="${log.detail}"/></span>
                                 </c:when>
                                 <c:when test="${log.action == 'UPDATE_ORDER_STATUS' && fn:contains(log.detail, 'DONE')}">
-                                    <span class="audit-status as-DONE"><i class="fa-solid fa-check-double"></i> ${log.detail}</span>
+                                    <span class="audit-status as-DONE"><i class="fa-solid fa-check-double"></i> <c:out value="${log.detail}"/></span>
                                 </c:when>
                                 <c:when test="${log.action == 'UPDATE_ORDER_STATUS' && fn:contains(log.detail, 'CANCELLED')}">
-                                    <span class="audit-status as-CANCELLED"><i class="fa-solid fa-ban"></i> ${log.detail}</span>
+                                    <span class="audit-status as-CANCELLED"><i class="fa-solid fa-ban"></i> <c:out value="${log.detail}"/></span>
                                 </c:when>
-                                <c:otherwise>${log.detail}</c:otherwise>
+                                <c:otherwise><c:out value="${log.detail}"/></c:otherwise>
                             </c:choose>
                         </td>
-                        <td class="mono">${log.ipAddress}</td>
+                        <td class="mono"><c:out value="${log.ipAddress}"/></td>
                     </tr>
                 </c:forEach>
                 <c:if test="${empty logs}">

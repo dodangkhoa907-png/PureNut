@@ -118,8 +118,10 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> list = new java.util.ArrayList<>();
         String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
                      "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
-                     "o.CancelReason, o.CancelledAt, u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
+                     "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
+                     "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
                      "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
+                     "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
                      "ORDER BY o.CreatedAt DESC";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -139,6 +141,9 @@ public class OrderDaoImpl implements OrderDao {
                 o.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 o.setCancelReason(rs.getNString("CancelReason"));
                 o.setCancelledAt(rs.getTimestamp("CancelledAt"));
+                int sid = rs.getInt("ShipperID");
+                o.setShipperId(rs.wasNull() ? null : sid);
+                o.setShipperName(rs.getNString("ShipperName"));
                 o.setEmail(rs.getString("UserEmail"));
                 o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                 list.add(o);
@@ -209,6 +214,8 @@ public class OrderDaoImpl implements OrderDao {
                         o.setCreatedAt(rs.getTimestamp("CreatedAt"));
                         o.setCancelReason(rs.getNString("CancelReason"));
                         o.setCancelledAt(rs.getTimestamp("CancelledAt"));
+                        int sid = rs.getInt("ShipperID");
+                        o.setShipperId(rs.wasNull() ? null : sid);
                     }
                 }
             }
@@ -273,7 +280,7 @@ public class OrderDaoImpl implements OrderDao {
             }
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE Orders SET Status='CANCELLED', CancelReason=?, CancelledAt=GETDATE() WHERE OrderID=?")) {
+                    "UPDATE Orders SET Status='CANCELLED', CancelReason=?, CancelledAt=DATEADD(HOUR,7,GETUTCDATE()) WHERE OrderID=?")) {
                 ps.setNString(1, reason);
                 ps.setInt(2, orderId);
                 ps.executeUpdate();
@@ -321,7 +328,7 @@ public class OrderDaoImpl implements OrderDao {
             conn.setAutoCommit(false);
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT Status FROM Orders WHERE OrderID = ?")) {
+                    "SELECT Status FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE OrderID = ?")) {
                 ps.setInt(1, orderId);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) throw new IllegalStateException("Đơn hàng không tồn tại");
@@ -334,7 +341,7 @@ public class OrderDaoImpl implements OrderDao {
             }
 
             try (PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE Orders SET Status='CANCELLED', CancelledAt=GETDATE() WHERE OrderID=?")) {
+                    "UPDATE Orders SET Status='CANCELLED', CancelledAt=DATEADD(HOUR,7,GETUTCDATE()) WHERE OrderID=?")) {
                 ps.setInt(1, orderId);
                 ps.executeUpdate();
             }
@@ -358,6 +365,110 @@ public class OrderDaoImpl implements OrderDao {
             ps.setInt(1, orderId);
             return ps.executeUpdate();
         }
+    }
+
+    @Override
+    public int assignShipper(int orderId, int shipperId) {
+        // Chỉ gán khi đơn đã CONFIRMED (hoặc gán lại khi đang SHIPPING)
+        String sql = "UPDATE Orders SET ShipperID = ?, Status = 'SHIPPING' " +
+                     "WHERE OrderID = ? AND Status IN ('CONFIRMED','SHIPPING')";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, shipperId);
+            ps.setInt(2, orderId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Order> findOrdersByShipper(int shipperId) {
+        List<Order> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Orders WHERE ShipperID = ? " +
+                     "ORDER BY CASE WHEN Status = 'SHIPPING' THEN 0 ELSE 1 END, CreatedAt DESC";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, shipperId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order o = new Order();
+                    o.setOrderId(rs.getInt("OrderID"));
+                    o.setUserId(rs.getInt("UserID"));
+                    o.setFullName(rs.getNString("FullName"));
+                    o.setPhone(rs.getString("Phone"));
+                    o.setAddress(rs.getNString("Address"));
+                    o.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    o.setPaymentMethod(rs.getString("PaymentMethod"));
+                    o.setStatus(rs.getString("Status"));
+                    o.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    int sid = rs.getInt("ShipperID");
+                    o.setShipperId(rs.wasNull() ? null : sid);
+                    list.add(o);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public List<Order> findAllOrdersPaged(int offset, int limit) {
+        List<Order> list = new java.util.ArrayList<>();
+        String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
+                     "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
+                     "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
+                     "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
+                     "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
+                     "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
+                     "ORDER BY o.CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order o = new Order();
+                    o.setOrderId(rs.getInt("OrderID"));
+                    o.setUserId(rs.getInt("UserID"));
+                    o.setFullName(rs.getNString("FullName"));
+                    o.setPhone(rs.getString("Phone"));
+                    o.setAddress(rs.getNString("Address"));
+                    o.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    o.setPaymentMethod(rs.getString("PaymentMethod"));
+                    o.setStatus(rs.getString("Status"));
+                    o.setCouponCode(rs.getString("CouponCode"));
+                    o.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    o.setCancelReason(rs.getNString("CancelReason"));
+                    o.setCancelledAt(rs.getTimestamp("CancelledAt"));
+                    int sid = rs.getInt("ShipperID");
+                    o.setShipperId(rs.wasNull() ? null : sid);
+                    o.setShipperName(rs.getNString("ShipperName"));
+                    o.setEmail(rs.getString("UserEmail"));
+                    o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
+                    list.add(o);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public int countOrders() {
+        String sql = "SELECT COUNT(*) FROM Orders";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private void restoreStock(Connection conn, int orderId) throws SQLException {

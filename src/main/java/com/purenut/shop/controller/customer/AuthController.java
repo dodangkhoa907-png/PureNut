@@ -4,8 +4,11 @@ import com.purenut.shop.model.User;
 import com.purenut.shop.model.CartItem;
 import com.purenut.shop.service.UserService;
 import com.purenut.shop.service.impl.UserServiceImpl;
+import com.purenut.shop.dao.UserDao;
+import com.purenut.shop.dao.impl.UserDaoImpl;
 import com.purenut.shop.dao.CartItemDao;
 import com.purenut.shop.dao.impl.CartItemDaoImpl;
+import com.purenut.shop.util.AuditLogger;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,11 +25,13 @@ import java.util.Optional;
 public class AuthController extends HttpServlet {
 
     private UserService userService;
+    private UserDao userDao;
     private CartItemDao cartItemDao;
 
     @Override
     public void init() throws ServletException {
         userService = new UserServiceImpl();
+        userDao = new UserDaoImpl();
         cartItemDao = new CartItemDaoImpl();
     }
 
@@ -39,9 +44,7 @@ public class AuthController extends HttpServlet {
         
         if ("/logout".equals(path)) {
             if (session != null) {
-                session.removeAttribute("user");
-                session.removeAttribute("cartItems");
-                session.removeAttribute("cartCount");
+                session.invalidate();
             }
             response.sendRedirect(request.getContextPath() + "/");
             return;
@@ -84,7 +87,7 @@ public class AuthController extends HttpServlet {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            // Tách role: trang này CHỈ dành cho khách hàng
+            // Tách role: trang này CHỈ dành cho khách hàng + nhân viên
             if ("ADMIN".equals(user.getRole())) {
                 request.setAttribute("errorMessage",
                         "Đây là tài khoản quản trị. Vui lòng đăng nhập tại trang Quản trị.");
@@ -95,13 +98,29 @@ public class AuthController extends HttpServlet {
             HttpSession session = request.getSession();
             request.changeSessionId(); // chống session fixation
             session.setAttribute("user", user);
-            
+
+            userDao.updateLoginInfo(user.getUserId(), request.getRemoteAddr());
+
+            // Nhân viên: chuyển thẳng vào khu làm việc riêng
+            if ("SHIPPER".equals(user.getRole())) {
+                AuditLogger.log(request, user.getUserId(), "STAFF_LOGIN", user.getEmail(), "Shipper đăng nhập");
+                response.sendRedirect(request.getContextPath() + "/shipper");
+                return;
+            }
+            if ("MANAGER".equals(user.getRole())) {
+                AuditLogger.log(request, user.getUserId(), "STAFF_LOGIN", user.getEmail(), "Manager đăng nhập");
+                response.sendRedirect(request.getContextPath() + "/manager");
+                return;
+            }
+
+            AuditLogger.log(request, user.getUserId(), "CUSTOMER_LOGIN", user.getEmail(), "Đăng nhập tài khoản khách hàng");
+
             // Load cart items từ database
             List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
             int cartCount = cartItemDao.countItems(user.getUserId());
             session.setAttribute("cartItems", cartItems);
             session.setAttribute("cartCount", cartCount);
-            
+
             response.sendRedirect(request.getContextPath() + "/");
         } else {
             request.setAttribute("errorMessage", "Email hoặc mật khẩu không đúng.");
@@ -116,6 +135,13 @@ public class AuthController extends HttpServlet {
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
+        String agreeTerms = request.getParameter("agreeTerms");
+
+        if (!"on".equals(agreeTerms)) {
+            request.setAttribute("errorMessage", "Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật.");
+            request.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(request, response);
+            return;
+        }
 
         if (password == null || !password.equals(confirmPassword)) {
             request.setAttribute("errorMessage", "Mật khẩu xác nhận không khớp.");
@@ -136,7 +162,10 @@ public class AuthController extends HttpServlet {
             HttpSession session = request.getSession();
             request.changeSessionId(); // chống session fixation
             session.setAttribute("user", user);
-            
+
+            userDao.updateLoginInfo(user.getUserId(), request.getRemoteAddr());
+            AuditLogger.log(request, user.getUserId(), "CUSTOMER_REGISTER", user.getEmail(), "Đăng ký tài khoản mới");
+
             // Giỏ hàng của user mới là rỗng
             session.setAttribute("cartItems", java.util.Collections.emptyList());
             session.setAttribute("cartCount", 0);

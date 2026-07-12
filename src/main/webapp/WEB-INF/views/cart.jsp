@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
@@ -323,10 +324,10 @@
             <div class="ci-row" data-price="${item.productPrice}" data-qty="${item.quantity}" data-id="${item.cartItemId}">
                 <div class="ci-check-wrap"><label class="checkbox-container"><input class="custom-checkbox ci-item-check" type="checkbox" checked><span class="checkmark"></span></label></div>
                 <div class="ci-prod">
-                    <a href="${ctx}/products/${item.productSlug}" class="ci-thumb" style="background:${not empty item.bgColorHex ? item.bgColorHex : '#E9DCBE'}">
+                    <a href="${ctx}/products/${item.productSlug}" class="ci-thumb" style="background:${fn:escapeXml(not empty item.bgColorHex ? item.bgColorHex : '#E9DCBE')}">
                         <c:choose>
                             <c:when test="${not empty item.imageUrl}">
-                                <img src="${ctx}${item.imageUrl}" alt="${item.productName}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=ci-thumb-emoji>🥛</span>'">
+                                <img src="${ctx}${item.imageUrl}" alt="${fn:escapeXml(item.productName)}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=ci-thumb-emoji>🥛</span>'">
                             </c:when>
                             <c:otherwise>
                                 <span class="ci-thumb-emoji">🥛</span>
@@ -334,7 +335,7 @@
                         </c:choose>
                     </a>
                     <div class="ci-info">
-                        <div class="ci-name"><a href="${ctx}/products/${item.productSlug}">${item.productName}</a></div>
+                        <div class="ci-name"><a href="${ctx}/products/${item.productSlug}"><c:out value="${item.productName}"/></a></div>
                         <div class="ci-meta">
                             <span>Chai thủy tinh ${item.volumeMl}ml</span>
                             <span class="dot">·</span>
@@ -344,6 +345,7 @@
                 </div>
                 <div class="ci-actions-wrap">
                     <form action="${ctx}/cart/update" method="POST" class="qty-form" style="margin:0">
+                        <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                         <input type="hidden" name="cartItemId" value="${item.cartItemId}">
                         <div class="ci-qty">
                             <button type="button" class="q-minus">−</button>
@@ -534,5 +536,6 @@
     recalc();
 })();
 </script>
+<jsp:include page="/WEB-INF/views/layout/support-widget.jsp" />
 </body>
 </html>

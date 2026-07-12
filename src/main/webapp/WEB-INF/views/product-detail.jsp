@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="isBean" value="${product.categorySlug == 'dau-nanh'}"/>
 <c:set var="accA" value="${isBean ? '#B9883A' : '#1877C4'}"/>
@@ -12,8 +13,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${product.name} — PureNut</title>
-<meta name="description" content="${product.description}">
+<title><c:out value="${product.name}"/> — PureNut</title>
+<meta name="description" content="${fn:escapeXml(fn:substring(product.description, 0, 160))}">
 <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700;800&display=swap" rel="stylesheet">
 <script>window.CTX='${ctx}';</script>
@@ -320,7 +321,7 @@
   <nav class="crumb" aria-label="Breadcrumb">
     <a href="${ctx}/">Trang chủ</a><span class="crumb-sep">›</span>
     <a href="${ctx}/products">Sản phẩm</a><span class="crumb-sep">›</span>
-    <span style="color:var(--ink)">${product.name}</span>
+    <span style="color:var(--ink)"><c:out value="${product.name}"/></span>
   </nav>
 </div>
 
@@ -339,8 +340,8 @@
 
   <!-- Info -->
   <div class="info-pane">
-    <span class="eyebrow-pill" style="color:${accA};background:${accA}18;border-color:${accA}44">${product.categoryName}</span>
-    <h1>${product.name}</h1>
+    <span class="eyebrow-pill" style="color:${accA};background:${accA}18;border-color:${accA}44"><c:out value="${product.categoryName}"/></span>
+    <h1><c:out value="${product.name}"/></h1>
     <div class="price">${product.formattedPrice} đ</div>
     <div class="price-sub">/ chai ${product.volumeMl}ml · Đã bao gồm VAT</div>
     <!-- Mobile Social Proof -->
@@ -369,7 +370,7 @@
         </div>
       </div>
       <div class="desc-block" style="margin-top:16px">
-        <p>${product.description}</p>
+        <p><c:out value="${product.description}"/></p>
       </div>
     </div>
 
@@ -438,14 +439,14 @@
   <button class="bs-close" onclick="closeAllSheets()">&times;</button>
   <div class="bs-body">
     <div class="bs-product">
-      <div class="bs-product-img" style="background:${not empty product.bgColorHex ? product.bgColorHex : '#E9DCBE'}">
+      <div class="bs-product-img" style="background:${fn:escapeXml(not empty product.bgColorHex ? product.bgColorHex : '#E9DCBE')}">
         <c:choose>
-          <c:when test="${not empty product.imageUrl}"><img src="${ctx}${product.imageUrl}" alt="${product.name}"></c:when>
+          <c:when test="${not empty product.imageUrl}"><img src="${ctx}${product.imageUrl}" alt="${fn:escapeXml(product.name)}"></c:when>
           <c:otherwise>${zoneIcon}</c:otherwise>
         </c:choose>
       </div>
       <div class="bs-product-info">
-        <div class="bs-product-name">${product.name}</div>
+        <div class="bs-product-name"><c:out value="${product.name}"/></div>
         <div class="bs-product-price">${product.formattedPrice} đ</div>
         <div class="bs-product-stock">Còn ${product.stockQuantity} sản phẩm</div>
       </div>
@@ -472,12 +473,12 @@
     <div class="grid">
       <c:forEach var="rel" items="${relatedProducts}">
         <a href="${ctx}/products/${rel.slug}" class="pcard">
-          <div class="pcard-thumb" style="background:${not empty rel.bgColorHex ? rel.bgColorHex : '#E9DCBE'}">
+          <div class="pcard-thumb" style="background:${fn:escapeXml(not empty rel.bgColorHex ? rel.bgColorHex : '#E9DCBE')}">
             <div class="pcard-thumb-emoji">${isBean ? '🌰' : '🥛'}</div>
             <c:if test="${rel.featured}"><span class="pcard-feat-badge">⭐ Nổi bật</span></c:if>
           </div>
           <div class="pcard-body">
-            <div class="pcard-name">${rel.name}</div>
+            <div class="pcard-name"><c:out value="${rel.name}"/></div>
             <div class="pcard-meta">${rel.volumeMl}ml · ${rel.kcalPer100ml} kcal/100ml</div>
             <div class="pcard-foot">
               <div class="pcard-price" style="color:${accA}">${rel.formattedPrice} đ</div>

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/admin/layout/header.jsp" />
 
@@ -194,7 +195,7 @@
                 <tbody>
                     <c:forEach var="item" items="${order.items}">
                     <tr>
-                        <td class="p-name">${item.productName}</td>
+                        <td class="p-name"><c:out value="${item.productName}"/></td>
                         <td><fmt:formatNumber value="${item.priceAtTime}" type="number" maxFractionDigits="0"/>đ</td>
                         <td>x${item.quantity}</td>
                         <td class="p-price" style="text-align:right"><fmt:formatNumber value="${item.priceAtTime * item.quantity}" type="number" maxFractionDigits="0"/>đ</td>
@@ -219,14 +220,14 @@
                     <div class="od-info-ic"><i class="fa-solid fa-user"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Người đặt hàng</div>
-                        <div class="od-info-val">${order.fullName}</div>
+                        <div class="od-info-val"><c:out value="${order.fullName}"/></div>
                     </div>
                 </div>
                 <div class="od-info-row">
                     <div class="od-info-ic"><i class="fa-solid fa-phone"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Số điện thoại</div>
-                        <div class="od-info-val">${order.phone}</div>
+                        <div class="od-info-val"><c:out value="${order.phone}"/></div>
                     </div>
                 </div>
                 <c:if test="${not empty customer}">
@@ -234,7 +235,7 @@
                     <div class="od-info-ic"><i class="fa-solid fa-envelope"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Email</div>
-                        <div class="od-info-val">${customer.email}</div>
+                        <div class="od-info-val"><c:out value="${customer.email}"/></div>
                     </div>
                 </div>
                 <div class="od-info-row">
@@ -244,6 +245,15 @@
                         <div class="od-info-val"><fmt:formatDate value="${customer.createdAt}" pattern="dd/MM/yyyy HH:mm"/></div>
                     </div>
                 </div>
+                <c:if test="${not empty customer.lastLoginIP}">
+                <div class="od-info-row">
+                    <div class="od-info-ic"><i class="fa-solid fa-network-wired"></i></div>
+                    <div class="od-info-body">
+                        <div class="od-info-label">Đăng nhập gần nhất</div>
+                        <div class="od-info-val"><c:out value="${customer.lastLoginIP}"/> — <fmt:formatDate value="${customer.lastLoginAt}" pattern="dd/MM/yyyy HH:mm"/></div>
+                    </div>
+                </div>
+                </c:if>
                 </c:if>
             </div>
         </div>
@@ -259,7 +269,7 @@
                     <div class="od-info-ic"><i class="fa-solid fa-map-pin"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Địa chỉ</div>
-                        <div class="od-info-val">${order.address}</div>
+                        <div class="od-info-val"><c:out value="${order.address}"/></div>
                     </div>
                 </div>
                 <div class="od-info-row">
@@ -305,7 +315,7 @@
                     <div class="od-cancel-reason-label" style="color:${order.status == 'PENDING_CANCEL' ? '#B45309' : '#F04438'}">
                         <i class="fa-solid fa-comment-dots" style="margin-right:4px"></i>Lý do hủy từ khách hàng
                     </div>
-                    <div class="od-cancel-reason-val" style="color:var(--admin-text)">${order.cancelReason}</div>
+                    <div class="od-cancel-reason-val" style="color:var(--admin-text)"><c:out value="${order.cancelReason}"/></div>
                 </div>
             </c:if>
 
@@ -322,6 +332,7 @@
                     </div>
                     <div class="od-approve-actions">
                         <form action="${pageContext.request.contextPath}/admin/don-hang/duyet-huy" method="POST" style="flex:1;display:flex">
+                            <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                             <input type="hidden" name="orderId" value="${order.orderId}">
                             <input type="hidden" name="action" value="approve">
                             <button type="submit" class="btn-approve" style="width:100%">
@@ -329,6 +340,7 @@
                             </button>
                         </form>
                         <form action="${pageContext.request.contextPath}/admin/don-hang/duyet-huy" method="POST" style="flex:1;display:flex">
+                            <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
                             <input type="hidden" name="orderId" value="${order.orderId}">
                             <input type="hidden" name="action" value="reject">
                             <button type="submit" class="btn-reject" style="width:100%">
@@ -395,7 +407,7 @@
                     <div class="od-info-ic"><i class="fa-solid fa-ticket"></i></div>
                     <div class="od-info-body">
                         <div class="od-info-label">Mã giảm giá</div>
-                        <div class="od-info-val">${order.couponCode}</div>
+                        <div class="od-info-val"><c:out value="${order.couponCode}"/></div>
                     </div>
                 </div>
                 </c:if>

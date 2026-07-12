@@ -22,8 +22,11 @@ CREATE TABLE Users (
   Email        NVARCHAR(150) UNIQUE NOT NULL,
   Phone        NVARCHAR(20),
   PasswordHash NVARCHAR(255) NOT NULL,
-  Role         NVARCHAR(20) DEFAULT 'CUSTOMER',   -- CUSTOMER | ADMIN
-  CreatedAt    DATETIME DEFAULT GETDATE()
+  Role         NVARCHAR(20) DEFAULT 'CUSTOMER',   -- CUSTOMER | ADMIN | SHIPPER | MANAGER
+  CreatedAt    DATETIME DEFAULT GETDATE(),
+  LastLoginIP  NVARCHAR(45),
+  LastLoginAt  DATETIME,
+  AgreedTermsAt DATETIME
 );
 GO
 
@@ -81,7 +84,29 @@ CREATE TABLE Orders (
   CouponCode    NVARCHAR(30),
   CreatedAt     DATETIME DEFAULT GETDATE(),
   CancelReason  NVARCHAR(500),
-  CancelledAt   DATETIME
+  CancelledAt   DATETIME,
+  ShipperID     INT NULL FOREIGN KEY REFERENCES Users(UserID)
+);
+GO
+
+/* ---------------- OrderNotes (trao đổi theo đơn: shipper ↔ manager) ---------------- */
+IF OBJECT_ID('dbo.OrderNotes', 'U') IS NULL
+CREATE TABLE OrderNotes (
+  NoteID    INT IDENTITY PRIMARY KEY,
+  OrderID   INT NOT NULL FOREIGN KEY REFERENCES Orders(OrderID),
+  UserID    INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+  Message   NVARCHAR(500) NOT NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+GO
+
+/* ---------------- StaffMessages (chat chung nội bộ nhân viên) ---------------- */
+IF OBJECT_ID('dbo.StaffMessages', 'U') IS NULL
+CREATE TABLE StaffMessages (
+  MessageID INT IDENTITY PRIMARY KEY,
+  UserID    INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+  Message   NVARCHAR(500) NOT NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
 );
 GO
 
@@ -118,6 +143,21 @@ CREATE TABLE DealerLeads (
   City      NVARCHAR(150),                          -- khu vực muốn làm đại lý
   Status    NVARCHAR(30) DEFAULT 'PENDING',         -- PENDING | CONTACTED | CLOSED
   CreatedAt DATETIME DEFAULT GETDATE()
+);
+GO
+
+/* ---------------- Feedback (bong bóng chat hỗ trợ khách hàng) ---------------- */
+IF OBJECT_ID('dbo.Feedback', 'U') IS NULL
+CREATE TABLE Feedback (
+  FeedbackID INT IDENTITY PRIMARY KEY,
+  UserID     INT NULL FOREIGN KEY REFERENCES Users(UserID),  -- NULL nếu khách vãng lai
+  Name       NVARCHAR(150) NOT NULL,
+  Phone      NVARCHAR(20)  NULL,
+  Email      NVARCHAR(150) NULL,
+  Rating     INT NULL,                               -- 1..5 sao (tùy chọn)
+  Message    NVARCHAR(1000) NOT NULL,
+  Status     NVARCHAR(30) DEFAULT 'NEW',             -- NEW | SEEN | RESOLVED
+  CreatedAt  DATETIME DEFAULT GETDATE()
 );
 GO
 

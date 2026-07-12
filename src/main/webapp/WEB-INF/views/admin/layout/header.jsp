@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="uri" value="${requestScope['jakarta.servlet.forward.servlet_path']}"/>
 <!DOCTYPE html>
@@ -146,6 +147,9 @@
             <ul class="sidebar-menu">
                 <li><a href="${ctx}/admin/don-hang" class="${uri.contains('/don-hang') ? 'active' : ''}"><i class="fa-solid fa-cart-shopping"></i> Quản lý Đơn hàng</a></li>
                 <li><a href="${ctx}/admin/san-pham" class="${uri.contains('/san-pham') ? 'active' : ''}"><i class="fa-solid fa-box"></i> Quản lý Sản phẩm</a></li>
+                <li><a href="${ctx}/admin/phan-hoi" class="${uri.contains('/phan-hoi') ? 'active' : ''}"><i class="fa-solid fa-comment-dots"></i> Phản hồi khách hàng</a></li>
+                <li><a href="${ctx}/admin/nhan-su" class="${uri.contains('/nhan-su') ? 'active' : ''}"><i class="fa-solid fa-user-group"></i> Quản lý Nhân sự</a></li>
+                <li><a href="${ctx}/manager" class="${uri.contains('/manager') ? 'active' : ''}"><i class="fa-solid fa-truck-fast"></i> Điều phối đơn hàng</a></li>
             </ul>
             <div class="menu-label">Hệ thống</div>
             <ul class="sidebar-menu">
@@ -162,8 +166,8 @@
     <main class="main-content">
         <header class="admin-header">
             <div class="admin-header-title">
-                ${pageTitle != null ? pageTitle : 'Dashboard'}
-                <small>Chào mừng trở lại, ${sessionScope.adminUser.fullName}!</small>
+                <c:out value="${pageTitle != null ? pageTitle : 'Dashboard'}"/>
+                <small>Chào mừng trở lại, <c:out value="${sessionScope.adminUser.fullName}"/>!</small>
             </div>
             <div class="admin-header-right">
                 <div class="noti-wrap">
@@ -184,10 +188,10 @@
                 <a href="${ctx}/admin/settings" class="hdr-ic" title="Cài đặt"><i class="fa-solid fa-gear"></i></a>
                 <div class="admin-user">
                     <div>
-                        <div class="u-name">${sessionScope.adminUser.fullName}</div>
+                        <div class="u-name"><c:out value="${sessionScope.adminUser.fullName}"/></div>
                         <div class="u-role">Quản trị viên</div>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=${sessionScope.adminUser.fullName}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
+                    <img src="https://ui-avatars.com/api/?name=${fn:escapeXml(sessionScope.adminUser.fullName)}&background=1B4F9E&color=fff&bold=true" alt="Avatar">
                 </div>
             </div>
         </header>

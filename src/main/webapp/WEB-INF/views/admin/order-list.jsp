@@ -731,4 +731,32 @@
 </c:otherwise>
 </c:choose>
 
+<%-- Pagination --%>
+<c:if test="${totalPages > 1}">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:20px 0;margin-top:10px">
+    <span style="font-size:13px;color:var(--admin-text-light);font-weight:500">Tổng ${totalItems} đơn hàng · Trang ${currentPage}/${totalPages}</span>
+    <div style="display:flex;gap:6px">
+        <c:if test="${currentPage > 1}">
+            <a href="${pageContext.request.contextPath}/admin/don-hang?page=${currentPage - 1}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--admin-border);background:var(--admin-surface);color:var(--admin-text);font-size:14px;text-decoration:none;font-weight:600;transition:all .2s">&laquo;</a>
+        </c:if>
+        <c:forEach begin="1" end="${totalPages}" var="p">
+            <c:choose>
+                <c:when test="${p == currentPage}">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3965FF,#1B4F9E);color:#fff;font-size:14px;font-weight:700">${p}</span>
+                </c:when>
+                <c:when test="${p <= 3 || p >= totalPages - 1 || (p >= currentPage - 1 && p <= currentPage + 1)}">
+                    <a href="${pageContext.request.contextPath}/admin/don-hang?page=${p}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--admin-border);background:var(--admin-surface);color:var(--admin-text);font-size:14px;text-decoration:none;font-weight:600;transition:all .2s">${p}</a>
+                </c:when>
+                <c:when test="${p == 4 || p == totalPages - 2}">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;font-size:14px;color:var(--admin-text-light)">...</span>
+                </c:when>
+            </c:choose>
+        </c:forEach>
+        <c:if test="${currentPage < totalPages}">
+            <a href="${pageContext.request.contextPath}/admin/don-hang?page=${currentPage + 1}" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;border:1.5px solid var(--admin-border);background:var(--admin-surface);color:var(--admin-text);font-size:14px;text-decoration:none;font-weight:600;transition:all .2s">&raquo;</a>
+        </c:if>
+    </div>
+</div>
+</c:if>
+
 <jsp:include page="/WEB-INF/views/admin/layout/footer.jsp" />

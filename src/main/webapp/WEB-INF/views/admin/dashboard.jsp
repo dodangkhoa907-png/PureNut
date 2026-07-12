@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/admin/layout/header.jsp" />
 
@@ -145,7 +146,7 @@
                     <c:forEach var="order" items="${recentOrders}">
                         <tr>
                             <td><strong>#${order.orderId}</strong></td>
-                            <td><strong>${order.fullName}</strong><br><span style="font-size:12.5px;color:var(--admin-text-light)">${order.phone}</span></td>
+                            <td><strong><c:out value="${order.fullName}"/></strong><br><span style="font-size:12.5px;color:var(--admin-text-light)"><c:out value="${order.phone}"/></span></td>
                             <td><strong style="color:var(--admin-primary)"><fmt:formatNumber value="${order.totalAmount}" type="number" maxFractionDigits="0"/> đ</strong></td>
                             <td><span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:700;${order.status == 'PENDING' ? 'background:rgba(245,165,36,.1);color:#D48806' : order.status == 'CONFIRMED' ? 'background:rgba(57,101,255,.1);color:#3965FF' : order.status == 'SHIPPING' ? 'background:rgba(122,90,248,.1);color:#7A5AF8' : order.status == 'DONE' ? 'background:rgba(43,172,98,.1);color:#12B76A' : 'background:rgba(240,68,56,.1);color:#F04438'}"><i class="fa-solid ${order.status == 'PENDING' ? 'fa-clock' : order.status == 'CONFIRMED' ? 'fa-circle-check' : order.status == 'SHIPPING' ? 'fa-truck-fast' : order.status == 'DONE' ? 'fa-check-double' : 'fa-ban'}" style="font-size:10px"></i><c:choose><c:when test="${order.status == 'PENDING'}">Chờ xử lý</c:when><c:when test="${order.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${order.status == 'SHIPPING'}">Đang giao</c:when><c:when test="${order.status == 'DONE'}">Hoàn thành</c:when><c:when test="${order.status == 'CANCELLED'}">Đã huỷ</c:when><c:otherwise>${order.status}</c:otherwise></c:choose></span></td>
                             <td><fmt:formatDate value="${order.createdAt}" pattern="dd/MM/yyyy HH:mm"/></td>
@@ -181,9 +182,9 @@
 <script>
 (function(){
     // Chart cột
-    var vals = "${chartValues}".split(",").map(function(x){return parseInt(x,10)||0;});
-    var labels = [<c:forEach var="l" items="${chartLabels}" varStatus="s">"${l}"<c:if test="${!s.last}">,</c:if></c:forEach>];
-    var max = ${chartMax} || 1;
+    var vals = "${fn:escapeXml(chartValues)}".split(",").map(function(x){return parseInt(x,10)||0;});
+    var labels = [<c:forEach var="l" items="${chartLabels}" varStatus="s">"${fn:escapeXml(l)}"<c:if test="${!s.last}">,</c:if></c:forEach>];
+    var max = parseInt("${chartMax}",10) || 1;
     var host = document.getElementById('revChart');
     if(host){
         vals.forEach(function(v,i){

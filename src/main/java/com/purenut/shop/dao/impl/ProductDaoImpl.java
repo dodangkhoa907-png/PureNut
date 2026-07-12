@@ -162,7 +162,7 @@ public class ProductDaoImpl implements ProductDao {
                 while (rs.next()) list.add(mapRow(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("ProductDao.searchByName thất bại: " + keyword, e);
+            throw new RuntimeException("ProductDao.searchByName thất bại", e);
         }
         return list;
     }

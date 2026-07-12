@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*"}, asyncSupported = true)
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*", "/shipper/*", "/manager/*", "/staff/*"}, asyncSupported = true)
 public class AuthFilter implements Filter {
 
     @Override
@@ -41,13 +41,48 @@ public class AuthFilter implements Filter {
             } else {
                 res.sendRedirect(loginUri);
             }
-        } else {
-            User user = (session != null) ? (User) session.getAttribute("user") : null;
-            if (user != null) {
+            return;
+        }
+
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        User admin = (session != null) ? (User) session.getAttribute("adminUser") : null;
+
+        // Khu vực Shipper: chỉ SHIPPER (hoặc admin xem giám sát)
+        if (servletPath.startsWith("/shipper")) {
+            if ((user != null && "SHIPPER".equals(user.getRole())) || admin != null) {
                 chain.doFilter(request, response);
             } else {
                 res.sendRedirect(loginUri);
             }
+            return;
+        }
+
+        // Khu vực Manager: chỉ MANAGER (hoặc admin)
+        if (servletPath.startsWith("/manager")) {
+            if ((user != null && "MANAGER".equals(user.getRole())) || admin != null) {
+                chain.doFilter(request, response);
+            } else {
+                res.sendRedirect(loginUri);
+            }
+            return;
+        }
+
+        // API nội bộ /staff/*: SHIPPER, MANAGER hoặc ADMIN
+        if (servletPath.startsWith("/staff")) {
+            boolean staff = (user != null && ("SHIPPER".equals(user.getRole()) || "MANAGER".equals(user.getRole())))
+                    || admin != null;
+            if (staff) {
+                chain.doFilter(request, response);
+            } else {
+                res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }
+            return;
+        }
+
+        if (user != null) {
+            chain.doFilter(request, response);
+        } else {
+            res.sendRedirect(loginUri);
         }
     }
 

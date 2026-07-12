@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/admin/layout/header.jsp" />
 
@@ -35,11 +36,11 @@
 <div class="set-grid">
     <!-- Hồ sơ -->
     <div class="card profile">
-        <img class="ava" src="https://ui-avatars.com/api/?name=${sessionScope.adminUser.fullName}&background=1B4F9E&color=fff&bold=true&size=128" alt="Avatar">
-        <h3>${sessionScope.adminUser.fullName}</h3>
+        <img class="ava" src="https://ui-avatars.com/api/?name=${fn:escapeXml(sessionScope.adminUser.fullName)}&background=1B4F9E&color=fff&bold=true&size=128" alt="Avatar">
+        <h3><c:out value="${sessionScope.adminUser.fullName}"/></h3>
         <div class="role"><i class="fa-solid fa-shield-halved"></i> Quản trị viên</div>
-        <div class="info-row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div class="lb">Email nhận mã</div><div class="vl">${sessionScope.adminUser.email}</div></div></div>
-        <div class="info-row"><div class="ic"><i class="fa-solid fa-phone"></i></div><div><div class="lb">Số điện thoại</div><div class="vl">${sessionScope.adminUser.phone}</div></div></div>
+        <div class="info-row"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><div class="lb">Email nhận mã</div><div class="vl"><c:out value="${sessionScope.adminUser.email}"/></div></div></div>
+        <div class="info-row"><div class="ic"><i class="fa-solid fa-phone"></i></div><div><div class="lb">Số điện thoại</div><div class="vl"><c:out value="${sessionScope.adminUser.phone}"/></div></div></div>
         <div class="info-row"><div class="ic"><i class="fa-solid fa-fingerprint"></i></div><div><div class="lb">Mã tài khoản</div><div class="vl">#${sessionScope.adminUser.userId}</div></div></div>
     </div>
 
@@ -47,9 +48,9 @@
     <div class="card">
         <div class="card-header" style="margin-bottom:18px"><div class="card-title" style="font-family:var(--fd);font-size:19px;font-weight:700">Đổi mật khẩu<small style="display:block;font-family:var(--fb);font-size:12.5px;color:var(--admin-text-light);font-weight:500;margin-top:2px">Xác thực 2 lớp qua mã gửi về email của bạn</small></div></div>
 
-        <c:if test="${not empty successMessage}"><div class="alert ok"><i class="fa-solid fa-circle-check"></i> ${successMessage}</div></c:if>
-        <c:if test="${not empty infoMessage}"><div class="alert info"><i class="fa-solid fa-envelope-circle-check"></i> ${infoMessage}</div></c:if>
-        <c:if test="${not empty errorMessage}"><div class="alert err"><i class="fa-solid fa-triangle-exclamation"></i> ${errorMessage}</div></c:if>
+        <c:if test="${not empty successMessage}"><div class="alert ok"><i class="fa-solid fa-circle-check"></i> <c:out value="${successMessage}"/></div></c:if>
+        <c:if test="${not empty infoMessage}"><div class="alert info"><i class="fa-solid fa-envelope-circle-check"></i> <c:out value="${infoMessage}"/></div></c:if>
+        <c:if test="${not empty errorMessage}"><div class="alert err"><i class="fa-solid fa-triangle-exclamation"></i> <c:out value="${errorMessage}"/></div></c:if>
 
         <div class="steps">
             <div class="step ${codeSent ? 'done' : ''}"><span class="n"><c:choose><c:when test="${codeSent}"><i class="fa-solid fa-check"></i></c:when><c:otherwise>1</c:otherwise></c:choose></span><p>Gửi mã<small>về email admin</small></p></div>

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <footer class="footer">
   <div class="container footer-grid">
@@ -29,6 +30,8 @@
       <a href="#">Chính sách giao hàng</a>
       <a href="#">Đổi trả & Hoàn tiền</a>
       <a href="#">FAQ</a>
+      <a href="${pageContext.request.contextPath}/privacy">Chính sách bảo mật</a>
+      <a href="${pageContext.request.contextPath}/terms">Điều khoản sử dụng</a>
     </div>
     <div class="footer-col">
       <h4>Liên hệ</h4>
@@ -42,11 +45,16 @@
   </div>
 </footer>
 
-<a href="https://zalo.me" class="zalo-float" target="_blank" rel="noopener" aria-label="Chat Zalo">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M12 2C6.48 2 2 6.02 2 11c0 2.9 1.6 5.47 4.1 7.13L5.5 22l4.3-2.16c.7.12 1.43.18 2.2.18 5.52 0 10-4.02 10-9S17.52 2 12 2z" fill="#fff"/>
-  </svg>
-</a>
+<jsp:include page="/WEB-INF/views/layout/support-widget.jsp" />
+
+<div class="cookie-consent" id="cookieConsent" role="region" aria-label="Thông báo cookie" hidden>
+  <div class="cookie-consent__text">
+    <strong>PureNut sử dụng cookie cần thiết</strong>
+    <span>Cookie phiên giúp duy trì đăng nhập, bảo mật giỏ hàng và không dùng để theo dõi quảng cáo.</span>
+    <a href="${pageContext.request.contextPath}/privacy">Tìm hiểu thêm</a>
+  </div>
+  <button type="button" class="cookie-consent__btn" id="cookieConsentAccept">Đã hiểu</button>
+</div>
 
 <script src="${pageContext.request.contextPath}/resources/js/script.js"></script>
 

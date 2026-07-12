@@ -26,14 +26,14 @@
         <p class="sub">Khu vực dành riêng cho quản trị viên PureNut.</p>
 
         <c:if test="${not empty errorMessage}">
-            <div class="admin-alert">${errorMessage}</div>
+            <div class="admin-alert"><c:out value="${errorMessage}"/></div>
         </c:if>
 
         <form action="${pageContext.request.contextPath}/admin/login" method="POST">
             <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
             <div class="admin-field">
                 <label for="email">Email quản trị</label>
-                <input type="email" id="email" name="email" placeholder="khoaddty00210@gmail.com" required autofocus>
+                <input type="email" id="email" name="email" placeholder="admin@example.com" required autofocus>
             </div>
             <div class="admin-field">
                 <label for="password">Mật khẩu</label>
