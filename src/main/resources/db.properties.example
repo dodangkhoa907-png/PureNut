@@ -1,6 +1,18 @@
-# Mẫu cấu hình kết nối SQL Server — COPY thành db.properties rồi điền mật khẩu thật.
+# Mẫu cấu hình — COPY thành db.properties rồi điền giá trị thật.
 # KHÔNG commit db.properties (chứa mật khẩu) lên Git.
+
 db.url=jdbc:sqlserver://14.225.217.109;databaseName=PureNut_DB;encrypt=true;trustServerCertificate=true
 db.username=sa
 db.password=your_password_here
 db.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# Email (SMTP Gmail)
+mail.smtp.host=smtp.gmail.com
+mail.smtp.port=587
+mail.smtp.username=your_email@gmail.com
+mail.smtp.password=your_app_password_here
+
+# PayOS
+payos.client_id=your_client_id_here
+payos.api_key=your_api_key_here
+payos.checksum_key=your_checksum_key_here

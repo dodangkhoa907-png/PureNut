@@ -1,14 +1,15 @@
 package com.purenut.shop.util;
 
+import com.purenut.shop.config.AppConfig;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import java.util.Properties;
 
 public class EmailUtil {
-    private static final String HOST     = "smtp.gmail.com";
-    private static final String PORT     = "587";
-    private static final String USERNAME = "dodangkhoa907@gmail.com";
-    private static final String PASSWORD = "qhbh kqkg xwxd ugwm";
+    private static final String HOST     = AppConfig.get("mail.smtp.host", "smtp.gmail.com");
+    private static final String PORT     = AppConfig.get("mail.smtp.port", "587");
+    private static final String USERNAME = AppConfig.get("mail.smtp.username");
+    private static final String PASSWORD = AppConfig.get("mail.smtp.password");
 
     /**
      * Gửi email (hỗ trợ HTML).

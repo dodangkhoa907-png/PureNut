@@ -18,6 +18,7 @@ public class SecurityHeadersFilter implements Filter {
             res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
             res.setHeader("Permissions-Policy", "geolocation=(self), microphone=(), camera=()");
             res.setHeader("X-XSS-Protection", "1; mode=block");
+            res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
             res.setHeader("Content-Security-Policy",
                     "default-src 'self'; "
                     + "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; "

@@ -506,7 +506,8 @@
         var initial = c.name.charAt(0).toUpperCase();
         document.getElementById('cdAvatar').textContent = initial;
         document.getElementById('cdName').textContent = c.name;
-        document.getElementById('cdSub').innerHTML = '<i class="fa-solid fa-phone" style="font-size:11px;margin-right:4px;opacity:.5"></i>' + c.phone + '&nbsp;&nbsp;·&nbsp;&nbsp;<i class="fa-solid fa-boxes-stacked" style="font-size:11px;margin-right:4px;opacity:.5"></i>' + c.orders.length + ' đơn hàng';
+        var _e=document.createElement('div');_e.textContent=c.phone;var safePhone=_e.innerHTML;
+        document.getElementById('cdSub').innerHTML = '<i class="fa-solid fa-phone" style="font-size:11px;margin-right:4px;opacity:.5"></i>' + safePhone + '&nbsp;&nbsp;·&nbsp;&nbsp;<i class="fa-solid fa-boxes-stacked" style="font-size:11px;margin-right:4px;opacity:.5"></i>' + c.orders.length + ' đơn hàng';
         document.getElementById('cdOrderCount').textContent = c.orders.length;
 
         var firstOrder = c.orders[c.orders.length - 1];

@@ -642,7 +642,7 @@
       } else {
         var form=document.createElement('form');form.method='POST';form.action=CTX+'/cart/add';
         var pid=f?f.querySelector('input[name=productId]').value:'';
-        form.innerHTML='<input name="productId" value="'+pid+'"><input name="quantity" value="'+qty+'"><input name="action" value="buy_now">';
+        form.innerHTML='<input name="_csrf" value="'+(document.querySelector('meta[name=_csrf]')||{content:''}).content+'"><input name="productId" value="'+pid+'"><input name="quantity" value="'+qty+'"><input name="action" value="buy_now">';
         document.body.appendChild(form);form.submit();
       }
     });

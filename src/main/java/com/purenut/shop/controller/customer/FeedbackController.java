@@ -13,8 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @WebServlet(name = "FeedbackController", urlPatterns = {"/feedback"})
 public class FeedbackController extends HttpServlet {
@@ -22,12 +27,34 @@ public class FeedbackController extends HttpServlet {
     private FeedbackDao feedbackDao;
 
     private static final int MAX_REQUESTS = 3;
-    private static final long WINDOW_MS = 5 * 60 * 1000; // 5 phút
+    private static final long WINDOW_MS = 5 * 60 * 1000;
     private final ConcurrentHashMap<String, ConcurrentLinkedDeque<Long>> ipHits = new ConcurrentHashMap<>();
+    private ScheduledExecutorService evictionScheduler;
 
     @Override
     public void init() throws ServletException {
         feedbackDao = new FeedbackDaoImpl();
+        evictionScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "feedback-rate-evict");
+            t.setDaemon(true);
+            return t;
+        });
+        evictionScheduler.scheduleAtFixedRate(this::evictStaleEntries, 10, 10, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void destroy() {
+        if (evictionScheduler != null) evictionScheduler.shutdownNow();
+    }
+
+    private void evictStaleEntries() {
+        long now = System.currentTimeMillis();
+        Iterator<Map.Entry<String, ConcurrentLinkedDeque<Long>>> it = ipHits.entrySet().iterator();
+        while (it.hasNext()) {
+            ConcurrentLinkedDeque<Long> hits = it.next().getValue();
+            while (!hits.isEmpty() && now - hits.peekFirst() > WINDOW_MS) hits.pollFirst();
+            if (hits.isEmpty()) it.remove();
+        }
     }
 
     @Override

@@ -5,16 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H">
-      <change afterPath="$PROJECT_DIR$/.claude/launch.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.claude/settings.local.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/config/PayOSConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/admin/AdminFeedbackController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/admin/AdminStaffController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/staff/ManagerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/staff/ShipperController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/staff/StaffChatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/FeedbackDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/StaffMessageDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/config/PayOSConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/config/PayOSConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/FeedbackController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/FeedbackController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/filter/SecurityHeadersFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/filter/SecurityHeadersFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/util/EmailUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/util/EmailUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db.properties.example" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db.properties.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/dispatch.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/dispatch.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/order-list.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/order-list.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/product-detail.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/product-detail.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/manager.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/manager.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/shipper.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/shipper.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminProductController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminProductController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/PasswordResetController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/PasswordResetController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/ProductDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/ProductDaoImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserDaoImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/AuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/AuthFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/SecurityHeadersFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/SecurityHeadersFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Order.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Order.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/User.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +204,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783766543266</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="H">
+      <option name="closed" value="true" />
+      <created>1783870732520</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1783870732520</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

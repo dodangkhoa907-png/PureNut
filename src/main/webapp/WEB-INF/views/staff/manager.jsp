@@ -209,12 +209,13 @@ function ajax(url,data,cb){
   fetch(CTX+url,opt).then(function(r){return r.json()}).then(cb).catch(function(){});
 }
 function roleTag(r){return r==='MANAGER'?'Quản lý':(r==='ADMIN'?'Admin':'Shipper')}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function render(list,box,append){
   if(!append)box.innerHTML='';
   list.forEach(function(m){
     var d=document.createElement('div');
     d.className='m '+(m.mine?'mine':'them');
-    d.innerHTML=(m.mine?'':'<div class="who2">'+m.name+' · '+roleTag(m.role)+'</div>')+m.msg+'<small>'+m.time+'</small>';
+    d.innerHTML=(m.mine?'':'<div class="who2">'+esc(m.name)+' · '+roleTag(m.role)+'</div>')+esc(m.msg)+'<small>'+esc(m.time)+'</small>';
     box.appendChild(d);
   });
   box.scrollTop=box.scrollHeight;
