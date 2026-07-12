@@ -204,7 +204,7 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
       <div class="grid">
         <c:forEach var="p" items="${products}"><c:if test="${p.categorySlug=='dau-nanh'}">
           <article class="pcard reveal">
-            <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${not empty p.bgColorHex ? p.bgColorHex : '#E7C9A0'}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
+            <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${fn:escapeXml(not empty p.bgColorHex ? p.bgColorHex : '#E7C9A0')}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
             <div class="p-body">
               <a href="${ctx}/products/${p.slug}"><h4><c:out value="${p.name}"/></h4></a>
               <div class="meta">${p.volumeMl}ml · ${p.kcalPer100ml} kcal/100ml</div>
@@ -256,7 +256,7 @@ footer{background:var(--navy-darker);color:#9FB2CC;font-size:14px}
       <div class="grid">
         <c:forEach var="p" items="${products}"><c:if test="${p.categorySlug=='dac-biet'}">
           <article class="pcard reveal">
-            <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${not empty p.bgColorHex ? p.bgColorHex : '#BFE0F2'}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
+            <a href="${ctx}/products/${p.slug}"><div class="p-thumb" style="background:${fn:escapeXml(not empty p.bgColorHex ? p.bgColorHex : '#BFE0F2')}"><c:if test="${p.featured}"><span class="p-tag">⭐ Nổi bật</span></c:if><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(255,255,255,.9)"/></svg></div></a>
             <div class="p-body">
               <a href="${ctx}/products/${p.slug}"><h4><c:out value="${p.name}"/></h4></a>
               <div class="meta">${p.volumeMl}ml · ${p.kcalPer100ml} kcal/100ml</div>
@@ -326,5 +326,6 @@ document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('.add-btn:not([disabled])').forEach(function(b){b.addEventListener('click',async function(){var id=b.dataset.id;if(!id)return;flyToCart(b);b.disabled=true;try{var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity=1'});if(r.redirected){window.location=r.url;return;}var d=await r.json();if(d&&d.success){if(badge)badge.textContent=d.cartCount;showToast('Đã thêm "'+b.dataset.name+'" vào giỏ');}}catch(e){window.location=CTX+'/login';}finally{b.disabled=false;}});});
 });
 </script>
+<jsp:include page="/WEB-INF/views/layout/support-widget.jsp" />
 </body>
 </html>

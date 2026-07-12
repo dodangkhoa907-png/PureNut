@@ -11,10 +11,10 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public int insert(User user) {
-        String sql = "INSERT INTO Users (FullName, Email, Phone, PasswordHash, Role) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (FullName, Email, Phone, PasswordHash, Role, AgreedTermsAt) VALUES (?, ?, ?, ?, ?, DATEADD(HOUR,7,GETUTCDATE()))";
         try (Connection conn = Database.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+
             ps.setNString(1, user.getFullName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPhone());
@@ -117,6 +117,50 @@ public class UserDaoImpl implements UserDao {
         return false;
     }
 
+    @Override
+    public boolean updateLoginInfo(int userId, String ip) {
+        String sql = "UPDATE Users SET LastLoginIP = ?, LastLoginAt = DATEADD(HOUR,7,GETUTCDATE()) WHERE UserID = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, ip);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public java.util.List<User> findByRole(String role) {
+        java.util.List<User> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE Role = ? ORDER BY FullName";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapResultSetToUser(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public boolean updateRole(int userId, String role) {
+        String sql = "UPDATE Users SET Role = ? WHERE UserID = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, role);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
         User user = new User();
         user.setUserId(rs.getInt("UserID"));
@@ -126,6 +170,9 @@ public class UserDaoImpl implements UserDao {
         user.setPasswordHash(rs.getString("PasswordHash"));
         user.setRole(rs.getString("Role"));
         user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        user.setLastLoginIP(rs.getString("LastLoginIP"));
+        user.setLastLoginAt(rs.getTimestamp("LastLoginAt"));
+        user.setAgreedTermsAt(rs.getTimestamp("AgreedTermsAt"));
         return user;
     }
 }

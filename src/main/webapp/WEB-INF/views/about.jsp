@@ -242,33 +242,6 @@
 
         /* navbar — dùng navbar.jsp chung */
 
-        .zalo-float {
-          position: fixed;
-          right: 22px;
-          bottom: 26px;
-          z-index: 190;
-          width: 54px;
-          height: 54px;
-          border-radius: 50%;
-          background: var(--blue-bright);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 10px 24px -8px rgba(24, 119, 196, .6);
-          animation: pulse 2.6s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-          0%,
-          100% {
-            transform: scale(1)
-          }
-
-          50% {
-            transform: scale(1.07)
-          }
-        }
 
         /* ============ REVEAL ANIMATION ============ */
         [data-reveal] {
@@ -1828,13 +1801,7 @@
       <!-- ============ NAVBAR ============ -->
       <jsp:include page="/WEB-INF/views/layout/navbar.jsp" />
 
-      <a href="https://zalo.me" class="zalo-float" target="_blank" rel="noopener" aria-label="Chat Zalo">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M12 2C6.48 2 2 6.02 2 11c0 2.9 1.6 5.47 4.1 7.13L5.5 22l4.3-2.16c.7.12 1.43.18 2.2.18 5.52 0 10-4.02 10-9S17.52 2 12 2z"
-            fill="#fff" />
-        </svg>
-      </a>
+      <jsp:include page="/WEB-INF/views/layout/support-widget.jsp" />
 
       <!-- ===== TOC RAIL: mục lục nổi bên trái (tự chứa, tiền tố toc-) ===== -->
       <style>

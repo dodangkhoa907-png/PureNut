@@ -39,4 +39,13 @@ public interface OrderDao {
 
     /** Admin từ chối hủy → trả về CONFIRMED */
     int rejectCancelOrder(int orderId) throws Exception;
+
+    /** Manager: gán shipper cho đơn + chuyển sang SHIPPING */
+    int assignShipper(int orderId, int shipperId);
+
+    /** Shipper: các đơn được gán cho mình (đang giao) */
+    List<Order> findOrdersByShipper(int shipperId);
+
+    List<Order> findAllOrdersPaged(int offset, int limit);
+    int countOrders();
 }

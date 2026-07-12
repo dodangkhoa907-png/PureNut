@@ -19,6 +19,8 @@ public class Order {
     private Date cancelledAt;
     private String email;
     private Date accountCreatedAt;
+    private Integer shipperId;    // null = chưa gán shipper
+    private String shipperName;   // join từ Users
 
     private List<OrderItem> items;
 
@@ -65,6 +67,12 @@ public class Order {
 
     public Date getAccountCreatedAt() { return accountCreatedAt; }
     public void setAccountCreatedAt(Date accountCreatedAt) { this.accountCreatedAt = accountCreatedAt; }
+
+    public Integer getShipperId() { return shipperId; }
+    public void setShipperId(Integer shipperId) { this.shipperId = shipperId; }
+
+    public String getShipperName() { return shipperName; }
+    public void setShipperName(String shipperName) { this.shipperName = shipperName; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }

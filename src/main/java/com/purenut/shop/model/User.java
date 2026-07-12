@@ -10,6 +10,9 @@ public class User {
     private String passwordHash;
     private String role; // CUSTOMER | ADMIN
     private Date createdAt;
+    private String lastLoginIP;
+    private Date lastLoginAt;
+    private Date agreedTermsAt;
 
     public User() {}
 
@@ -41,4 +44,13 @@ public class User {
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public String getLastLoginIP() { return lastLoginIP; }
+    public void setLastLoginIP(String lastLoginIP) { this.lastLoginIP = lastLoginIP; }
+
+    public Date getLastLoginAt() { return lastLoginAt; }
+    public void setLastLoginAt(Date lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public Date getAgreedTermsAt() { return agreedTermsAt; }
+    public void setAgreedTermsAt(Date agreedTermsAt) { this.agreedTermsAt = agreedTermsAt; }
 }

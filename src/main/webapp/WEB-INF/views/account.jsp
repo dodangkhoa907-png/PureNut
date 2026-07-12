@@ -672,6 +672,8 @@
         .mob-btn{padding:6px 9px;font-size:10.5px}
     }
     </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -699,7 +701,7 @@
                         <c:otherwise>Thành viên mới</c:otherwise>
                     </c:choose>
                 </span>
-                <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${sessionScope.user.email}</span>
+                <span><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><c:out value="${sessionScope.user.email}"/></span>
                 <span><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><c:out value="${sessionScope.user.phone}"/></span>
                 <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Từ <fmt:formatDate value="${sessionScope.user.createdAt}" pattern="MM/yyyy"/></span>
             </div>
@@ -1042,7 +1044,7 @@
 
                 <div class="ov-field"><label class="ov-label">Nickname (Tên hiển thị)</label><input type="text" class="ov-input" id="profNickname" value="" placeholder="Tên của bạn"></div>
                 <div class="ov-field"><label class="ov-label">Họ và tên</label><input type="text" class="ov-input" id="profName" value="${fn:escapeXml(sessionScope.user.fullName)}"></div>
-                <div class="ov-field"><label class="ov-label">Email</label><input type="email" class="ov-input" id="profEmail" value="${sessionScope.user.email}" readonly></div>
+                <div class="ov-field"><label class="ov-label">Email</label><input type="email" class="ov-input" id="profEmail" value="${fn:escapeXml(sessionScope.user.email)}" readonly></div>
                 <div class="ov-field"><label class="ov-label">Số điện thoại</label><input type="tel" class="ov-input" id="profPhone" value="${fn:escapeXml(sessionScope.user.phone)}" pattern="0[0-9]{9,10}" maxlength="11"></div>
                 <div class="ov-field"><label class="ov-label">Ngày tham gia</label><input type="text" class="ov-input" value="<fmt:formatDate value="${sessionScope.user.createdAt}" pattern="dd/MM/yyyy"/>" readonly></div>
                 <button class="ov-btn primary" onclick="saveProfile()">Lưu thay đổi</button>
@@ -1054,7 +1056,7 @@
                 <div id="addrList">
                     <c:forEach var="addr" items="${addresses}">
                         <div class="addr-card" data-id="${addr.addressId}">
-                            <div class="addr-label">${addr.label}<c:if test="${addr.isDefault()}"><span class="def-badge">Mặc định</span></c:if></div>
+                            <div class="addr-label"><c:out value="${addr.label}"/><c:if test="${addr.isDefault()}"><span class="def-badge">Mặc định</span></c:if></div>
                             <div class="addr-name"><c:out value="${addr.recipientName}"/> · <c:out value="${addr.phone}"/></div>
                             <div class="addr-detail"><c:out value="${addr.fullAddress}"/></div>
                             <div class="addr-actions"><button title="Xóa" onclick="deleteAddr(${addr.addressId})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></div>
@@ -1077,6 +1079,8 @@
                         <div class="ov-field" style="margin-bottom:0"><label class="ov-label">Phường / Xã</label><input type="text" class="ov-input" id="addrWard"></div>
                     </div>
                     <div class="ov-field"><label class="ov-label">Số nhà, đường</label><input type="text" class="ov-input" id="addrStreet" placeholder="123 Nguyễn Văn A"></div>
+                    <button type="button" class="ov-btn" id="geoLocBtn" onclick="geoLocate()" style="background:var(--paper);border:1.5px solid var(--navy);color:var(--navy);margin-bottom:10px;gap:8px;width:100%"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg><span id="geoLocText">Định vị vị trí hiện tại</span></button>
+                    <div id="addrMap" style="display:none;width:100%;height:200px;border-radius:12px;margin-bottom:12px;border:1.5px solid var(--line);overflow:hidden"></div>
                     <button class="ov-btn primary" onclick="saveAddr()">Thêm địa chỉ</button>
                 </div>
             </div>
@@ -1130,8 +1134,8 @@
     });
 
     function post(url,data,cb){
-        var fd=new FormData();for(var k in data)fd.append(k,data[k]);
-        fetch(CTX+url,{method:'POST',body:fd}).then(function(r){return r.json().then(function(j){cb(r.ok,j)})}).catch(function(){cb(false,{error:'Lỗi kết nối.'})});
+        var p=new URLSearchParams();p.append('_csrf','${sessionScope._csrf}');for(var k in data)p.append(k,data[k]);
+        fetch(CTX+url,{method:'POST',body:p,headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(function(r){return r.json().then(function(j){cb(r.ok,j)})}).catch(function(){cb(false,{error:'Lỗi kết nối.'})});
     }
     function showMsg(id,ok,text){var el=document.getElementById(id);el.className='ov-msg '+(ok?'ok':'err');el.textContent=text}
 
@@ -1330,6 +1334,48 @@
         document.querySelectorAll('#allergyChips .chip.sel').forEach(function(c){sa.push(c.getAttribute('data-allergy'))});
         localStorage.setItem('purenut_taste',JSON.stringify({sweetness:sw?sw.getAttribute('data-val'):'50',nuts:sn,allergies:sa}));
         var sv=document.getElementById('tasteSaved');sv.classList.add('show');setTimeout(function(){sv.classList.remove('show')},2500);
+    };
+    var pinIcon=L.divIcon({className:'',html:'<div style="position:relative;width:30px;height:45px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));transition:transform .3s cubic-bezier(.34,1.56,.64,1)" id="pinSvg"><svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg"><path d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 30 15 30s15-18.75 15-30C30 6.7 23.3 0 15 0z" fill="#CE2E2E"/><circle cx="15" cy="14" r="6" fill="#fff"/></svg></div>',iconSize:[30,45],iconAnchor:[15,45],popupAnchor:[0,-40]});
+    var addrMap=null,addrMarker=null;
+    function reverseGeoFill(lat,lng){
+        fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng+'&accept-language=vi&addressdetails=1')
+        .then(function(r){return r.json()}).then(function(d){
+            var a=d.address||{};
+            document.getElementById('addrProvince').value=a.city||a.state||a.province||'';
+            document.getElementById('addrDistrict').value=a.county||a.suburb||a.city_district||'';
+            document.getElementById('addrWard').value=a.quarter||a.village||a.town||a.neighbourhood||'';
+            document.getElementById('addrStreet').value=(a.house_number?a.house_number+' ':'')+(a.road||'');
+            if(addrMarker){var short=(a.road||'')+(a.quarter?', '+a.quarter:'');addrMarker.bindPopup('<b>'+short+'</b><br><small>Kéo ghim để chỉnh vị trí</small>').openPopup()}
+        }).catch(function(){});
+    }
+    function showMap(lat,lng){
+        var mapDiv=document.getElementById('addrMap');mapDiv.style.display='block';
+        if(!addrMap){
+            addrMap=L.map('addrMap').setView([lat,lng],17);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(addrMap);
+            addrMarker=L.marker([lat,lng],{draggable:true,icon:pinIcon}).addTo(addrMap);
+            addrMarker.on('dragstart',function(){var el=addrMarker._icon.querySelector('div');if(el){el.style.transform='translateY(-12px) scale(1.15)';el.style.filter='drop-shadow(0 8px 8px rgba(0,0,0,.3))'}});
+            addrMarker.on('dragend',function(){var el=addrMarker._icon.querySelector('div');if(el){el.style.transform='translateY(0) scale(1)';el.style.filter='drop-shadow(0 3px 4px rgba(0,0,0,.35))'}var p=addrMarker.getLatLng();reverseGeoFill(p.lat,p.lng)});
+        }else{addrMap.setView([lat,lng],17);addrMarker.setLatLng([lat,lng])}
+        setTimeout(function(){addrMap.invalidateSize()},100);
+    }
+    window.geoLocate=function(){
+        var btn=document.getElementById('geoLocBtn'),txt=document.getElementById('geoLocText');
+        if(!navigator.geolocation){txt.textContent='Trình duyệt không hỗ trợ định vị';return}
+        txt.textContent='Đang định vị...';btn.disabled=true;btn.style.opacity='.6';
+        navigator.geolocation.getCurrentPosition(function(pos){
+            var lat=pos.coords.latitude,lng=pos.coords.longitude;
+            reverseGeoFill(lat,lng);
+            showMap(lat,lng);
+            txt.textContent='Kéo ghim 📍 trên bản đồ để chỉnh vị trí';btn.style.opacity='1';btn.disabled=false;
+            btn.style.borderColor='var(--green)';btn.style.color='var(--green)';
+        },function(err){
+            var msg='Không thể định vị';
+            if(err.code===1)msg='Bạn đã từ chối quyền truy cập vị trí';
+            else if(err.code===2)msg='Không tìm thấy vị trí';
+            else if(err.code===3)msg='Hết thời gian chờ';
+            txt.textContent=msg;btn.style.opacity='1';btn.disabled=false;
+        },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
     };
 })();
 </script>

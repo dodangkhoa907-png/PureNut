@@ -38,7 +38,10 @@ CREATE TABLE Users (
   PasswordHash NVARCHAR(255)  NOT NULL,
   Address      NVARCHAR(500)  NULL,
   Role         NVARCHAR(20)   DEFAULT 'CUSTOMER',     -- CUSTOMER | ADMIN
-  CreatedAt    DATETIME       DEFAULT GETDATE()
+  CreatedAt    DATETIME       DEFAULT GETDATE(),
+  LastLoginIP  NVARCHAR(45),
+  LastLoginAt  DATETIME,
+  AgreedTermsAt DATETIME
 );
 GO
 
@@ -143,6 +146,45 @@ CREATE TABLE DealerLeads (
   City      NVARCHAR(150),
   Status    NVARCHAR(30)  DEFAULT 'PENDING',            -- PENDING | CONTACTED | CLOSED
   CreatedAt DATETIME      DEFAULT GETDATE()
+);
+GO
+
+-- ─── Staff roles: ShipperID trên Orders + OrderNotes + StaffMessages ───
+IF COL_LENGTH('dbo.Orders', 'ShipperID') IS NULL
+    ALTER TABLE Orders ADD ShipperID INT NULL FOREIGN KEY REFERENCES Users(UserID);
+GO
+
+IF OBJECT_ID('dbo.OrderNotes', 'U') IS NULL
+CREATE TABLE OrderNotes (
+  NoteID    INT IDENTITY PRIMARY KEY,
+  OrderID   INT NOT NULL FOREIGN KEY REFERENCES Orders(OrderID),
+  UserID    INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+  Message   NVARCHAR(500) NOT NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+GO
+
+IF OBJECT_ID('dbo.StaffMessages', 'U') IS NULL
+CREATE TABLE StaffMessages (
+  MessageID INT IDENTITY PRIMARY KEY,
+  UserID    INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+  Message   NVARCHAR(500) NOT NULL,
+  CreatedAt DATETIME DEFAULT GETDATE()
+);
+GO
+
+-- ─── Feedback (bong bóng chat hỗ trợ khách hàng) ───
+IF OBJECT_ID('dbo.Feedback', 'U') IS NULL
+CREATE TABLE Feedback (
+  FeedbackID INT IDENTITY PRIMARY KEY,
+  UserID     INT NULL FOREIGN KEY REFERENCES Users(UserID),  -- NULL nếu khách vãng lai
+  Name       NVARCHAR(150) NOT NULL,
+  Phone      NVARCHAR(20)  NULL,
+  Email      NVARCHAR(150) NULL,
+  Rating     INT NULL,                                        -- 1..5 sao (tùy chọn)
+  Message    NVARCHAR(1000) NOT NULL,
+  Status     NVARCHAR(30)  DEFAULT 'NEW',                     -- NEW | SEEN | RESOLVED
+  CreatedAt  DATETIME      DEFAULT GETDATE()
 );
 GO
 

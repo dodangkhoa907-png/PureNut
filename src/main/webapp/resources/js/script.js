@@ -81,6 +81,39 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    const cookieConsent = document.getElementById('cookieConsent');
+    const cookieConsentAccept = document.getElementById('cookieConsentAccept');
+    const cookieConsentKey = 'purenut_cookie_consent_v1';
+
+    function hasCookieConsent() {
+        try {
+            return localStorage.getItem(cookieConsentKey) === 'accepted';
+        } catch (err) {
+            return document.cookie.indexOf(cookieConsentKey + '=accepted') !== -1;
+        }
+    }
+
+    function saveCookieConsent() {
+        try {
+            localStorage.setItem(cookieConsentKey, 'accepted');
+        } catch (err) {
+            document.cookie = cookieConsentKey + '=accepted; max-age=31536000; path=/; SameSite=Lax';
+        }
+    }
+
+    if (cookieConsent && cookieConsentAccept && !hasCookieConsent()) {
+        cookieConsent.hidden = false;
+        requestAnimationFrame(() => cookieConsent.classList.add('is-visible'));
+
+        cookieConsentAccept.addEventListener('click', () => {
+            saveCookieConsent();
+            cookieConsent.classList.remove('is-visible');
+            setTimeout(() => {
+                cookieConsent.hidden = true;
+            }, 220);
+        });
+    }
 });
 
 /* ============================================================

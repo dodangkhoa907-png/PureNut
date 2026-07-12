@@ -241,7 +241,7 @@ input[type=color].pf-color-swatch::-webkit-color-swatch{border:none;border-radiu
                 </div>
                 <div class="pf-field">
                     <label><i class="fa-solid fa-link"></i> Slug (đường dẫn)</label>
-                    <input type="text" name="slug" id="slugInput" class="pf-input" required placeholder="sua-hat-yen-mach" value="${product.slug}">
+                    <input type="text" name="slug" id="slugInput" class="pf-input" required placeholder="sua-hat-yen-mach" value="${fn:escapeXml(product.slug)}">
                 </div>
             </div>
             <div class="pf-row pf-row-2">
@@ -271,7 +271,7 @@ input[type=color].pf-color-swatch::-webkit-color-swatch{border:none;border-radiu
             <c:if test="${not empty product.imageUrl}">
                 <div class="pf-upload-current" id="currentImg">
                     <img src="${pageContext.request.contextPath}${product.imageUrl}" alt="Ảnh hiện tại">
-                    <span><i class="fa-solid fa-circle-check" style="margin-right:4px"></i>Đang sử dụng: ${product.imageUrl}</span>
+                    <span><i class="fa-solid fa-circle-check" style="margin-right:4px"></i>Đang sử dụng: <c:out value="${product.imageUrl}"/></span>
                 </div>
             </c:if>
 
@@ -296,8 +296,8 @@ input[type=color].pf-color-swatch::-webkit-color-swatch{border:none;border-radiu
                 <div class="pf-field">
                     <label><i class="fa-solid fa-palette"></i> Màu nền</label>
                     <div class="pf-color-row">
-                        <input type="color" id="colorPicker" class="pf-color-swatch" value="${product.bgColorHex != null ? product.bgColorHex : '#E7C9A0'}">
-                        <input type="text" name="bgColorHex" id="colorHex" class="pf-input" value="${product.bgColorHex != null ? product.bgColorHex : '#E7C9A0'}" placeholder="#E7C9A0">
+                        <input type="color" id="colorPicker" class="pf-color-swatch" value="${fn:escapeXml(product.bgColorHex != null ? product.bgColorHex : '#E7C9A0')}">
+                        <input type="text" name="bgColorHex" id="colorHex" class="pf-input" value="${fn:escapeXml(product.bgColorHex != null ? product.bgColorHex : '#E7C9A0')}" placeholder="#E7C9A0" maxlength="7" pattern="#[0-9a-fA-F]{6}">
                     </div>
                 </div>
                 <div class="pf-field">

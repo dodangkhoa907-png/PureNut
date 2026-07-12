@@ -62,6 +62,18 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
 .perk:nth-of-type(2):hover{background:#F2B705;border-color:#F2B705;color:#3a2b00}
 .perk:nth-of-type(3):hover{background:#1B4F9E;border-color:#1B4F9E}
 @media(max-width:900px){.auth{grid-template-columns:1fr}.side{display:none}.pane{padding:42px 30px}.grid2{grid-template-columns:1fr}}
+.terms-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:20px}
+.terms-overlay.open{display:flex}
+.terms-panel{background:var(--paper);border-radius:20px;max-width:600px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 40px 80px -20px rgba(0,0,0,.4);overflow:hidden}
+.terms-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.terms-hdr h2{font-family:var(--fd);font-size:22px;font-weight:600;color:var(--ink)}
+.terms-close{background:none;font-size:22px;color:var(--ink-soft);padding:4px 8px;border-radius:8px}
+.terms-close:hover{background:rgba(0,0,0,.05)}
+.terms-body{padding:24px;overflow-y:auto;font-size:14px;line-height:1.8;color:var(--ink)}
+.terms-body h3{font-family:var(--fd);font-size:16px;font-weight:600;margin:18px 0 8px;color:var(--navy)}
+.terms-body h3:first-child{margin-top:0}
+.terms-body ul{padding-left:20px;margin:8px 0}
+.terms-body li{margin-bottom:4px}
 @media(max-width:560px){
   body{padding:0;align-items:stretch;flex-direction:column}
   .blob{display:none}
@@ -135,14 +147,93 @@ a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer;border:n
           <button type="button" class="eye" onclick="togglePw('confirmPassword')" aria-label="Hiện mật khẩu"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
+      <div class="field" style="margin-bottom:16px">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:500;font-size:13.5px;color:var(--ink)">
+          <input type="checkbox" name="agreeTerms" id="agreeTerms" required style="width:18px;height:18px;margin-top:2px;accent-color:var(--red);flex-shrink:0;cursor:pointer">
+          <span>Tôi đồng ý với <a href="#" onclick="openTermsModal(event)" style="color:var(--navy);font-weight:700;text-decoration:underline">Điều khoản sử dụng</a> và <a href="#" onclick="openPrivacyModal(event)" style="color:var(--navy);font-weight:700;text-decoration:underline">Chính sách bảo mật</a> của PureNut</span>
+        </label>
+      </div>
       <button type="submit" class="submit">Đăng ký</button>
     </form>
     <p class="alt">Đã có tài khoản? <a href="${ctx}/login">Đăng nhập →</a></p>
   </div>
 </div>
 
+<div class="terms-overlay" id="termsModal">
+  <div class="terms-panel">
+    <div class="terms-hdr"><h2>Điều khoản sử dụng</h2><button class="terms-close" onclick="closeModal('termsModal')">&times;</button></div>
+    <div class="terms-body">
+      <h3>1. Giới thiệu</h3>
+      <p>Chào mừng bạn đến với PureNut. Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý tuân thủ các điều khoản dưới đây.</p>
+      <h3>2. Tài khoản</h3>
+      <ul>
+        <li>Bạn phải cung cấp thông tin chính xác khi đăng ký.</li>
+        <li>Bạn chịu trách nhiệm bảo mật thông tin đăng nhập của mình.</li>
+        <li>Chúng tôi có quyền khóa tài khoản nếu phát hiện hành vi vi phạm.</li>
+      </ul>
+      <h3>3. Đặt hàng và thanh toán</h3>
+      <ul>
+        <li>Giá sản phẩm có thể thay đổi mà không cần thông báo trước.</li>
+        <li>Đơn hàng chỉ được xác nhận sau khi chúng tôi gửi email/thông báo xác nhận.</li>
+        <li>Bạn có thể hủy đơn hàng trước khi đơn được giao cho đơn vị vận chuyển.</li>
+      </ul>
+      <h3>4. Quyền sở hữu trí tuệ</h3>
+      <p>Toàn bộ nội dung trên website (hình ảnh, văn bản, logo) thuộc sở hữu của PureNut và được bảo hộ bởi luật sở hữu trí tuệ.</p>
+      <h3>5. Giới hạn trách nhiệm</h3>
+      <p>PureNut không chịu trách nhiệm cho các thiệt hại gián tiếp phát sinh từ việc sử dụng dịch vụ.</p>
+      <h3>6. Thay đổi điều khoản</h3>
+      <p>Chúng tôi có quyền cập nhật điều khoản này. Thay đổi sẽ có hiệu lực ngay khi được đăng tải trên website.</p>
+    </div>
+  </div>
+</div>
+
+<div class="terms-overlay" id="privacyModal">
+  <div class="terms-panel">
+    <div class="terms-hdr"><h2>Chính sách bảo mật</h2><button class="terms-close" onclick="closeModal('privacyModal')">&times;</button></div>
+    <div class="terms-body">
+      <h3>1. Thông tin chúng tôi thu thập</h3>
+      <ul>
+        <li><strong>Thông tin cá nhân:</strong> Họ tên, email, số điện thoại khi bạn đăng ký tài khoản.</li>
+        <li><strong>Thông tin đơn hàng:</strong> Địa chỉ giao hàng, lịch sử mua hàng.</li>
+        <li><strong>Thông tin kỹ thuật:</strong> Địa chỉ IP, thời gian đăng nhập — phục vụ bảo mật tài khoản.</li>
+      </ul>
+      <h3>2. Mục đích sử dụng</h3>
+      <ul>
+        <li>Xử lý đơn hàng và giao hàng.</li>
+        <li>Bảo vệ tài khoản: phát hiện đăng nhập bất thường qua IP.</li>
+        <li>Cải thiện trải nghiệm mua sắm.</li>
+        <li>Gửi thông báo về đơn hàng, khuyến mãi (nếu bạn đồng ý).</li>
+      </ul>
+      <h3>3. Bảo mật dữ liệu</h3>
+      <ul>
+        <li>Mật khẩu được mã hóa (bcrypt), không ai đọc được — kể cả admin.</li>
+        <li>Dữ liệu truyền qua kênh mã hóa (HTTPS khi deploy production).</li>
+        <li>Chỉ nhân viên được ủy quyền mới truy cập dữ liệu khách hàng.</li>
+      </ul>
+      <h3>4. Chia sẻ thông tin</h3>
+      <p>Chúng tôi <strong>không</strong> bán hoặc chia sẻ thông tin cá nhân cho bên thứ ba, trừ trường hợp:</p>
+      <ul>
+        <li>Đơn vị vận chuyển (tên, SĐT, địa chỉ giao hàng).</li>
+        <li>Yêu cầu từ cơ quan pháp luật.</li>
+      </ul>
+      <h3>5. Quyền của bạn</h3>
+      <ul>
+        <li>Xem và chỉnh sửa thông tin cá nhân trong trang Tài khoản.</li>
+        <li>Yêu cầu xóa tài khoản bằng cách liên hệ chúng tôi.</li>
+      </ul>
+      <h3>6. Lưu trữ địa chỉ IP</h3>
+      <p>Chúng tôi ghi nhận địa chỉ IP và thời gian đăng nhập gần nhất để bảo vệ tài khoản khỏi truy cập trái phép. Thông tin này chỉ admin hệ thống xem được và không chia sẻ ra ngoài.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 function togglePw(id){var i=document.getElementById(id);i.type=i.type==='password'?'text':'password';}
+function openTermsModal(e){e.preventDefault();document.getElementById('termsModal').classList.add('open');}
+function openPrivacyModal(e){e.preventDefault();document.getElementById('privacyModal').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.terms-overlay').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)closeModal(m.id)});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal('termsModal');closeModal('privacyModal')}});
 (function(){
   var side=document.getElementById('side3d'),inner=document.getElementById('sideInner');
   if(!side||!inner)return;

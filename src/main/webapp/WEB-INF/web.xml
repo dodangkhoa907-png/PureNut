@@ -27,6 +27,21 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- ══ Admin IP Whitelist — chỉ IP trong danh sách mới truy cập /admin/* ══ -->
+    <filter>
+        <filter-name>adminIpFilter</filter-name>
+        <filter-class>com.purenut.shop.filter.AdminIpFilter</filter-class>
+        <init-param>
+            <param-name>allowedIps</param-name>
+            <param-value>192.168.0.101</param-value>
+        </init-param>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>adminIpFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
     <!-- JSP Servlet: development mode cho hot-reload khi dev -->
     <servlet>
         <servlet-name>jsp</servlet-name>
@@ -59,12 +74,18 @@
         <url-pattern>*.jsp</url-pattern>
     </servlet-mapping>
 
+    <!-- Timezone cho JSTL fmt:formatDate — hiển thị giờ VN (UTC+7) -->
+    <context-param>
+        <param-name>jakarta.servlet.jsp.jstl.fmt.timeZone</param-name>
+        <param-value>Asia/Ho_Chi_Minh</param-value>
+    </context-param>
+
     <!-- Session config -->
     <session-config>
         <session-timeout>120</session-timeout>
         <cookie-config>
             <http-only>true</http-only>
-            <secure>true</secure>
+            <!-- <secure>true</secure> bật lại khi deploy HTTPS -->
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
@@ -79,5 +100,18 @@
         <mime-type>font/woff</mime-type>
     </mime-mapping>
 
+    <!-- Custom error pages — ẩn thông tin server -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
 
 </web-app>

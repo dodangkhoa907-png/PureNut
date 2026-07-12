@@ -3,6 +3,8 @@ package com.purenut.shop.controller.admin;
 import com.purenut.shop.model.User;
 import com.purenut.shop.service.UserService;
 import com.purenut.shop.service.impl.UserServiceImpl;
+import com.purenut.shop.dao.UserDao;
+import com.purenut.shop.dao.impl.UserDaoImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,10 +27,12 @@ import java.util.Optional;
 public class AdminAuthController extends HttpServlet {
 
     private UserService userService;
+    private UserDao userDao;
 
     @Override
     public void init() throws ServletException {
         userService = new UserServiceImpl();
+        userDao = new UserDaoImpl();
     }
 
     @Override
@@ -40,7 +44,7 @@ public class AdminAuthController extends HttpServlet {
 
         if ("/admin/logout".equals(path)) {
             if (session != null) {
-                session.removeAttribute("adminUser");
+                session.invalidate();
             }
             response.sendRedirect(request.getContextPath() + "/admin/login");
             return;
@@ -69,6 +73,7 @@ public class AdminAuthController extends HttpServlet {
             HttpSession session = request.getSession();
             request.changeSessionId(); // chống session fixation
             session.setAttribute("adminUser", userOpt.get());
+            userDao.updateLoginInfo(userOpt.get().getUserId(), request.getRemoteAddr());
             com.purenut.shop.util.AuditLogger.log(request, userOpt.get().getUserId(),
                     "ADMIN_LOGIN", userOpt.get().getEmail(), "Đăng nhập khu vực quản trị");
             response.sendRedirect(request.getContextPath() + "/admin/dashboard");

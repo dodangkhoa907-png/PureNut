@@ -150,7 +150,7 @@
                 <div class="product-grid">
                     <c:forEach var="p" items="${products}">
                         <a href="${pageContext.request.contextPath}/products/${p.slug}" class="product-card">
-                            <div class="product-img-wrap" style="background-color: ${p.bgColorHex}">
+                            <div class="product-img-wrap" style="background-color: ${fn:escapeXml(p.bgColorHex)}">
                                 <img src="${pageContext.request.contextPath}${p.imageUrl}" alt="${fn:escapeXml(p.name)}" onerror="this.onerror=null;this.src=&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect width='100%25' height='100%25' fill='%23EDE6D2'/%3E%3Ctext x='50%25' y='56%25' font-size='52' text-anchor='middle'%3E%F0%9F%A5%9B%3C/text%3E%3C/svg%3E&quot;">
                             </div>
                             <div class="product-info">

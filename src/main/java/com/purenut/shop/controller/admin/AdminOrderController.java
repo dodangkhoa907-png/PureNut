@@ -7,6 +7,8 @@ import com.purenut.shop.dao.impl.UserDaoImpl;
 import com.purenut.shop.model.Order;
 import com.purenut.shop.model.User;
 
+import com.purenut.shop.util.Validators;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,6 +32,8 @@ public class AdminOrderController extends HttpServlet {
     private static final Set<String> ALLOWED_STATUS =
             Set.of("PENDING", "CONFIRMED", "SHIPPING", "DONE", "CANCELLED", "PENDING_CANCEL");
 
+    private static final int PAGE_SIZE = 30;
+
     private static final Map<String, Integer> STATUS_RANK = Map.ofEntries(
             Map.entry("PENDING", 0), Map.entry("CONFIRMED", 1),
             Map.entry("SHIPPING", 2), Map.entry("DONE", 3),
@@ -39,9 +43,19 @@ public class AdminOrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
-        
+
         if ("/admin/don-hang".equals(path)) {
-            req.setAttribute("orders", orderDao.findAllOrders());
+            int page = Validators.parsePositiveInt(req.getParameter("page"), 1);
+            if (page < 1) page = 1;
+            int totalItems = orderDao.countOrders();
+            int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / PAGE_SIZE));
+            if (page > totalPages) page = totalPages;
+            int offset = (page - 1) * PAGE_SIZE;
+
+            req.setAttribute("orders", orderDao.findAllOrdersPaged(offset, PAGE_SIZE));
+            req.setAttribute("currentPage", page);
+            req.setAttribute("totalPages", totalPages);
+            req.setAttribute("totalItems", totalItems);
             req.setAttribute("pageTitle", "Quản lý Đơn hàng");
             req.getRequestDispatcher("/WEB-INF/views/admin/order-list.jsp").forward(req, resp);
             

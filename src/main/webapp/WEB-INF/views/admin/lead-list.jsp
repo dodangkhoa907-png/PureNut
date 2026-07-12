@@ -36,7 +36,7 @@
                             <div style="font-size: 14px;"><c:out value="${lead.phone}"/></div>
                             <div style="font-size: 13px; color: var(--admin-text-light);"><c:out value="${lead.email}"/></div>
                         </td>
-                        <td>${lead.city}</td>
+                        <td><c:out value="${lead.city}"/></td>
                         <td><fmt:formatDate value="${lead.createdAt}" pattern="dd/MM/yyyy" /></td>
                         <td>
                             <span class="badge badge-${lead.status}">

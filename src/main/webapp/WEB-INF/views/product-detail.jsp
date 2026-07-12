@@ -340,7 +340,7 @@
 
   <!-- Info -->
   <div class="info-pane">
-    <span class="eyebrow-pill" style="color:${accA};background:${accA}18;border-color:${accA}44">${product.categoryName}</span>
+    <span class="eyebrow-pill" style="color:${accA};background:${accA}18;border-color:${accA}44"><c:out value="${product.categoryName}"/></span>
     <h1><c:out value="${product.name}"/></h1>
     <div class="price">${product.formattedPrice} đ</div>
     <div class="price-sub">/ chai ${product.volumeMl}ml · Đã bao gồm VAT</div>
@@ -370,7 +370,7 @@
         </div>
       </div>
       <div class="desc-block" style="margin-top:16px">
-        <p>${product.description}</p>
+        <p><c:out value="${product.description}"/></p>
       </div>
     </div>
 
@@ -439,7 +439,7 @@
   <button class="bs-close" onclick="closeAllSheets()">&times;</button>
   <div class="bs-body">
     <div class="bs-product">
-      <div class="bs-product-img" style="background:${not empty product.bgColorHex ? product.bgColorHex : '#E9DCBE'}">
+      <div class="bs-product-img" style="background:${fn:escapeXml(not empty product.bgColorHex ? product.bgColorHex : '#E9DCBE')}">
         <c:choose>
           <c:when test="${not empty product.imageUrl}"><img src="${ctx}${product.imageUrl}" alt="${fn:escapeXml(product.name)}"></c:when>
           <c:otherwise>${zoneIcon}</c:otherwise>
@@ -473,7 +473,7 @@
     <div class="grid">
       <c:forEach var="rel" items="${relatedProducts}">
         <a href="${ctx}/products/${rel.slug}" class="pcard">
-          <div class="pcard-thumb" style="background:${not empty rel.bgColorHex ? rel.bgColorHex : '#E9DCBE'}">
+          <div class="pcard-thumb" style="background:${fn:escapeXml(not empty rel.bgColorHex ? rel.bgColorHex : '#E9DCBE')}">
             <div class="pcard-thumb-emoji">${isBean ? '🌰' : '🥛'}</div>
             <c:if test="${rel.featured}"><span class="pcard-feat-badge">⭐ Nổi bật</span></c:if>
           </div>
