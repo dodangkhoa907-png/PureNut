@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tomcat",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "echo Server already running on port 8081 && timeout /t 99999"],
+      "port": 8081
+    }
+  ]
+}
