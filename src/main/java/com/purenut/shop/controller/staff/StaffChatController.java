@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
- * API nội bộ nhân viên (SHIPPER / MANAGER / ADMIN):
+ * API nội bộ nhân viên (SHIPPER / ADMIN):
  *  GET  /staff/chat?after=ID     → tin chat chung mới hơn ID (polling)
  *  POST /staff/chat  (message)   → gửi tin chat chung
  *  GET  /staff/notes?orderId=N   → ghi chú của đơn N
@@ -34,10 +34,10 @@ public class StaffChatController extends HttpServlet {
         dao = new StaffMessageDaoImpl();
     }
 
-    /** Người dùng hiện tại: nhân viên (session "user") hoặc admin (session "adminUser"). */
+    /** Người dùng hiện tại: shipper (session "shipperUser") hoặc admin (session "adminUser"). */
     private User currentStaff(HttpServletRequest req) {
-        User u = (User) req.getSession().getAttribute("user");
-        if (u != null && ("SHIPPER".equals(u.getRole()) || "MANAGER".equals(u.getRole()))) return u;
+        User u = (User) req.getSession().getAttribute("shipperUser");
+        if (u != null && "SHIPPER".equals(u.getRole())) return u;
         User admin = (User) req.getSession().getAttribute("adminUser");
         return admin; // null nếu không phải staff
     }

@@ -40,11 +40,22 @@ public interface OrderDao {
     /** Admin từ chối hủy → trả về CONFIRMED */
     int rejectCancelOrder(int orderId) throws Exception;
 
-    /** Manager: gán shipper cho đơn + chuyển sang SHIPPING */
+    /** Admin điều phối: gán shipper cho đơn + Status=SHIPPING + DeliveryStatus=ASSIGNED */
     int assignShipper(int orderId, int shipperId);
 
     /** Shipper: các đơn được gán cho mình (đang giao) */
     List<Order> findOrdersByShipper(int shipperId);
+
+    /**
+     * State machine giao hàng — CAS atomic: chỉ update khi DeliveryStatus
+     * đang đúng {@code from} VÀ đơn thuộc đúng shipper. Chống race + nhảy cóc.
+     * to=COMPLETED đồng bộ Status='DONE'.
+     * @return số dòng update (0 = sai trạng thái nguồn / sai chủ đơn)
+     */
+    int updateDeliveryStatus(int orderId, int shipperId, String from, String to);
+
+    /** Shipper: lưu ảnh bằng chứng giao hàng (chỉ chủ đơn) */
+    int setProofImage(int orderId, int shipperId, String imagePath);
 
     List<Order> findAllOrdersPaged(int offset, int limit);
     int countOrders();

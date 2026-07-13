@@ -78,6 +78,15 @@ public class CartController extends HttpServlet {
         String path = request.getServletPath();
         User user = (User) request.getSession().getAttribute("user");
 
+        if (user == null) {
+            if (isAjax(request)) {
+                writeJson(response, "{\"success\":false,\"msg\":\"Vui lòng đăng nhập\"}");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login");
+            }
+            return;
+        }
+
         switch (path) {
             case "/cart/add":   handleAdd(request, response, user);    break;
             case "/cart/update": handleUpdate(request, response, user); break;

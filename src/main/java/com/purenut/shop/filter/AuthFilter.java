@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*", "/shipper/*", "/manager/*", "/staff/*"}, asyncSupported = true)
+@WebFilter(filterName = "AuthFilter", urlPatterns = {"/cart/*", "/checkout/*", "/account/*", "/admin/*", "/shipper/*", "/staff/*"}, asyncSupported = true)
 public class AuthFilter implements Filter {
 
     @Override
@@ -25,7 +25,9 @@ public class AuthFilter implements Filter {
 
         String servletPath = req.getServletPath();
 
-        if ("/admin/login".equals(servletPath) || "/cart/count".equals(servletPath)) {
+        // Cổng đăng nhập public: không chặn
+        if ("/admin/login".equals(servletPath) || "/cart/count".equals(servletPath)
+                || "/shipper/login".equals(servletPath) || "/shipper/logout".equals(servletPath)) {
             chain.doFilter(request, response);
             return;
         }
@@ -46,30 +48,22 @@ public class AuthFilter implements Filter {
 
         User user = (session != null) ? (User) session.getAttribute("user") : null;
         User admin = (session != null) ? (User) session.getAttribute("adminUser") : null;
+        User shipperUser = (session != null) ? (User) session.getAttribute("shipperUser") : null;
 
-        // Khu vực Shipper: chỉ SHIPPER (hoặc admin xem giám sát)
+        // Khu vực Shipper: dùng session ĐỘC LẬP "shipperUser" (hoặc admin giám sát).
+        // KHÔNG dùng "user" của khách → shipper không bao giờ bị đá về trang khách hàng.
         if (servletPath.startsWith("/shipper")) {
-            if ((user != null && "SHIPPER".equals(user.getRole())) || admin != null) {
+            if ((shipperUser != null && "SHIPPER".equals(shipperUser.getRole())) || admin != null) {
                 chain.doFilter(request, response);
             } else {
-                res.sendRedirect(loginUri);
+                res.sendRedirect(req.getContextPath() + "/shipper/login");
             }
             return;
         }
 
-        // Khu vực Manager: chỉ MANAGER (hoặc admin)
-        if (servletPath.startsWith("/manager")) {
-            if ((user != null && "MANAGER".equals(user.getRole())) || admin != null) {
-                chain.doFilter(request, response);
-            } else {
-                res.sendRedirect(loginUri);
-            }
-            return;
-        }
-
-        // API nội bộ /staff/*: SHIPPER, MANAGER hoặc ADMIN
+        // API nội bộ /staff/*: SHIPPER (session riêng) hoặc ADMIN
         if (servletPath.startsWith("/staff")) {
-            boolean staff = (user != null && ("SHIPPER".equals(user.getRole()) || "MANAGER".equals(user.getRole())))
+            boolean staff = (shipperUser != null && "SHIPPER".equals(shipperUser.getRole()))
                     || admin != null;
             if (staff) {
                 chain.doFilter(request, response);

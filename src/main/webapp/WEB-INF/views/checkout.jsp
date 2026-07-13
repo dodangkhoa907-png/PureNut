@@ -96,6 +96,8 @@ h1.title{font-size:clamp(28px,4vw,40px);margin-bottom:28px}
   <h1 class="title">Thanh toán</h1>
   <form action="${ctx}/checkout" method="POST" id="checkoutForm">
     <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
+    <input type="hidden" name="lat" id="orderLat">
+    <input type="hidden" name="lng" id="orderLng">
     <c:if test="${not empty param.items}"><input type="hidden" name="items" value="${fn:escapeXml(param.items)}"></c:if>
     <div class="grid">
       <div class="box">
@@ -156,7 +158,12 @@ h1.title{font-size:clamp(28px,4vw,40px);margin-bottom:28px}
 (function(){
   var pinIcon=L.divIcon({className:'',html:'<div style="position:relative;width:30px;height:45px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));transition:transform .3s cubic-bezier(.34,1.56,.64,1)" id="pinSvg"><svg width="30" height="45" viewBox="0 0 30 45" xmlns="http://www.w3.org/2000/svg"><path d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 30 15 30s15-18.75 15-30C30 6.7 23.3 0 15 0z" fill="#CE2E2E"/><circle cx="15" cy="14" r="6" fill="#fff"/></svg></div>',iconSize:[30,45],iconAnchor:[15,45],popupAnchor:[0,-40]});
   var addrMap=null,addrMarker=null;
+  function saveCoords(lat,lng){
+    var la=document.getElementById('orderLat'),lo=document.getElementById('orderLng');
+    if(la)la.value=lat.toFixed(6);if(lo)lo.value=lng.toFixed(6);
+  }
   function reverseGeoFill(lat,lng){
+    saveCoords(lat,lng);
     fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lng+'&accept-language=vi&addressdetails=1')
     .then(function(r){return r.json()}).then(function(d){
       var a=d.address||{},parts=[];

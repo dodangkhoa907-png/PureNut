@@ -13,7 +13,7 @@ public interface UserDao {
     boolean updateProfile(int userId, String fullName, String phone);
     boolean updateLoginInfo(int userId, String ip);
 
-    /** Nhân sự: danh sách user theo role (SHIPPER / MANAGER) */
+    /** Nhân sự: danh sách user theo role (SHIPPER) */
     List<User> findByRole(String role);
 
     /** Admin: đổi role một user */

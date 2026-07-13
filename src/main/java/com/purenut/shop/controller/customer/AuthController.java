@@ -97,22 +97,19 @@ public class AuthController extends HttpServlet {
 
             HttpSession session = request.getSession();
             request.changeSessionId(); // chống session fixation
-            session.setAttribute("user", user);
 
-            userDao.updateLoginInfo(user.getUserId(), request.getRemoteAddr());
-
-            // Nhân viên: chuyển thẳng vào khu làm việc riêng
+            // Shipper đăng nhập nhầm ở cổng khách → set session ĐỘC LẬP shipperUser,
+            // KHÔNG set "user" (giữ khu shipper tách biệt hoàn toàn với khách hàng)
             if ("SHIPPER".equals(user.getRole())) {
-                AuditLogger.log(request, user.getUserId(), "STAFF_LOGIN", user.getEmail(), "Shipper đăng nhập");
+                session.setAttribute("shipperUser", user);
+                userDao.updateLoginInfo(user.getUserId(), request.getRemoteAddr());
+                AuditLogger.log(request, user.getUserId(), "SHIPPER_LOGIN", user.getEmail(), "Shipper đăng nhập (qua cổng khách)");
                 response.sendRedirect(request.getContextPath() + "/shipper");
                 return;
             }
-            if ("MANAGER".equals(user.getRole())) {
-                AuditLogger.log(request, user.getUserId(), "STAFF_LOGIN", user.getEmail(), "Manager đăng nhập");
-                response.sendRedirect(request.getContextPath() + "/manager");
-                return;
-            }
 
+            session.setAttribute("user", user);
+            userDao.updateLoginInfo(user.getUserId(), request.getRemoteAddr());
             AuditLogger.log(request, user.getUserId(), "CUSTOMER_LOGIN", user.getEmail(), "Đăng nhập tài khoản khách hàng");
 
             // Load cart items từ database

@@ -166,6 +166,10 @@ public class CheckoutController extends HttpServlet {
         order.setTotalAmount(totalAmount);
         order.setCouponCode(couponValid ? Coupons.PURENUT20 : null);
 
+        // Tọa độ Google Maps của khách (nút định vị ở checkout) — shipper dùng chỉ đường
+        order.setLatitude(parseCoord(request.getParameter("lat"), -90, 90));
+        order.setLongitude(parseCoord(request.getParameter("lng"), -180, 180));
+
         boolean bankTransfer = "BANK_TRANSFER".equals(paymentMethod);
         long amount = totalAmount.longValue();
 
@@ -296,6 +300,17 @@ public class CheckoutController extends HttpServlet {
     }
 
     /** Trả về thông báo lỗi đầu tiên, hoặc null nếu hợp lệ. */
+    /** Parse tọa độ an toàn: null nếu không phải số hoặc ngoài phạm vi hợp lệ */
+    private static Double parseCoord(String s, double min, double max) {
+        if (s == null || s.isBlank()) return null;
+        try {
+            double v = Double.parseDouble(s.trim());
+            return (v >= min && v <= max) ? v : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     private String validate(String fullName, String phone, String address, String paymentMethod) {
         if (Validators.isBlank(fullName)) {
             return "Vui lòng nhập họ tên người nhận.";

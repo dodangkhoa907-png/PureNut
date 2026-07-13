@@ -13,6 +13,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="_csrf" content="${sessionScope._csrf}">
 <title><c:out value="${product.name}"/> — PureNut</title>
 <meta name="description" content="${fn:escapeXml(fn:substring(product.description, 0, 160))}">
 <jsp:include page="/WEB-INF/views/layout/header.jsp" />
@@ -569,18 +570,20 @@
   }
 
   // Add to cart
+  var csrfToken=(document.querySelector('meta[name=_csrf]')||{content:''}).content;
   async function addToCart(){
     var id=f.querySelector('input[name="productId"]').value,q=inp.value;
     try{
-      var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity='+q});
+      var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity='+q+'&_csrf='+encodeURIComponent(csrfToken)});
       if(r.redirected){window.location=r.url;return}
+      if(!r.ok){showToast('Lỗi, vui lòng thử lại');return}
       var d=await r.json();
       if(d&&d.success){
         showToast('Đã thêm vào giỏ hàng ✓');
         var b1=document.getElementById('siteCartBadge');if(b1)b1.textContent=d.cartCount;
         var b2=document.getElementById('mobileCartBadge');if(b2)b2.textContent=d.cartCount;
       }
-    }catch(e){window.location=CTX+'/login'}
+    }catch(e){showToast('Có lỗi xảy ra, vui lòng tải lại trang')}
   }
 
   document.getElementById('addBtn').addEventListener('click',function(){flyToCart(this);addToCart()});

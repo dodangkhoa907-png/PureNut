@@ -136,6 +136,26 @@
   <c:if test="${empty newOrders}"><div class="dp-muted">Không có đơn mới.</div></c:if>
 </div>
 
+<!-- Đội shipper: cấp IP nội bộ (màng lọc thép) -->
+<div class="card">
+  <div class="dp-section-title">🛡️ Đội Shipper — IP nội bộ &amp; biển số</div>
+  <c:forEach var="s" items="${shipperProfiles}">
+    <div class="dp-row">
+      <span class="dp-oid">#${s.shipperId}</span>
+      <span class="dp-who">
+        <b><c:out value="${s.fullName}"/></b>
+        <small><c:out value="${empty s.phone ? '—' : s.phone}"/> · ${s.status == 'ACTIVE' ? '🟢 Đang nhận đơn' : '⚪ Tạm nghỉ'}</small>
+      </span>
+      <input type="text" id="plate${s.shipperId}" value="${fn:escapeXml(s.vehiclePlate)}" placeholder="Biển số xe"
+             style="border:1.5px solid var(--admin-border);border-radius:10px;padding:8px 10px;font-size:13px;width:110px">
+      <input type="text" id="ip${s.shipperId}" value="${fn:escapeXml(s.allowedIp)}" placeholder="IP nội bộ (CSV) — trống = không khóa"
+             style="border:1.5px solid var(--admin-border);border-radius:10px;padding:8px 10px;font-size:13px;flex:1;min-width:190px">
+      <button class="dp-b assign" onclick="grantIp(${s.shipperId})">💾 Lưu</button>
+    </div>
+  </c:forEach>
+  <c:if test="${empty shipperProfiles}"><div class="dp-muted">Chưa có shipper nào. Tạo tài khoản ở mục Quản lý Nhân sự.</div></c:if>
+</div>
+
 <!-- Chat dock -->
 <button class="chat-fab" onclick="toggleChat()" aria-label="Chat nội bộ">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -169,7 +189,7 @@ function ajax(url,data,cb){
   if(data){var p=new URLSearchParams();p.append('_csrf',CSRF);for(var k in data)p.append(k,data[k]);opt.method='POST';opt.body=p;opt.headers['Content-Type']='application/x-www-form-urlencoded'}
   fetch(CTX+url,opt).then(function(r){return r.json()}).then(cb).catch(function(){});
 }
-function roleTag(r){return r==='MANAGER'?'Quản lý':(r==='ADMIN'?'Admin':'Shipper')}
+function roleTag(r){return r==='ADMIN'?'Admin':'Shipper'}
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 function render(list,box,append){
   if(!append)box.innerHTML='';
@@ -184,15 +204,23 @@ function render(list,box,append){
 window.assign=function(orderId){
   var sel=document.getElementById('sel'+orderId);
   if(!sel.value){alert('Chọn shipper trước nhé!');return}
-  ajax('/manager/gan-don',{orderId:orderId,shipperId:sel.value},function(d){
+  ajax('/admin/dieu-phoi/gan-don',{orderId:orderId,shipperId:sel.value},function(d){
     if(d.ok){var r=document.getElementById('asg'+orderId);r.style.opacity='.45';r.querySelectorAll('button,select').forEach(function(x){x.disabled=true});setTimeout(function(){location.reload()},600)}
     else alert(d.msg||'Không gán được');
   });
 };
 window.cancelAct=function(orderId,action){
   if(!confirm(action==='approve'?'Duyệt hủy đơn #'+orderId+' và hoàn kho?':'Từ chối yêu cầu hủy đơn #'+orderId+'?'))return;
-  ajax('/manager/duyet-huy',{orderId:orderId,action:action},function(d){
+  ajax('/admin/dieu-phoi/duyet-huy',{orderId:orderId,action:action},function(d){
     if(d.ok){location.reload()}else alert(d.msg||'Không xử lý được');
+  });
+};
+window.grantIp=function(shipperId){
+  var ip=document.getElementById('ip'+shipperId).value.trim();
+  var plate=document.getElementById('plate'+shipperId).value.trim();
+  ajax('/admin/dieu-phoi/cap-ip',{shipperId:shipperId,allowedIp:ip,vehiclePlate:plate},function(d){
+    if(d.ok)alert('Đã lưu cấu hình shipper #'+shipperId+(ip?'\nIP whitelist: '+ip:'\n(Không khóa IP)'));
+    else alert(d.msg||'Không lưu được');
   });
 };
 window.openNotes=function(orderId){

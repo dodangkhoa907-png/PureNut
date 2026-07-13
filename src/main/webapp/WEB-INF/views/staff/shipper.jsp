@@ -1,235 +1,418 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-<c:set var="me" value="${not empty sessionScope.user ? sessionScope.user : sessionScope.adminUser}"/>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
 <title>Shipper — PureNut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1B4F9E;--navy-darker:#0B2547;--red:#CE2E2E;--green:#2BAC62;--cream:#FBF6EC;--paper:#FFFDF8;--ink:#241F18;--ink-soft:#6B6357;--line:rgba(36,31,24,.1);--fd:'Fraunces',serif;--fb:'Inter',sans-serif}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--fb);background:var(--cream);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:76px}
-button{font:inherit;cursor:pointer;border:none;background:none}
-a{text-decoration:none;color:inherit}
+:root{--yellow:#FFC400;--yellow-dark:#E6A800;--black:#111;--gray:#1E1E1E;--gray-2:#2A2A2A;--white:#FFF;--muted:#9E9E9E;--green:#22C55E;--red:#EF4444;--blue:#3B82F6}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased}
 
-.hd{background:linear-gradient(135deg,var(--navy),var(--navy-darker));color:#fff;padding:20px 18px 56px;border-radius:0 0 26px 26px}
-.hd-row{display:flex;align-items:center;justify-content:space-between;max-width:680px;margin:0 auto}
-.hd h1{font-family:var(--fd);font-size:20px;color:#fff}
-.hd small{opacity:.8;font-size:12.5px}
-.hd a.out{font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);padding:8px 14px;border-radius:99px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:680px;margin:-38px auto 18px;padding:0 16px}
-.stat{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:center;box-shadow:0 10px 26px -14px rgba(11,37,71,.3)}
-.stat b{display:block;font-family:var(--fd);font-size:26px;color:var(--navy)}
-.stat span{font-size:12px;color:var(--ink-soft);font-weight:600}
+/* ===== HEADER ===== */
+.hd{position:sticky;top:0;z-index:50;background:var(--yellow);color:var(--black);padding:14px 16px calc(14px + env(safe-area-inset-top)) 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.hd-l{display:flex;align-items:center;gap:10px}
+.hd-avatar{width:44px;height:44px;border-radius:14px;background:var(--black);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
+.hd-name{font-weight:800;font-size:16px;line-height:1.2}
+.hd-sub{font-size:12px;font-weight:600;opacity:.75}
+.hd-r{display:flex;align-items:center;gap:8px}
+.hd-toggle{border:none;border-radius:99px;padding:10px 14px;font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.hd-toggle.on{background:var(--black);color:var(--green)}
+.hd-toggle.off{background:rgba(0,0,0,.15);color:var(--black)}
+.hd-logout{width:40px;height:40px;flex-shrink:0;border-radius:12px;background:var(--black);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none}
+.hd-logout:active{transform:scale(.94)}
 
-.wrap{max-width:680px;margin:0 auto;padding:0 16px}
-.oc{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;transition:transform .2s,box-shadow .2s}
-.oc:active{transform:scale(.99)}
-.oc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.oc-id{font-weight:800;font-size:15px}
-.pill{font-size:11px;font-weight:700;padding:4px 11px;border-radius:99px}
-.pill.SHIPPING{background:#FFF3DC;color:#B7791F}
-.pill.DONE{background:#E4F7EC;color:var(--green)}
-.oc-name{font-weight:700;font-size:14.5px}
-.oc-addr{font-size:13px;color:var(--ink-soft);margin:4px 0 10px;display:flex;gap:6px}
-.oc-addr svg{flex-shrink:0;margin-top:2px}
-.oc-foot{display:flex;gap:8px;align-items:center;border-top:1px dashed var(--line);padding-top:12px}
-.oc-total{font-family:var(--fd);font-weight:700;font-size:17px;color:var(--red);margin-right:auto}
-.ob{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;font-weight:700;font-size:12.5px;transition:transform .15s}
-.ob:active{transform:scale(.95)}
-.ob.call{background:#E8F1FE;color:var(--navy)}
-.ob.note{background:var(--cream);color:var(--ink);border:1px solid var(--line)}
-.ob.done{background:var(--green);color:#fff;box-shadow:0 8px 16px -8px rgba(43,172,98,.6)}
-.empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}
-.empty svg{margin-bottom:12px;opacity:.4}
+/* ===== STATS ===== */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
+.stat{background:var(--gray);border-radius:18px;padding:14px;text-align:center;border:1px solid var(--gray-2)}
+.stat b{display:block;font-size:26px;font-weight:900;color:var(--yellow)}
+.stat span{font-size:12px;font-weight:600;color:var(--muted)}
 
-/* tabs bottom */
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-top:1px solid var(--line);display:flex;box-shadow:0 -6px 22px -12px rgba(11,37,71,.25)}
-.tab{flex:1;padding:11px 0 13px;text-align:center;font-size:11.5px;font-weight:700;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;gap:3px}
-.tab.on{color:var(--navy)}
-.tab .dot-new{position:absolute;margin-left:22px;width:8px;height:8px;border-radius:50%;background:var(--red);display:none}
+/* ===== ORDER CARD ===== */
+.wrap{padding:0 16px;max-width:520px;margin:0 auto}
+.card{background:var(--gray);border-radius:22px;margin-bottom:16px;overflow:hidden;border:1px solid var(--gray-2)}
+.card.done{opacity:.55}
+.card-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray-2)}
+.card-id{font-weight:900;font-size:17px}
+.chip{border-radius:99px;padding:5px 12px;font-size:11px;font-weight:800;letter-spacing:.3px}
+.chip-ASSIGNED{background:rgba(59,130,246,.18);color:var(--blue)}
+.chip-PICKING_UP{background:rgba(255,196,0,.15);color:var(--yellow)}
+.chip-DELIVERING{background:rgba(255,196,0,.25);color:var(--yellow)}
+.chip-COMPLETED{background:rgba(34,197,94,.18);color:var(--green)}
+.chip-FAILED{background:rgba(239,68,68,.18);color:var(--red)}
+.card-body{padding:14px 16px}
+.cust{font-size:17px;font-weight:800;margin-bottom:2px}
+.addr{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.money{display:flex;align-items:center;gap:8px;background:var(--gray-2);border-radius:14px;padding:10px 14px;margin-bottom:12px}
+.money.cod{background:rgba(255,196,0,.12);border:1.5px dashed var(--yellow)}
+.money b{font-size:18px;font-weight:900;color:var(--yellow)}
+.money small{font-size:11.5px;font-weight:700;color:var(--muted)}
+.money.cod small{color:var(--yellow)}
 
-/* sheet (notes + chat) */
-.sheet{position:fixed;inset:0;z-index:100;background:rgba(11,37,71,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end}
-.sheet.show{display:flex}
-.sheet-card{background:var(--paper);border-radius:22px 22px 0 0;width:100%;max-width:680px;margin:0 auto;max-height:82vh;display:flex;flex-direction:column;animation:up .3s cubic-bezier(.2,.8,.3,1)}
-@keyframes up{from{transform:translateY(60px);opacity:.4}to{transform:none;opacity:1}}
-.sheet-hd{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-.sheet-hd b{font-family:var(--fd);font-size:16px}
-.sheet-x{width:32px;height:32px;border-radius:50%;background:var(--cream);font-size:17px;display:flex;align-items:center;justify-content:center}
-.msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-height:180px}
-.m{max-width:82%;padding:9px 13px;border-radius:15px;font-size:13.5px;line-height:1.5}
-.m small{display:block;font-size:10.5px;opacity:.65;margin-top:3px}
-.m.them{background:#F0F4FB;border-bottom-left-radius:4px;align-self:flex-start}
-.m.mine{background:var(--navy);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
-.m .who{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:2px}
+/* Map */
+.map-box{border-radius:16px;overflow:hidden;margin-bottom:12px;border:1px solid var(--gray-2);position:relative}
+.map-box iframe{display:block;width:100%;height:170px;border:0;filter:saturate(1.05)}
+
+/* Action row: call + direction */
+.act-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.act{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:15px 10px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .15s}
+.act:active{transform:scale(.96)}
+.act-call{background:var(--gray-2);color:var(--white)}
+.act-dir{background:var(--blue);color:#fff}
+
+/* Big state button + ripple */
+.big-btn{position:relative;overflow:hidden;width:100%;border:none;border-radius:18px;padding:19px;font-family:inherit;font-size:17px;font-weight:900;letter-spacing:.3px;cursor:pointer;color:var(--black);background:var(--yellow);transition:transform .15s;text-transform:uppercase}
+.big-btn:active{transform:scale(.97)}
+.big-btn:disabled{opacity:.5}
+.ripple{position:absolute;border-radius:50%;background:rgba(0,0,0,.25);transform:scale(0);animation:rip .55s ease-out;pointer-events:none}
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+
+/* Camera proof */
+.proof-row{display:flex;gap:10px;margin-bottom:12px}
+.proof-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--yellow);background:transparent;color:var(--yellow);border-radius:16px;padding:14px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.proof-thumb{width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid var(--green);display:none}
+.proof-thumb.show{display:block}
+
+/* Swipe to complete */
+.swipe{position:relative;height:64px;background:var(--gray-2);border-radius:99px;overflow:hidden;user-select:none;touch-action:pan-y}
+.swipe-fill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,rgba(34,197,94,.35),rgba(34,197,94,.65));transition:width .1s}
+.swipe-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--muted);letter-spacing:.5px}
+.swipe-knob{position:absolute;top:5px;left:5px;width:54px;height:54px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:left .25s cubic-bezier(.2,.8,.3,1)}
+.swipe.locked{opacity:.45;pointer-events:none}
+.swipe.done .swipe-fill{width:100%}
+.swipe.done .swipe-txt{color:#fff}
+
+/* Fail link */
+.fail-link{display:block;text-align:center;margin-top:10px;background:none;border:none;color:var(--red);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:8px;width:100%}
+
+/* Proof image view (completed) */
+.proof-view{width:100%;border-radius:14px;margin-top:8px;max-height:160px;object-fit:cover}
+
+/* Empty state */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty b{display:block;font-size:40px;margin-bottom:10px}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--black);font-size:14px;font-weight:700;padding:12px 22px;border-radius:99px;opacity:0;transition:all .3s;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Chat FAB + sheet */
+.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;background:var(--yellow);color:var(--black);border:none;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(255,196,0,.35);z-index:90}
+.sheet{position:fixed;inset:0;z-index:100;display:none}
+.sheet.show{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.sheet-body{position:absolute;left:0;right:0;bottom:0;background:var(--gray);border-radius:24px 24px 0 0;max-height:80vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.sheet-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--gray-2);font-weight:800}
+.sheet-hd button{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.msgs{flex:1;overflow-y:auto;padding:14px;min-height:220px;max-height:46vh}
+.m{max-width:80%;margin-bottom:10px;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;word-break:break-word}
+.m.them{background:var(--gray-2)}
+.m.mine{background:var(--yellow);color:var(--black);margin-left:auto;font-weight:600}
+.m small{display:block;font-size:10.5px;opacity:.6;margin-top:3px}
+.m .who{font-size:11px;font-weight:800;color:var(--yellow);margin-bottom:2px}
 .m.mine .who{display:none}
-.send-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
-.send-row input{flex:1;border:1.5px solid var(--line);border-radius:99px;padding:11px 16px;font-size:14px;font-family:inherit;background:#fff}
-.send-row input:focus{outline:none;border-color:var(--navy)}
-.send-row button{width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-in{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--gray-2)}
+.chat-in input{flex:1;background:var(--gray-2);border:none;border-radius:99px;padding:13px 18px;color:#fff;font-family:inherit;font-size:14px;outline:none}
+.chat-in button{background:var(--yellow);color:var(--black);border:none;border-radius:99px;width:48px;font-size:18px;cursor:pointer}
 </style>
 </head>
 <body>
+<c:set var="me" value="${not empty sessionScope.shipperUser ? sessionScope.shipperUser : sessionScope.adminUser}"/>
 
-<div class="hd">
-  <div class="hd-row">
+<header class="hd">
+  <div class="hd-l">
+    <div class="hd-avatar">${fn:toUpperCase(fn:substring(me.fullName,0,1))}</div>
     <div>
-      <h1>🛵 Giao hàng</h1>
-      <small>Xin chào, <c:out value="${me.fullName}"/></small>
+      <div class="hd-name"><c:out value="${me.fullName}"/></div>
+      <div class="hd-sub">
+        <c:if test="${not empty profile.vehiclePlate}">🏍 <c:out value="${profile.vehiclePlate}"/> · </c:if>Shipper PureNut
+      </div>
     </div>
-    <a class="out" href="${ctx}/logout">Đăng xuất</a>
   </div>
-</div>
+  <div class="hd-r">
+    <button type="button" id="statusToggle"
+            class="hd-toggle ${profile.status == 'ACTIVE' ? 'on' : 'off'}"
+            data-status="${profile.status}">
+      ${profile.status == 'ACTIVE' ? '● Đang nhận đơn' : '○ Tạm nghỉ'}
+    </button>
+    <a class="hd-logout" href="${ctx}/shipper/logout" title="Đăng xuất" aria-label="Đăng xuất">⏻</a>
+  </div>
+</header>
 
 <div class="stats">
-  <div class="stat"><b>${shippingCount}</b><span>Đang giao</span></div>
+  <div class="stat"><b>${activeCount}</b><span>Đơn đang chạy</span></div>
   <div class="stat"><b>${doneCount}</b><span>Đã hoàn thành</span></div>
 </div>
 
-<div class="wrap" id="orderList">
-  <c:forEach var="o" items="${orders}">
-    <div class="oc" id="oc${o.orderId}">
-      <div class="oc-top">
-        <span class="oc-id">Đơn #${o.orderId}</span>
-        <span class="pill ${o.status}" id="pill${o.orderId}">${o.status == 'SHIPPING' ? 'Đang giao' : (o.status == 'DONE' ? 'Đã giao' : o.status)}</span>
-      </div>
-      <div class="oc-name"><c:out value="${o.fullName}"/></div>
-      <div class="oc-addr">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <c:out value="${o.address}"/>
-      </div>
-      <div class="oc-foot">
-        <span class="oc-total"><fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true"/> đ</span>
-        <a class="ob call" href="tel:${o.phone}">📞 Gọi</a>
-        <button class="ob note" onclick="openNotes(${o.orderId})">💬 Ghi chú</button>
-        <c:if test="${o.status == 'SHIPPING'}">
-          <button class="ob done" onclick="markDone(${o.orderId},this)">✓ Đã giao</button>
-        </c:if>
-      </div>
-    </div>
-  </c:forEach>
-  <c:if test="${empty orders}">
-    <div class="empty">
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10h4l3 3v4a1 1 0 01-1 1h-6V10z"/><circle cx="6" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>
-      <p>Chưa có đơn nào được gán cho bạn.<br>Quản lý sẽ gán đơn — kiểm tra lại sau nhé!</p>
-    </div>
-  </c:if>
-</div>
+<div class="wrap">
+<c:if test="${empty orders}">
+  <div class="empty"><b>📭</b>Chưa có đơn nào được gán.<br>Chờ điều phối từ PureNut nhé!</div>
+</c:if>
 
-<!-- Bottom tabs -->
-<nav class="tabs">
-  <button class="tab on" onclick="location.reload()">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10h4l3 3v4a1 1 0 01-1 1h-6V10z"/><circle cx="6" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>
-    Đơn hàng
-  </button>
-  <button class="tab" onclick="openChat()">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    Chat nội bộ
-  </button>
-</nav>
+<c:forEach var="o" items="${orders}">
+  <c:set var="ds" value="${empty o.deliveryStatus ? 'ASSIGNED' : o.deliveryStatus}"/>
+  <c:set var="isActive" value="${ds == 'ASSIGNED' || ds == 'PICKING_UP' || ds == 'DELIVERING'}"/>
+  <div class="card ${isActive ? '' : 'done'}" id="card${o.orderId}" data-status="${ds}">
+    <div class="card-hd">
+      <span class="card-id">#${o.orderId}</span>
+      <span class="chip chip-${ds}" id="chip${o.orderId}">
+        <c:choose>
+          <c:when test="${ds == 'ASSIGNED'}">CHỜ LẤY HÀNG</c:when>
+          <c:when test="${ds == 'PICKING_UP'}">ĐANG LẤY HÀNG</c:when>
+          <c:when test="${ds == 'DELIVERING'}">ĐANG GIAO</c:when>
+          <c:when test="${ds == 'COMPLETED'}">HOÀN THÀNH ✓</c:when>
+          <c:otherwise>THẤT BẠI</c:otherwise>
+        </c:choose>
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="cust"><c:out value="${o.fullName}"/></div>
+      <div class="addr">📍 <c:out value="${o.address}"/></div>
 
-<!-- Notes sheet -->
-<div class="sheet" id="noteSheet">
-  <div class="sheet-card">
-    <div class="sheet-hd"><b id="noteTitle">Ghi chú đơn</b><button class="sheet-x" onclick="closeSheet('noteSheet')">×</button></div>
-    <div class="msgs" id="noteMsgs"></div>
-    <div class="send-row">
-      <input type="text" id="noteInput" maxlength="500" placeholder="VD: Khách hẹn giao sau 17h…">
-      <button onclick="sendNote()" aria-label="Gửi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+      <div class="money ${o.paymentMethod == 'COD' ? 'cod' : ''}">
+        <div style="flex:1">
+          <b><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>₫</b><br>
+          <small>${o.paymentMethod == 'COD' ? '⚠ THU TIỀN MẶT KHI GIAO' : '✓ Đã thanh toán online'}</small>
+        </div>
+      </div>
+
+      <c:if test="${isActive}">
+        <%-- Bản đồ vị trí khách: ưu tiên tọa độ, fallback địa chỉ text --%>
+        <div class="map-box">
+          <c:choose>
+            <c:when test="${o.latitude != null && o.longitude != null}">
+              <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                      src="https://maps.google.com/maps?q=${o.latitude},${o.longitude}&z=16&output=embed"></iframe>
+            </c:when>
+            <c:otherwise>
+              <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                      src="https://maps.google.com/maps?q=${fn:escapeXml(o.address)}&z=15&output=embed"></iframe>
+            </c:otherwise>
+          </c:choose>
+        </div>
+
+        <div class="act-row">
+          <a class="act act-call" href="tel:${o.phone}">📞 Gọi khách</a>
+          <c:choose>
+            <c:when test="${o.latitude != null && o.longitude != null}">
+              <a class="act act-dir" target="_blank" rel="noopener"
+                 href="https://www.google.com/maps/dir/?api=1&destination=${o.latitude},${o.longitude}&travelmode=driving">🧭 Chỉ đường</a>
+            </c:when>
+            <c:otherwise>
+              <a class="act act-dir" target="_blank" rel="noopener"
+                 href="https://www.google.com/maps/dir/?api=1&destination=${fn:escapeXml(o.address)}&travelmode=driving">🧭 Chỉ đường</a>
+            </c:otherwise>
+          </c:choose>
+        </div>
+
+        <%-- ===== STATE MACHINE UI ===== --%>
+        <div id="stage${o.orderId}">
+          <c:if test="${ds == 'ASSIGNED'}">
+            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'ASSIGNED','PICKING_UP')">🏪 Bắt đầu lấy hàng</button>
+          </c:if>
+
+          <c:if test="${ds == 'PICKING_UP'}">
+            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'PICKING_UP','DELIVERING')">🛵 Đã lấy hàng — Bắt đầu giao</button>
+            <button type="button" class="fail-link" onclick="markFail(${o.orderId},'PICKING_UP')">✕ Không lấy được hàng</button>
+          </c:if>
+
+          <c:if test="${ds == 'DELIVERING'}">
+            <div class="proof-row">
+              <button type="button" class="proof-btn" onclick="document.getElementById('cam${o.orderId}').click()">
+                📷 <span id="camTxt${o.orderId}">${empty o.proofImage ? 'Chụp ảnh xác nhận' : 'Chụp lại ảnh'}</span>
+              </button>
+              <img class="proof-thumb ${empty o.proofImage ? '' : 'show'}" id="thumb${o.orderId}"
+                   src="${empty o.proofImage ? '' : ctx.concat(o.proofImage)}" alt="proof">
+              <input type="file" id="cam${o.orderId}" accept="image/*" capture="environment"
+                     style="display:none" onchange="uploadProof(${o.orderId},this)">
+            </div>
+            <div class="swipe ${empty o.proofImage ? 'locked' : ''}" id="swipe${o.orderId}" data-order="${o.orderId}">
+              <div class="swipe-fill"></div>
+              <div class="swipe-txt">VUỐT ĐỂ HOÀN THÀNH ĐƠN →</div>
+              <div class="swipe-knob">➤</div>
+            </div>
+            <button type="button" class="fail-link" onclick="markFail(${o.orderId},'DELIVERING')">✕ Giao thất bại (khách không nhận)</button>
+          </c:if>
+        </div>
+      </c:if>
+
+      <c:if test="${ds == 'COMPLETED' && not empty o.proofImage}">
+        <img class="proof-view" src="${ctx}${o.proofImage}" alt="Bằng chứng giao hàng" loading="lazy">
+      </c:if>
     </div>
   </div>
+</c:forEach>
 </div>
 
-<!-- Chat sheet -->
+<div class="toast" id="toast"></div>
+
+<button type="button" class="fab" id="chatFab">💬</button>
 <div class="sheet" id="chatSheet">
-  <div class="sheet-card">
-    <div class="sheet-hd"><b>💬 Chat nội bộ PureNut</b><button class="sheet-x" onclick="closeSheet('chatSheet')">×</button></div>
+  <div class="sheet-bg" onclick="closeChat()"></div>
+  <div class="sheet-body">
+    <div class="sheet-hd">Kênh nội bộ PureNut <button type="button" onclick="closeChat()">✕</button></div>
     <div class="msgs" id="chatMsgs"></div>
-    <div class="send-row">
-      <input type="text" id="chatInput" maxlength="500" placeholder="Nhắn cho quản lý…">
-      <button onclick="sendChat()" aria-label="Gửi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+    <div class="chat-in">
+      <input type="text" id="chatInput" placeholder="Nhắn cho điều phối..." maxlength="500">
+      <button type="button" onclick="sendChat()">➤</button>
     </div>
   </div>
 </div>
 
 <script>
 var CTX='${ctx}',CSRF='${sessionScope._csrf}';
-var curOrder=0,lastChatId=0,chatTimer=null;
-function ajax(url,data,cb){
-  var opt={headers:{'X-Requested-With':'XMLHttpRequest'}};
-  if(data){var p=new URLSearchParams();p.append('_csrf',CSRF);for(var k in data)p.append(k,data[k]);opt.method='POST';opt.body=p;opt.headers['Content-Type']='application/x-www-form-urlencoded'}
-  fetch(CTX+url,opt).then(function(r){return r.json()}).then(cb).catch(function(){});
+var lastChatId=0,chatTimer=null;
+
+/* ===== Helpers ===== */
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2600)}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function post(url,data,cb){
+  var p=new URLSearchParams();p.append('_csrf',CSRF);
+  for(var k in data)p.append(k,data[k]);
+  fetch(CTX+url,{method:'POST',body:p,headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'}})
+    .then(function(r){return r.json()}).then(cb)
+    .catch(function(){toast('Mất kết nối — thử lại')});
 }
-function roleTag(r){return r==='MANAGER'?'Quản lý':(r==='ADMIN'?'Admin':'Shipper')}
-function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-function render(list,box,append){
+function addRipple(btn,e){
+  var r=document.createElement('span');r.className='ripple';
+  var rect=btn.getBoundingClientRect(),size=Math.max(rect.width,rect.height);
+  var x=(e&&e.clientX?e.clientX-rect.left:rect.width/2)-size/2;
+  var y=(e&&e.clientY?e.clientY-rect.top:rect.height/2)-size/2;
+  r.style.cssText='width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px';
+  btn.appendChild(r);setTimeout(function(){r.remove()},600);
+}
+document.addEventListener('click',function(e){var b=e.target.closest('.big-btn');if(b)addRipple(b,e)});
+
+/* ===== State machine ===== */
+window.transition=function(btn,orderId,from,to){
+  if(btn)btn.disabled=true;
+  post('/shipper/cap-nhat',{orderId:orderId,from:from,to:to},function(d){
+    if(d.ok){toast('Đã cập nhật ✓');setTimeout(function(){location.reload()},500)}
+    else{if(btn)btn.disabled=false;toast(d.msg||'Không cập nhật được')}
+  });
+};
+window.markFail=function(orderId,from){
+  if(!confirm('Xác nhận GIAO THẤT BẠI đơn #'+orderId+'?\nĐơn sẽ chuyển về điều phối xử lý.'))return;
+  post('/shipper/cap-nhat',{orderId:orderId,from:from,to:'FAILED'},function(d){
+    if(d.ok){toast('Đã báo thất bại');setTimeout(function(){location.reload()},500)}
+    else toast(d.msg||'Không cập nhật được');
+  });
+};
+
+/* ===== Proof upload (camera) ===== */
+window.uploadProof=function(orderId,input){
+  if(!input.files||!input.files[0])return;
+  var f=input.files[0];
+  if(f.size>5*1024*1024){toast('Ảnh quá lớn (tối đa 5MB)');return}
+  document.getElementById('camTxt'+orderId).textContent='Đang tải ảnh...';
+  var fd=new FormData();fd.append('_csrf',CSRF);fd.append('orderId',orderId);fd.append('proofImage',f);
+  fetch(CTX+'/shipper/proof',{method:'POST',body:fd,headers:{'X-Requested-With':'XMLHttpRequest'}})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.ok){
+        var img=document.getElementById('thumb'+orderId);
+        img.src=CTX+d.path;img.classList.add('show');
+        document.getElementById('camTxt'+orderId).textContent='Chụp lại ảnh';
+        document.getElementById('swipe'+orderId).classList.remove('locked');
+        toast('Đã lưu ảnh ✓ — Vuốt để chốt đơn');
+      }else{
+        document.getElementById('camTxt'+orderId).textContent='Chụp ảnh xác nhận';
+        toast(d.msg||'Không tải được ảnh');
+      }
+    }).catch(function(){
+      document.getElementById('camTxt'+orderId).textContent='Chụp ảnh xác nhận';
+      toast('Mất kết nối — thử lại');
+    });
+};
+
+/* ===== Swipe to complete ===== */
+document.querySelectorAll('.swipe').forEach(function(sw){
+  var knob=sw.querySelector('.swipe-knob'),fill=sw.querySelector('.swipe-fill');
+  var dragging=false,startX=0,maxX=0;
+  function down(e){
+    if(sw.classList.contains('locked')||sw.classList.contains('done'))return;
+    dragging=true;startX=(e.touches?e.touches[0].clientX:e.clientX);
+    maxX=sw.offsetWidth-knob.offsetWidth-10;knob.style.transition='none';
+  }
+  function move(e){
+    if(!dragging)return;
+    var x=(e.touches?e.touches[0].clientX:e.clientX)-startX;
+    x=Math.max(0,Math.min(x,maxX));
+    knob.style.left=(5+x)+'px';fill.style.width=(x+59)+'px';
+    if(e.cancelable)e.preventDefault();
+  }
+  function up(e){
+    if(!dragging)return;dragging=false;knob.style.transition='left .25s cubic-bezier(.2,.8,.3,1)';
+    var x=parseFloat(knob.style.left||5)-5;
+    if(x>=maxX*0.88){
+      sw.classList.add('done');knob.style.left=(5+maxX)+'px';
+      sw.querySelector('.swipe-txt').textContent='ĐANG CHỐT ĐƠN...';
+      transition(null,parseInt(sw.dataset.order),'DELIVERING','COMPLETED');
+    }else{knob.style.left='5px';fill.style.width='0'}
+  }
+  sw.addEventListener('touchstart',down,{passive:true});
+  sw.addEventListener('touchmove',move,{passive:false});
+  sw.addEventListener('touchend',up);
+  sw.addEventListener('mousedown',down);
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',up);
+});
+
+/* ===== Toggle ACTIVE/OFFLINE ===== */
+document.getElementById('statusToggle').addEventListener('click',function(){
+  var btn=this,cur=btn.dataset.status,next=cur==='ACTIVE'?'OFFLINE':'ACTIVE';
+  post('/shipper/trang-thai',{status:next},function(d){
+    if(d.ok){
+      btn.dataset.status=next;
+      btn.className='hd-toggle '+(next==='ACTIVE'?'on':'off');
+      btn.textContent=next==='ACTIVE'?'● Đang nhận đơn':'○ Tạm nghỉ';
+      toast(next==='ACTIVE'?'Bật nhận đơn ✓':'Đã tạm nghỉ');
+    }else toast(d.msg||'Lỗi');
+  });
+});
+
+/* ===== Chat nội bộ ===== */
+function renderChat(list,append){
+  var box=document.getElementById('chatMsgs');
   if(!append)box.innerHTML='';
   list.forEach(function(m){
+    if(m.id>lastChatId)lastChatId=m.id;
     var d=document.createElement('div');
     d.className='m '+(m.mine?'mine':'them');
-    d.innerHTML=(m.mine?'':'<div class="who">'+esc(m.name)+' · '+roleTag(m.role)+'</div>')+esc(m.msg)+'<small>'+esc(m.time)+'</small>';
+    d.innerHTML=(m.mine?'':'<div class="who">'+esc(m.name)+'</div>')+esc(m.msg)+'<small>'+esc(m.time)+'</small>';
     box.appendChild(d);
   });
-  box.scrollTop=box.scrollHeight;
+  if(list.length)box.scrollTop=box.scrollHeight;
 }
-/* Notes */
-window.openNotes=function(orderId){
-  curOrder=orderId;
-  document.getElementById('noteTitle').textContent='Ghi chú đơn #'+orderId;
-  document.getElementById('noteSheet').classList.add('show');
-  loadNotes();
-};
-function loadNotes(){
-  ajax('/staff/notes?orderId='+curOrder,null,function(d){if(d.ok)render(d.items,document.getElementById('noteMsgs'))});
+function pollChat(){
+  fetch(CTX+'/staff/chat?after='+lastChatId,{headers:{'X-Requested-With':'XMLHttpRequest'}})
+    .then(function(r){return r.json()})
+    .then(function(d){if(d.ok)renderChat(d.items,lastChatId>0)})
+    .catch(function(){});
 }
-window.sendNote=function(){
-  var i=document.getElementById('noteInput'),v=i.value.trim();if(!v)return;
-  i.value='';
-  ajax('/staff/notes',{orderId:curOrder,message:v},function(){loadNotes()});
-};
-/* Chat */
-window.openChat=function(){
+document.getElementById('chatFab').addEventListener('click',function(){
   document.getElementById('chatSheet').classList.add('show');
   lastChatId=0;pollChat();
-  clearInterval(chatTimer);chatTimer=setInterval(pollChat,4000);
+  chatTimer=setInterval(pollChat,5000);
+});
+window.closeChat=function(){
+  document.getElementById('chatSheet').classList.remove('show');
+  if(chatTimer)clearInterval(chatTimer);
 };
-function pollChat(){
-  ajax('/staff/chat?after='+lastChatId,null,function(d){
-    if(!d.ok||!d.items.length)return;
-    render(d.items,document.getElementById('chatMsgs'),lastChatId>0);
-    lastChatId=d.items[d.items.length-1].id;
-  });
-}
 window.sendChat=function(){
-  var i=document.getElementById('chatInput'),v=i.value.trim();if(!v)return;
-  i.value='';
-  ajax('/staff/chat',{message:v},function(){pollChat()});
+  var i=document.getElementById('chatInput'),v=i.value.trim();
+  if(!v)return;i.value='';
+  post('/staff/chat',{message:v},function(d){if(d.ok)pollChat();else toast(d.msg||'Không gửi được')});
 };
-window.closeSheet=function(id){
-  document.getElementById(id).classList.remove('show');
-  if(id==='chatSheet'){clearInterval(chatTimer)}
-};
-/* Done */
-window.markDone=function(orderId,btn){
-  if(!confirm('Xác nhận đã giao thành công đơn #'+orderId+'?'))return;
-  btn.disabled=true;
-  ajax('/shipper/hoan-thanh',{orderId:orderId},function(d){
-    if(d.ok){
-      var p=document.getElementById('pill'+orderId);
-      p.className='pill DONE';p.textContent='Đã giao';
-      btn.remove();
-    }else{alert(d.msg||'Không cập nhật được');btn.disabled=false}
-  });
-};
-/* Enter để gửi */
-document.getElementById('noteInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendNote()});
 document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendChat()});
 </script>
 </body>

@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="_csrf" content="${sessionScope._csrf}">
 <title>Cửa hàng — PureNut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -323,7 +324,8 @@ document.addEventListener('DOMContentLoaded',function(){
   var toast=document.getElementById('toast'),tm=document.getElementById('toastMsg'),tt;function showToast(m){tm.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show');},2200);}
   function flyToCart(src){var cart=document.querySelector('.cart-ic')||document.querySelector('a[href$="/cart"]');if(!cart)return;var s=src.getBoundingClientRect(),e=cart.getBoundingClientRect();var f=document.createElement('div');f.className='fly';f.style.left=(s.left+s.width/2-12)+'px';f.style.top=(s.top+s.height/2-12)+'px';document.body.appendChild(f);requestAnimationFrame(function(){var dx=(e.left+e.width/2)-(s.left+s.width/2),dy=(e.top+e.height/2)-(s.top+s.height/2);f.style.transform='translate('+dx+'px,'+dy+'px) scale(.25)';f.style.opacity='.35';});setTimeout(function(){f.remove();cart.classList.add('bump');setTimeout(function(){cart.classList.remove('bump');},450);},820);}
   var badge=document.getElementById('siteCartBadge');
-  document.querySelectorAll('.add-btn:not([disabled])').forEach(function(b){b.addEventListener('click',async function(){var id=b.dataset.id;if(!id)return;flyToCart(b);b.disabled=true;try{var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity=1'});if(r.redirected){window.location=r.url;return;}var d=await r.json();if(d&&d.success){if(badge)badge.textContent=d.cartCount;showToast('Đã thêm "'+b.dataset.name+'" vào giỏ');}}catch(e){window.location=CTX+'/login';}finally{b.disabled=false;}});});
+  var csrfToken=(document.querySelector('meta[name=_csrf]')||{content:''}).content;
+  document.querySelectorAll('.add-btn:not([disabled])').forEach(function(b){b.addEventListener('click',async function(){var id=b.dataset.id;if(!id)return;flyToCart(b);b.disabled=true;try{var r=await fetch(CTX+'/cart/add',{method:'POST',headers:{'X-Requested-With':'XMLHttpRequest','Content-Type':'application/x-www-form-urlencoded'},body:'productId='+id+'&quantity=1&_csrf='+encodeURIComponent(csrfToken)});if(r.redirected){window.location=r.url;return;}if(!r.ok){showToast('Lỗi, vui lòng thử lại');return;}var d=await r.json();if(d&&d.success){if(badge)badge.textContent=d.cartCount;showToast('Đã thêm "'+b.dataset.name+'" vào giỏ');}}catch(e){showToast('Có lỗi xảy ra, vui lòng tải lại trang');}finally{b.disabled=false;}});});
 });
 </script>
 <jsp:include page="/WEB-INF/views/layout/support-widget.jsp" />

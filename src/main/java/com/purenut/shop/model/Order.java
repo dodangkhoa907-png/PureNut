@@ -22,6 +22,11 @@ public class Order {
     private Integer shipperId;    // null = chưa gán shipper
     private String shipperName;   // join từ Users
 
+    private String deliveryStatus;   // ASSIGNED | PICKING_UP | DELIVERING | COMPLETED | FAILED
+    private Double latitude;         // tọa độ khách lúc đặt hàng
+    private Double longitude;
+    private String proofImage;       // ảnh bằng chứng giao hàng
+
     private List<OrderItem> items;
 
     public Order() {}
@@ -73,6 +78,18 @@ public class Order {
 
     public String getShipperName() { return shipperName; }
     public void setShipperName(String shipperName) { this.shipperName = shipperName; }
+
+    public String getDeliveryStatus() { return deliveryStatus; }
+    public void setDeliveryStatus(String deliveryStatus) { this.deliveryStatus = deliveryStatus; }
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public String getProofImage() { return proofImage; }
+    public void setProofImage(String proofImage) { this.proofImage = proofImage; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }

@@ -46,7 +46,6 @@
             <label style="font-size:12px;font-weight:700;display:block;margin-bottom:5px;">Vai trò *</label>
             <select class="form-control" name="role" required>
                 <option value="SHIPPER">Shipper (giao hàng)</option>
-                <option value="MANAGER">Manager (điều phối)</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary" style="padding:10px 18px;">+ Tạo tài khoản</button>
@@ -77,9 +76,7 @@
                             <div style="font-size:13px;color:var(--admin-text-light);"><c:out value="${u.phone}"/></div>
                         </td>
                         <td>
-                            <span class="badge badge-${u.role == 'MANAGER' ? 'CONTACTED' : 'PENDING'}">
-                                ${u.role == 'MANAGER' ? 'Manager' : 'Shipper'}
-                            </span>
+                            <span class="badge badge-PENDING">Shipper</span>
                         </td>
                         <td>
                             <c:choose>
@@ -93,7 +90,6 @@
                                 <input type="hidden" name="userId" value="${u.userId}">
                                 <select name="role" class="form-control" style="padding:6px;width:150px;font-size:13px;">
                                     <option value="SHIPPER" ${u.role == 'SHIPPER' ? 'selected' : ''}>Shipper</option>
-                                    <option value="MANAGER" ${u.role == 'MANAGER' ? 'selected' : ''}>Manager</option>
                                     <option value="CUSTOMER">Thu hồi quyền</option>
                                 </select>
                                 <button type="submit" class="btn btn-primary" style="padding:6px 12px;font-size:13px;">Lưu</button>

@@ -19,16 +19,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Admin quản lý nhân sự (SHIPPER / MANAGER):
+ * Admin quản lý nhân sự (SHIPPER):
  *  GET  /admin/nhan-su            → danh sách nhân viên
- *  POST /admin/nhan-su/tao        → tạo tài khoản nhân viên
- *  POST /admin/nhan-su/doi-role   → đổi role (SHIPPER ↔ MANAGER ↔ CUSTOMER = khóa)
+ *  POST /admin/nhan-su/tao        → tạo tài khoản shipper
+ *  POST /admin/nhan-su/doi-role   → đổi role (SHIPPER ↔ CUSTOMER = khóa)
  */
 @WebServlet(urlPatterns = {"/admin/nhan-su", "/admin/nhan-su/tao", "/admin/nhan-su/doi-role"})
 public class AdminStaffController extends HttpServlet {
 
     private UserDao userDao;
-    private static final Set<String> STAFF_ROLES = Set.of("SHIPPER", "MANAGER", "CUSTOMER");
+    private static final Set<String> STAFF_ROLES = Set.of("SHIPPER", "CUSTOMER");
 
     @Override
     public void init() throws ServletException {
@@ -38,9 +38,7 @@ public class AdminStaffController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<User> staff = new ArrayList<>();
-        staff.addAll(userDao.findByRole("MANAGER"));
-        staff.addAll(userDao.findByRole("SHIPPER"));
+        List<User> staff = new ArrayList<>(userDao.findByRole("SHIPPER"));
         req.setAttribute("staffList", staff);
         req.setAttribute("pageTitle", "Quản lý Nhân sự");
         req.getRequestDispatcher("/WEB-INF/views/admin/staff-list.jsp").forward(req, resp);
@@ -62,7 +60,7 @@ public class AdminStaffController extends HttpServlet {
 
             if (fullName == null || fullName.isEmpty() || !Validators.isValidEmail(email)
                     || password == null || password.length() < 8
-                    || (!"SHIPPER".equals(role) && !"MANAGER".equals(role))) {
+                    || !"SHIPPER".equals(role)) {
                 resp.sendRedirect(req.getContextPath() + "/admin/nhan-su?error=BadInput");
                 return;
             }

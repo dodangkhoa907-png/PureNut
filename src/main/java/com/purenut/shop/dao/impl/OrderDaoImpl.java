@@ -25,9 +25,9 @@ public class OrderDaoImpl implements OrderDao {
             conn = Database.getConnection();
             conn.setAutoCommit(false); // Bắt đầu Transaction
             
-            // 1. Lưu Order
-            String sqlOrder = "INSERT INTO Orders (UserID, FullName, Phone, Address, TotalAmount, PaymentMethod, Status, CouponCode) " +
-                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            // 1. Lưu Order (kèm tọa độ Google Maps của khách nếu có)
+            String sqlOrder = "INSERT INTO Orders (UserID, FullName, Phone, Address, TotalAmount, PaymentMethod, Status, CouponCode, Latitude, Longitude) " +
+                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             psOrder = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
             psOrder.setInt(1, order.getUserId());
             psOrder.setNString(2, order.getFullName());
@@ -37,6 +37,10 @@ public class OrderDaoImpl implements OrderDao {
             psOrder.setString(6, order.getPaymentMethod());
             psOrder.setString(7, "PENDING");
             psOrder.setString(8, order.getCouponCode());
+            if (order.getLatitude() != null)  psOrder.setBigDecimal(9,  java.math.BigDecimal.valueOf(order.getLatitude()));
+            else                              psOrder.setNull(9,  java.sql.Types.DECIMAL);
+            if (order.getLongitude() != null) psOrder.setBigDecimal(10, java.math.BigDecimal.valueOf(order.getLongitude()));
+            else                              psOrder.setNull(10, java.sql.Types.DECIMAL);
             
             psOrder.executeUpdate();
             rsKeys = psOrder.getGeneratedKeys();
@@ -369,8 +373,8 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public int assignShipper(int orderId, int shipperId) {
-        // Chỉ gán khi đơn đã CONFIRMED (hoặc gán lại khi đang SHIPPING)
-        String sql = "UPDATE Orders SET ShipperID = ?, Status = 'SHIPPING' " +
+        // Gán khi đơn CONFIRMED (hoặc gán lại khi SHIPPING) → khởi động state machine ASSIGNED
+        String sql = "UPDATE Orders SET ShipperID = ?, Status = 'SHIPPING', DeliveryStatus = 'ASSIGNED', ProofImage = NULL " +
                      "WHERE OrderID = ? AND Status IN ('CONFIRMED','SHIPPING')";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -378,7 +382,7 @@ public class OrderDaoImpl implements OrderDao {
             ps.setInt(2, orderId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[OrderDao] assignShipper: " + e.getMessage());
         }
         return 0;
     }
@@ -387,7 +391,7 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> findOrdersByShipper(int shipperId) {
         List<Order> list = new java.util.ArrayList<>();
         String sql = "SELECT * FROM Orders WHERE ShipperID = ? " +
-                     "ORDER BY CASE WHEN Status = 'SHIPPING' THEN 0 ELSE 1 END, CreatedAt DESC";
+                     "ORDER BY CASE WHEN DeliveryStatus IN ('ASSIGNED','PICKING_UP','DELIVERING') THEN 0 ELSE 1 END, CreatedAt DESC";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -406,13 +410,57 @@ public class OrderDaoImpl implements OrderDao {
                     o.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     int sid = rs.getInt("ShipperID");
                     o.setShipperId(rs.wasNull() ? null : sid);
+                    o.setDeliveryStatus(rs.getString("DeliveryStatus"));
+                    java.math.BigDecimal lat = rs.getBigDecimal("Latitude");
+                    java.math.BigDecimal lng = rs.getBigDecimal("Longitude");
+                    o.setLatitude(lat != null ? lat.doubleValue() : null);
+                    o.setLongitude(lng != null ? lng.doubleValue() : null);
+                    o.setProofImage(rs.getNString("ProofImage"));
                     list.add(o);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[OrderDao] findOrdersByShipper: " + e.getMessage());
         }
         return list;
+    }
+
+    @Override
+    public int updateDeliveryStatus(int orderId, int shipperId, String from, String to) {
+        // CAS atomic: WHERE khóa cả chủ đơn lẫn trạng thái nguồn → không thể nhảy cóc,
+        // không thể race (2 request cùng lúc chỉ 1 cái thắng).
+        // COMPLETED đồng bộ Status='DONE'; FAILED giữ Status='SHIPPING' để admin xử lý tiếp.
+        String sql = "UPDATE Orders SET DeliveryStatus = ?, " +
+                     "Status = CASE WHEN ? = 'COMPLETED' THEN 'DONE' ELSE Status END " +
+                     "WHERE OrderID = ? AND ShipperID = ? AND DeliveryStatus = ?";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, to);
+            ps.setString(2, to);
+            ps.setInt(3, orderId);
+            ps.setInt(4, shipperId);
+            ps.setString(5, from);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("[OrderDao] updateDeliveryStatus: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public int setProofImage(int orderId, int shipperId, String imagePath) {
+        String sql = "UPDATE Orders SET ProofImage = ? " +
+                     "WHERE OrderID = ? AND ShipperID = ? AND DeliveryStatus = 'DELIVERING'";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setNString(1, imagePath);
+            ps.setInt(2, orderId);
+            ps.setInt(3, shipperId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("[OrderDao] setProofImage: " + e.getMessage());
+        }
+        return 0;
     }
 
     @Override
