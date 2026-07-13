@@ -13,6 +13,7 @@ public class User {
     private String lastLoginIP;
     private Date lastLoginAt;
     private Date agreedTermsAt;
+    private String profileImage;
 
     public User() {}
 
@@ -53,4 +54,7 @@ public class User {
 
     public Date getAgreedTermsAt() { return agreedTermsAt; }
     public void setAgreedTermsAt(Date agreedTermsAt) { this.agreedTermsAt = agreedTermsAt; }
+
+    public String getProfileImage() { return profileImage; }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 }

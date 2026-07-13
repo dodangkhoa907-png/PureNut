@@ -31,7 +31,8 @@ import java.util.stream.Collectors;
  */
 @WebServlet(name = "AdminDispatchController", urlPatterns = {
         "/admin/dieu-phoi", "/admin/dieu-phoi/gan-don",
-        "/admin/dieu-phoi/duyet-huy", "/admin/dieu-phoi/cap-ip"})
+        "/admin/dieu-phoi/duyet-huy", "/admin/dieu-phoi/cap-ip",
+        "/admin/dieu-phoi/xac-nhan"})
 public class AdminDispatchController extends HttpServlet {
 
     private OrderDao orderDao;
@@ -67,7 +68,7 @@ public class AdminDispatchController extends HttpServlet {
         req.setAttribute("pendingCancel", pendingCancel);
         req.setAttribute("newOrders", newOrders);
         req.setAttribute("shippers", userDao.findByRole("SHIPPER"));
-        req.setAttribute("shipperProfiles", shipperDao.findActive());
+        req.setAttribute("shipperProfiles", shipperDao.findAll());
         req.setAttribute("pageTitle", "Điều phối giao hàng");
         req.getRequestDispatcher("/WEB-INF/views/admin/dispatch.jsp").forward(req, resp);
     }
@@ -124,6 +125,22 @@ public class AdminDispatchController extends HttpServlet {
             } catch (Exception e) {
                 System.err.println("[AdminDispatch] duyet-huy: " + e.getMessage());
                 writeJson(resp, "{\"ok\":false,\"msg\":\"Lỗi hệ thống\"}");
+            }
+            return;
+        }
+
+        if ("/admin/dieu-phoi/xac-nhan".equals(path)) {
+            int orderId = Validators.parsePositiveInt(req.getParameter("orderId"), -1);
+            if (orderId <= 0) {
+                writeJson(resp, "{\"ok\":false,\"msg\":\"Dữ liệu không hợp lệ\"}"); return;
+            }
+            int n = orderDao.updateOrderStatus(orderId, "CONFIRMED");
+            if (n > 0) {
+                AuditLogger.log(req, admin.getUserId(), "CONFIRM_ORDER",
+                        "Đơn #" + orderId, "Admin xác nhận đơn — PENDING → CONFIRMED");
+                writeJson(resp, "{\"ok\":true}");
+            } else {
+                writeJson(resp, "{\"ok\":false,\"msg\":\"Đơn không ở trạng thái chờ xác nhận\"}");
             }
             return;
         }

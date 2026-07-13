@@ -18,14 +18,14 @@ public class SecurityHeadersFilter implements Filter {
             res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
             // camera=(self): shipper chụp ảnh bằng chứng giao hàng
             res.setHeader("Permissions-Policy", "geolocation=(self), microphone=(), camera=(self)");
-            res.setHeader("X-XSS-Protection", "1; mode=block");
+
             res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
             res.setHeader("Content-Security-Policy",
                     "default-src 'self'; "
                     + "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com; "
                     + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; "
                     + "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; "
-                    + "img-src 'self' data: https://ui-avatars.com https://*.tile.openstreetmap.org; "
+                    + "img-src 'self' data: blob: https://ui-avatars.com https://*.tile.openstreetmap.org; "
                     + "connect-src 'self' https://nominatim.openstreetmap.org; "
                     // frame-src: iframe Google Maps trên trang Shipper
                     + "frame-src 'self' https://maps.google.com https://www.google.com; "

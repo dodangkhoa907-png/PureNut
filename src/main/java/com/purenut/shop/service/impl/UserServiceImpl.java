@@ -12,6 +12,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
+    private static final String DUMMY_HASH = Passwords.hash("dummy_timing_equalization");
 
     public UserServiceImpl() {
         this.userDao = new UserDaoImpl();
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
             if (Passwords.matches(rawPassword, user.getPasswordHash())) {
                 return Optional.of(user);
             }
+        } else {
+            Passwords.matches(rawPassword, DUMMY_HASH);
         }
         return Optional.empty();
     }

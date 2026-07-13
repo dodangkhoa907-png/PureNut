@@ -11,6 +11,7 @@ public interface UserDao {
     boolean existsByEmail(String email);
     boolean updatePassword(int userId, String passwordHash);
     boolean updateProfile(int userId, String fullName, String phone);
+    boolean updateProfileImage(int userId, String profileImage);
     boolean updateLoginInfo(int userId, String ip);
 
     /** Nhân sự: danh sách user theo role (SHIPPER) */

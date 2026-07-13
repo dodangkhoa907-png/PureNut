@@ -29,7 +29,7 @@ import java.util.List;
 @WebServlet(name = "AccountController",
         urlPatterns = {"/account", "/account/profile", "/account/password",
                        "/account/address", "/account/address/delete", "/account/address/default",
-                       "/account/order/cancel"})
+                       "/account/order/cancel", "/account/avatar"})
 public class AccountController extends HttpServlet {
 
     private OrderDao orderDao;
@@ -98,6 +98,7 @@ public class AccountController extends HttpServlet {
             case "/account/address/delete"  -> handleDeleteAddress(req, resp, user);
             case "/account/address/default" -> handleSetDefaultAddress(req, resp, user);
             case "/account/order/cancel"    -> handleCancelOrder(req, resp, user);
+            case "/account/avatar"         -> handleUpdateAvatar(req, resp, user);
             default -> resp.sendRedirect(req.getContextPath() + "/account");
         }
     }
@@ -244,6 +245,29 @@ public class AccountController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             writeJson(resp, 500, "{\"error\":\"Có lỗi hệ thống. Vui lòng thử lại.\"}");
+        }
+    }
+
+    private void handleUpdateAvatar(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        String imageData = req.getParameter("imageData");
+        if (imageData == null || imageData.isEmpty()) {
+            writeJson(resp, 400, "{\"error\":\"Không có dữ liệu ảnh.\"}");
+            return;
+        }
+        if (!imageData.startsWith("data:image/")) {
+            writeJson(resp, 400, "{\"error\":\"Định dạng ảnh không hợp lệ.\"}");
+            return;
+        }
+        if (imageData.length() > 200_000) {
+            writeJson(resp, 400, "{\"error\":\"Ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn.\"}");
+            return;
+        }
+        boolean ok = userDao.updateProfileImage(user.getUserId(), imageData);
+        if (ok) {
+            user.setProfileImage(imageData);
+            writeJson(resp, 200, "{\"success\":true}");
+        } else {
+            writeJson(resp, 500, "{\"error\":\"Có lỗi hệ thống.\"}");
         }
     }
 

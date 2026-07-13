@@ -44,6 +44,28 @@ public class ShipperDaoImpl implements ShipperDao {
     }
 
     @Override
+    public List<Shipper> findAll() {
+        List<Shipper> list = new ArrayList<>();
+        String sql = "SELECT s.*, " +
+                "(SELECT COUNT(*) FROM Orders o WHERE o.ShipperID = s.ShipperID AND o.Status = 'SHIPPING') AS ActiveOrders, " +
+                "(SELECT COUNT(*) FROM Orders o WHERE o.ShipperID = s.ShipperID AND o.Status = 'DONE') AS CompletedToday " +
+                "FROM Shippers s ORDER BY s.Status DESC, s.FullName";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Shipper s = map(rs);
+                s.setActiveOrders(rs.getInt("ActiveOrders"));
+                s.setCompletedToday(rs.getInt("CompletedToday"));
+                list.add(s);
+            }
+        } catch (SQLException e) {
+            System.err.println("[ShipperDao] findAll: " + e.getMessage());
+        }
+        return list;
+    }
+
+    @Override
     public void ensureProfile(int userId, String fullName, String phone) {
         String sql = "IF NOT EXISTS (SELECT 1 FROM Shippers WHERE ShipperID = ?) " +
                      "INSERT INTO Shippers (ShipperID, FullName, Phone) VALUES (?, ?, ?)";

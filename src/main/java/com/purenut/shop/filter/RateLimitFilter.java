@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @WebFilter(filterName = "RateLimitFilter",
-        urlPatterns = {"/login", "/admin/login", "/forgot-password", "/verify-otp", "/register"},
+        urlPatterns = {"/login", "/admin/login", "/shipper/login", "/forgot-password", "/verify-otp", "/register"},
         asyncSupported = true)
 public class RateLimitFilter implements Filter {
 
@@ -59,6 +59,10 @@ public class RateLimitFilter implements Filter {
     }
 
     private String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
         return request.getRemoteAddr();
     }
 

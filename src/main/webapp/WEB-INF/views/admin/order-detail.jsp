@@ -416,4 +416,93 @@
     </div>
 </div>
 
+<!-- Shipper Assignment Prompt Modal -->
+<div class="modal-overlay" id="shipperPrompt" style="position:fixed;inset:0;z-index:200;background:rgba(14,46,92,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:18px">
+  <div style="background:var(--admin-surface);border-radius:20px;width:100%;max-width:460px;box-shadow:0 30px 70px -16px rgba(14,46,92,.4);animation:spIn .35s ease;overflow:hidden">
+    <div style="background:linear-gradient(135deg,var(--admin-sidebar),var(--admin-sidebar-2));padding:28px 24px;text-align:center;color:#fff">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px">
+        <i class="fa-solid fa-truck-fast"></i>
+      </div>
+      <div style="font-family:var(--fd);font-size:20px;font-weight:700">Gán shipper giao hàng?</div>
+      <p style="font-size:13px;color:rgba(255,255,255,.7);margin-top:6px">Đơn #${order.orderId} đã chuyển sang trạng thái <strong>Đang giao</strong></p>
+    </div>
+    <div style="padding:24px;text-align:center">
+      <p style="font-size:14px;color:var(--admin-text);margin-bottom:20px;line-height:1.6">
+        Bạn có muốn chuyển đến trang <strong>Điều phối</strong> để gán shipper cho đơn này ngay không?
+      </p>
+      <div style="display:flex;gap:10px">
+        <button onclick="dismissShipperPrompt()" style="flex:1;padding:13px;border-radius:12px;border:1.5px solid var(--admin-border);background:var(--admin-bg);color:var(--admin-text);font-weight:700;font-size:14px;cursor:pointer;transition:background .2s">
+          Để sau
+        </button>
+        <a href="${pageContext.request.contextPath}/admin/dieu-phoi" style="flex:1;padding:13px;border-radius:12px;background:linear-gradient(135deg,#3965FF,#1B4F9E);color:#fff;font-weight:700;font-size:14px;text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 20px -6px rgba(57,101,255,.5);transition:transform .15s">
+          <i class="fa-solid fa-arrow-right"></i> Gán shipper ngay
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes spIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+
+/* Unassigned reminder banner */
+.ship-reminder{padding:14px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(245,165,36,.08),rgba(238,93,80,.06));border:1.5px solid rgba(245,165,36,.2);margin-bottom:20px;display:flex;align-items:center;gap:12px;animation:remPulse 2s ease infinite}
+@keyframes remPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,165,36,0)}50%{box-shadow:0 0 0 6px rgba(245,165,36,.1)}}
+.ship-reminder i{font-size:20px;color:var(--status-pending)}
+.ship-reminder-text{flex:1;font-size:13.5px;font-weight:600;color:var(--admin-text)}
+.ship-reminder-text strong{color:var(--admin-red)}
+.ship-reminder a{padding:8px 16px;border-radius:10px;background:var(--admin-primary);color:#fff;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+</style>
+
+<script>
+(function(){
+  var orderId = ${order.orderId};
+  var status = '${order.status}';
+  var hasShipper = ${order.shipperId != null};
+
+  // Show prompt if just changed to SHIPPING (success=true in URL + status=SHIPPING)
+  var params = new URLSearchParams(location.search);
+  if(params.get('success') === 'true' && status === 'SHIPPING' && !hasShipper){
+    setTimeout(function(){
+      document.getElementById('shipperPrompt').style.display = 'flex';
+    }, 600);
+  }
+
+  // 30-minute reminder for unassigned SHIPPING orders
+  if(status === 'SHIPPING' && !hasShipper){
+    var storageKey = 'shipReminder_' + orderId;
+    var lastRemind = parseInt(localStorage.getItem(storageKey) || '0');
+    var now = Date.now();
+    var thirtyMin = 30 * 60 * 1000;
+
+    function showReminder(){
+      var existing = document.querySelector('.ship-reminder');
+      if(existing) return;
+      var ctx = document.querySelector('meta[name="ctx"]').content;
+      var div = document.createElement('div');
+      div.className = 'ship-reminder';
+      div.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i>' +
+        '<div class="ship-reminder-text"><strong>Đơn #'+orderId+'</strong> đang giao nhưng chưa được gán shipper. Vui lòng gán shipper để tránh ảnh hưởng trải nghiệm khách hàng.</div>' +
+        '<a href="'+ctx+'/admin/dieu-phoi"><i class="fa-solid fa-truck-fast"></i> Gán ngay</a>';
+      var header = document.querySelector('.admin-header');
+      if(header && header.nextSibling) header.parentNode.insertBefore(div, header.nextSibling);
+      localStorage.setItem(storageKey, String(Date.now()));
+    }
+
+    if(now - lastRemind >= thirtyMin){
+      showReminder();
+    }
+    setInterval(function(){
+      showReminder();
+    }, thirtyMin);
+  }
+})();
+
+function dismissShipperPrompt(){
+  document.getElementById('shipperPrompt').style.display = 'none';
+}
+document.getElementById('shipperPrompt').addEventListener('click',function(e){
+  if(e.target===this) dismissShipperPrompt();
+});
+</script>
+
 <jsp:include page="/WEB-INF/views/admin/layout/footer.jsp" />

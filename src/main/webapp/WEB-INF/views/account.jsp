@@ -560,6 +560,32 @@
     .sec-info p{font-size:14px;color:var(--ink);line-height:1.5}
     .sec-info strong{color:var(--navy);font-weight:700}
 
+    /* ── Crop Modal ── */
+    .crop-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+    .crop-modal.open{display:flex}
+    .crop-panel{background:#fff;border-radius:22px;width:94%;max-width:460px;padding:0;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,.3);animation:ovSlide .28s cubic-bezier(.4,0,.2,1)}
+    .crop-header{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--line);background:linear-gradient(135deg,#FDFBF7,#FBF6EC)}
+    .crop-header h3{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+    .crop-header h3 svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .crop-close{width:34px;height:34px;border-radius:50%;border:none;background:rgba(0,0,0,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--ink-soft);transition:all .15s}
+    .crop-close:hover{background:rgba(206,46,46,.08);color:var(--red)}
+    .crop-area{position:relative;width:100%;aspect-ratio:1;background:#111;overflow:hidden;cursor:grab;touch-action:none}
+    .crop-area:active{cursor:grabbing}
+    .crop-area img{position:absolute;transform-origin:0 0;pointer-events:none;max-width:none}
+    .crop-circle{position:absolute;top:50%;left:50%;width:70%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;box-shadow:0 0 0 9999px rgba(0,0,0,.55);pointer-events:none;border:2px solid rgba(255,255,255,.5)}
+    .crop-controls{padding:16px 24px;display:flex;align-items:center;gap:12px}
+    .crop-controls svg{width:16px;height:16px;stroke:var(--ink-soft);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .crop-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--line);border-radius:99px;outline:none}
+    .crop-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#1B4F9E,#2A5FB8);cursor:pointer;box-shadow:0 2px 8px rgba(27,79,158,.3)}
+    .crop-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#1B4F9E,#2A5FB8);cursor:pointer;border:none}
+    .crop-actions{padding:0 24px 20px;display:flex;gap:10px}
+    .crop-actions button{flex:1;padding:12px;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+    .crop-cancel{background:var(--cream);color:var(--ink)}
+    .crop-cancel:hover{background:rgba(0,0,0,.06)}
+    .crop-save{background:linear-gradient(135deg,#1B4F9E,#2A5FB8);color:#fff;box-shadow:0 6px 18px -6px rgba(27,79,158,.4)}
+    .crop-save:hover{transform:translateY(-1px);box-shadow:0 8px 22px -6px rgba(27,79,158,.5)}
+    .crop-save:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
     /* ── Mobile strip ── */
     .mob-strip{display:none;gap:8px;overflow-x:auto;padding:0 16px 8px;margin:14px auto 0;max-width:var(--container);-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .mob-strip::-webkit-scrollbar{display:none}
@@ -686,7 +712,10 @@
     <div class="ban-deco">PureNut</div>
     <div class="ban-inner" style="max-width:var(--container);margin:0 auto">
         <div class="ban-avatar">
-            ${fn:substring(sessionScope.user.fullName, 0, 1)}
+            <c:choose>
+                <c:when test="${not empty sessionScope.user.profileImage}"><img src="${fn:escapeXml(sessionScope.user.profileImage)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></c:when>
+                <c:otherwise>${fn:substring(sessionScope.user.fullName, 0, 1)}</c:otherwise>
+            </c:choose>
             <span class="av-dot"></span>
         </div>
         <div class="ban-info">
@@ -1007,6 +1036,29 @@
     </div>
 </div>
 
+<!-- ════════ Avatar Crop Modal ════════ -->
+<div class="crop-modal" id="cropModal">
+    <div class="crop-panel">
+        <div class="crop-header">
+            <h3><svg viewBox="0 0 24 24"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"/></svg>Cắt ảnh đại diện</h3>
+            <button class="crop-close" onclick="closeCropModal()">&times;</button>
+        </div>
+        <div class="crop-area" id="cropArea">
+            <img id="cropImg" src="" alt="">
+            <div class="crop-circle"></div>
+        </div>
+        <div class="crop-controls">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <input type="range" class="crop-slider" id="cropZoom" min="100" max="300" value="100">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </div>
+        <div class="crop-actions">
+            <button class="crop-cancel" onclick="closeCropModal()">Hủy</button>
+            <button class="crop-save" id="cropSaveBtn" onclick="saveCrop()">Lưu ảnh đại diện</button>
+        </div>
+    </div>
+</div>
+
 </main>
 
 <!-- ════════════════════════════════
@@ -1032,13 +1084,16 @@
                 <div class="ov-avatar-section">
                     <div class="ov-avatar-wrap" onclick="document.getElementById('avatarInput').click()">
                         <div class="ov-avatar" id="ovAvatarPreview">
-                            <span class="ov-avatar-initial" id="avatarInitial">${fn:substring(sessionScope.user.fullName, 0, 1)}</span>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.user.profileImage}"><img src="${fn:escapeXml(sessionScope.user.profileImage)}" alt="Avatar" style="width:100%;height:100%;object-fit:cover"></c:when>
+                                <c:otherwise><span class="ov-avatar-initial" id="avatarInitial">${fn:substring(sessionScope.user.fullName, 0, 1)}</span></c:otherwise>
+                            </c:choose>
                         </div>
                         <div class="ov-avatar-cam">
                             <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                         </div>
                     </div>
-                    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="previewAvatar(this)">
+                    <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="openCropModal(this)">
                     <div class="ov-avatar-hint">Nhấn vào ảnh để thay đổi</div>
                 </div>
 
@@ -1139,16 +1194,105 @@
     }
     function showMsg(id,ok,text){var el=document.getElementById(id);el.className='ov-msg '+(ok?'ok':'err');el.textContent=text}
 
-    /* Avatar preview */
-    window.previewAvatar=function(input){
-        if(input.files && input.files[0]){
-            var reader=new FileReader();
-            reader.onload=function(e){
-                var wrap=document.getElementById('ovAvatarPreview');
-                wrap.innerHTML='<img src="'+e.target.result+'" alt="Avatar" id="avatarImg" style="width:100%;height:100%;object-fit:cover">';
+    /* ── Avatar Crop ── */
+    var cropState={img:null,natW:0,natH:0,scale:1,ox:0,oy:0,dragging:false,sx:0,sy:0};
+
+    window.openCropModal=function(input){
+        if(!input.files||!input.files[0])return;
+        var file=input.files[0];
+        if(file.size>10*1024*1024){showMsg('profileMsg',false,'Ảnh quá lớn (tối đa 10MB).');input.value='';return}
+        var reader=new FileReader();
+        reader.onload=function(e){
+            var img=document.getElementById('cropImg');
+            img.onload=function(){
+                cropState.natW=img.naturalWidth;cropState.natH=img.naturalHeight;
+                cropState.scale=1;cropState.ox=0;cropState.oy=0;
+                document.getElementById('cropZoom').value=100;
+                positionCropImg();
+                document.getElementById('cropModal').classList.add('open');
             };
-            reader.readAsDataURL(input.files[0]);
-        }
+            img.src=e.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
+    window.closeCropModal=function(){
+        document.getElementById('cropModal').classList.remove('open');
+        document.getElementById('avatarInput').value='';
+    };
+    document.getElementById('cropModal').addEventListener('click',function(e){if(e.target===this)closeCropModal()});
+
+    function positionCropImg(){
+        var area=document.getElementById('cropArea'),img=document.getElementById('cropImg');
+        var aw=area.offsetWidth,ah=area.offsetHeight;
+        var fitScale=Math.max(aw/cropState.natW,ah/cropState.natH);
+        var s=fitScale*cropState.scale;
+        var iw=cropState.natW*s,ih=cropState.natH*s;
+        var maxOx=(iw-aw)/2,maxOy=(ih-ah)/2;
+        cropState.ox=Math.max(-maxOx,Math.min(maxOx,cropState.ox));
+        cropState.oy=Math.max(-maxOy,Math.min(maxOy,cropState.oy));
+        var x=(aw-iw)/2+cropState.ox,y=(ah-ih)/2+cropState.oy;
+        img.style.width=iw+'px';img.style.height=ih+'px';
+        img.style.left=x+'px';img.style.top=y+'px';
+        img.style.transform='none';
+    }
+
+    document.getElementById('cropZoom').addEventListener('input',function(){
+        cropState.scale=this.value/100;positionCropImg();
+    });
+
+    var cropArea=document.getElementById('cropArea');
+    function startDrag(ex,ey){cropState.dragging=true;cropState.sx=ex;cropState.sy=ey}
+    function moveDrag(ex,ey){if(!cropState.dragging)return;cropState.ox+=ex-cropState.sx;cropState.oy+=ey-cropState.sy;cropState.sx=ex;cropState.sy=ey;positionCropImg()}
+    function endDrag(){cropState.dragging=false}
+    cropArea.addEventListener('mousedown',function(e){e.preventDefault();startDrag(e.clientX,e.clientY)});
+    document.addEventListener('mousemove',function(e){moveDrag(e.clientX,e.clientY)});
+    document.addEventListener('mouseup',endDrag);
+    cropArea.addEventListener('touchstart',function(e){if(e.touches.length===1){e.preventDefault();startDrag(e.touches[0].clientX,e.touches[0].clientY)}},{passive:false});
+    cropArea.addEventListener('touchmove',function(e){if(e.touches.length===1){e.preventDefault();moveDrag(e.touches[0].clientX,e.touches[0].clientY)}},{passive:false});
+    cropArea.addEventListener('touchend',endDrag);
+
+    window.saveCrop=function(){
+        var btn=document.getElementById('cropSaveBtn');
+        btn.disabled=true;btn.textContent='Đang lưu...';
+        var area=document.getElementById('cropArea'),img=document.getElementById('cropImg');
+        var aw=area.offsetWidth,ah=area.offsetHeight;
+        var circle=area.querySelector('.crop-circle');
+        var cr=circle.offsetWidth;
+        var cx=(aw-cr)/2,cy=(ah-cr)/2;
+        var canvas=document.createElement('canvas');
+        var outSize=256;
+        canvas.width=outSize;canvas.height=outSize;
+        var ctx=canvas.getContext('2d');
+        ctx.beginPath();ctx.arc(outSize/2,outSize/2,outSize/2,0,Math.PI*2);ctx.closePath();ctx.clip();
+        var imgLeft=parseFloat(img.style.left),imgTop=parseFloat(img.style.top);
+        var imgW=parseFloat(img.style.width),imgH=parseFloat(img.style.height);
+        var srcX=(cx-imgLeft)/imgW*cropState.natW;
+        var srcY=(cy-imgTop)/imgH*cropState.natH;
+        var srcSize=cr/imgW*cropState.natW;
+        ctx.drawImage(img,srcX,srcY,srcSize,srcSize,0,0,outSize,outSize);
+        var dataUrl=canvas.toDataURL('image/jpeg',0.85);
+        var p=new URLSearchParams();
+        p.append('_csrf','${sessionScope._csrf}');
+        p.append('imageData',dataUrl);
+        fetch(CTX+'/account/avatar',{method:'POST',body:p,headers:{'Content-Type':'application/x-www-form-urlencoded'}})
+        .then(function(r){return r.json().then(function(j){return{ok:r.ok,data:j}})})
+        .then(function(res){
+            if(res.ok&&res.data.success){
+                document.getElementById('ovAvatarPreview').innerHTML='<img src="'+dataUrl+'" alt="Avatar" style="width:100%;height:100%;object-fit:cover">';
+                var banAv=document.querySelector('.ban-avatar');
+                var avDot=banAv.querySelector('.av-dot');
+                banAv.innerHTML='<img src="'+dataUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+                banAv.appendChild(avDot);
+                closeCropModal();
+                showMsg('profileMsg',true,'Đã cập nhật ảnh đại diện!');
+            } else {
+                showMsg('profileMsg',false,res.data.error||'Có lỗi xảy ra');
+            }
+            btn.disabled=false;btn.textContent='Lưu ảnh đại diện';
+        }).catch(function(){
+            showMsg('profileMsg',false,'Lỗi kết nối.');
+            btn.disabled=false;btn.textContent='Lưu ảnh đại diện';
+        });
     };
 
     window.saveProfile=function(){
@@ -1158,12 +1302,9 @@
         if(!/^0[0-9]{9,10}$/.test(p)){showMsg('profileMsg',false,'SĐT không hợp lệ.');return}
         var data={fullName:n,phone:p};
         if(nick) data.nickname=nick;
-        /* Upload avatar nếu có */
-        var avatarFile=document.getElementById('avatarInput').files[0];
-        if(avatarFile) data.avatar=avatarFile;
         post('/account/profile',data,function(ok,j){
             showMsg('profileMsg',ok,ok?'Đã lưu thông tin!':j.error);
-            if(ok){document.querySelector('.ban-info h1').textContent=n;document.querySelector('.ban-avatar').childNodes[0].textContent=n.charAt(0)}
+            if(ok){document.querySelector('.ban-info h1').textContent=n;var ba=document.querySelector('.ban-avatar');if(!ba.querySelector('img'))ba.childNodes[0].textContent=n.charAt(0)}
         });
     };
 
@@ -1287,7 +1428,7 @@
         fetch(CTX+'/account/order/cancel',{
             method:'POST',
             headers:{'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest'},
-            body:'orderId='+currentCancelOid+'&reason='+encodeURIComponent(reason)
+            body:'_csrf='+encodeURIComponent('${sessionScope._csrf}')+'&orderId='+currentCancelOid+'&reason='+encodeURIComponent(reason)
         }).then(function(r){return r.json()}).then(function(d){
             var msg=document.getElementById('cmMsg');
             if(d.success){

@@ -11,6 +11,9 @@ public class Shipper {
     private String allowedIp;     // CSV IP nội bộ, null = chưa khóa IP
     private Date createdAt;
 
+    private int activeOrders;
+    private int completedToday;
+
     public int getShipperId() { return shipperId; }
     public void setShipperId(int shipperId) { this.shipperId = shipperId; }
 
@@ -31,4 +34,10 @@ public class Shipper {
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public int getActiveOrders() { return activeOrders; }
+    public void setActiveOrders(int activeOrders) { this.activeOrders = activeOrders; }
+
+    public int getCompletedToday() { return completedToday; }
+    public void setCompletedToday(int completedToday) { this.completedToday = completedToday; }
 }

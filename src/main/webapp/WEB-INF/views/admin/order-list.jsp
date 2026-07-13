@@ -304,6 +304,23 @@
 }
 </style>
 
+<%-- ═══════════ Unassigned shipping alert ═══════════ --%>
+<c:set var="unassignedShipping" value="0"/>
+<c:forEach var="o" items="${orders}">
+  <c:if test="${o.status == 'SHIPPING' && o.shipperId == null}"><c:set var="unassignedShipping" value="${unassignedShipping + 1}"/></c:if>
+</c:forEach>
+<c:if test="${unassignedShipping > 0}">
+<div style="padding:14px 20px;border-radius:14px;background:linear-gradient(135deg,rgba(245,165,36,.08),rgba(238,93,80,.06));border:1.5px solid rgba(245,165,36,.2);margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <i class="fa-solid fa-exclamation-triangle" style="font-size:20px;color:var(--status-pending)"></i>
+  <div style="flex:1;font-size:13.5px;font-weight:600;color:var(--admin-text);min-width:200px">
+    <strong style="color:var(--admin-red)">${unassignedShipping} đơn</strong> đang giao nhưng chưa gán shipper — cần xử lý để tránh ảnh hưởng trải nghiệm khách hàng.
+  </div>
+  <a href="${pageContext.request.contextPath}/admin/dieu-phoi" style="padding:9px 18px;border-radius:10px;background:var(--admin-primary);color:#fff;font-weight:700;font-size:12.5px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px">
+    <i class="fa-solid fa-truck-fast"></i> Gán shipper ngay
+  </a>
+</div>
+</c:if>
+
 <%-- ═══════════ Group orders by UserId ═══════════ --%>
 <c:set var="cntAll" value="${orders.size()}"/>
 <c:set var="cntPending" value="0"/><c:set var="cntShipping" value="0"/><c:set var="cntDone" value="0"/><c:set var="cntCancelled" value="0"/><c:set var="cntPendingCancel" value="0"/>
@@ -409,6 +426,7 @@
 <script>
 (function(){
     var ctx = document.querySelector('meta[name="ctx"]').content;
+    function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
     var els = document.querySelectorAll('#ordersData .order-data');
     var customers = {};
 
@@ -453,9 +471,9 @@
         card.setAttribute('data-uid', uid);
         card.innerHTML =
             '<div class="cg-top">' +
-                '<div class="cg-avatar" style="background:linear-gradient(135deg,'+color+','+color+'cc)">' + initial + '</div>' +
-                '<div><div class="cg-name">' + c.name + '</div>' +
-                '<div class="cg-phone"><i class="fa-solid fa-phone" style="font-size:10px;margin-right:4px;opacity:.5"></i>' + c.phone + '</div></div>' +
+                '<div class="cg-avatar" style="background:linear-gradient(135deg,'+color+','+color+'cc)">' + esc(initial) + '</div>' +
+                '<div><div class="cg-name">' + esc(c.name) + '</div>' +
+                '<div class="cg-phone"><i class="fa-solid fa-phone" style="font-size:10px;margin-right:4px;opacity:.5"></i>' + esc(c.phone) + '</div></div>' +
             '</div>' +
             '<div class="cg-stats">' +
                 (pending ? '<span class="cg-stat-chip pending"><i class="fa-solid fa-clock" style="font-size:9px"></i> '+pending+' chờ</span>' : '') +
@@ -541,11 +559,11 @@
                 '<div style="text-align:right"><div class="ci-hl-label">Đã hoàn thành</div><div class="ci-hl-val" style="font-size:18px;color:var(--admin-text)">'+formatVND(doneSpent)+'</div></div>' +
             '</div>' +
             '<div class="ci-grid" style="margin-top:18px">' +
-                '<div class="ci-item"><div class="ci-ic blue"><i class="fa-solid fa-user"></i></div><div><div class="ci-label">Họ tên</div><div class="ci-val">' + c.name + '</div></div></div>' +
-                '<div class="ci-item"><div class="ci-ic green"><i class="fa-solid fa-phone"></i></div><div><div class="ci-label">Số điện thoại</div><div class="ci-val">' + c.phone + '</div></div></div>' +
-                '<div class="ci-item"><div class="ci-ic purple"><i class="fa-solid fa-envelope"></i></div><div><div class="ci-label">Email</div><div class="ci-val">' + (c.email || 'Chưa cập nhật') + '</div></div></div>' +
-                '<div class="ci-item"><div class="ci-ic teal"><i class="fa-solid fa-user-plus"></i></div><div><div class="ci-label">Ngày tham gia</div><div class="ci-val">' + (c.accountDate || 'N/A') + '</div></div></div>' +
-                '<div class="ci-item ci-full"><div class="ci-ic orange"><i class="fa-solid fa-map-pin"></i></div><div><div class="ci-label">Địa chỉ giao hàng</div><div class="ci-val">' + c.address + '</div></div></div>' +
+                '<div class="ci-item"><div class="ci-ic blue"><i class="fa-solid fa-user"></i></div><div><div class="ci-label">Họ tên</div><div class="ci-val">' + esc(c.name) + '</div></div></div>' +
+                '<div class="ci-item"><div class="ci-ic green"><i class="fa-solid fa-phone"></i></div><div><div class="ci-label">Số điện thoại</div><div class="ci-val">' + esc(c.phone) + '</div></div></div>' +
+                '<div class="ci-item"><div class="ci-ic purple"><i class="fa-solid fa-envelope"></i></div><div><div class="ci-label">Email</div><div class="ci-val">' + esc(c.email || 'Chưa cập nhật') + '</div></div></div>' +
+                '<div class="ci-item"><div class="ci-ic teal"><i class="fa-solid fa-user-plus"></i></div><div><div class="ci-label">Ngày tham gia</div><div class="ci-val">' + esc(c.accountDate || 'N/A') + '</div></div></div>' +
+                '<div class="ci-item ci-full"><div class="ci-ic orange"><i class="fa-solid fa-map-pin"></i></div><div><div class="ci-label">Địa chỉ giao hàng</div><div class="ci-val">' + esc(c.address) + '</div></div></div>' +
                 '<div class="ci-item"><div class="ci-ic blue"><i class="fa-solid fa-calendar"></i></div><div><div class="ci-label">Đơn đầu tiên</div><div class="ci-val">' + firstOrder.date + '</div></div></div>' +
                 '<div class="ci-item"><div class="ci-ic teal"><i class="fa-solid fa-calendar-check"></i></div><div><div class="ci-label">Đơn gần nhất</div><div class="ci-val">' + lastOrder.date + '</div></div></div>' +
                 '<div class="ci-item"><div class="ci-ic blue"><i class="fa-solid fa-boxes-stacked"></i></div><div><div class="ci-label">Tổng đơn hàng</div><div class="ci-val">' + c.orders.length + '</div></div></div>' +
@@ -715,7 +733,7 @@
                 rows +=
                     '<tr>' +
                         '<td><strong>#'+o.oid+'</strong></td>' +
-                        '<td><strong>'+o.name+'</strong><br><span style="font-size:12px;color:var(--admin-text-light)">'+o.phone+'</span></td>' +
+                        '<td><strong>'+esc(o.name)+'</strong><br><span style="font-size:12px;color:var(--admin-text-light)">'+esc(o.phone)+'</span></td>' +
                         '<td><strong style="color:var(--admin-primary)">'+formatVND(o.total)+'</strong></td>' +
                         '<td style="font-size:13px">'+(o.pay==='COD'?'Khi nhận hàng':'Chuyển khoản')+'</td>' +
                         '<td><span class="os-pill os-'+o.status+'"><i class="fa-solid '+statusIcon(o.status)+'"></i> '+statusLabel(o.status)+'</span></td>' +

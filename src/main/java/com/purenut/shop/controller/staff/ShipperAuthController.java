@@ -48,7 +48,10 @@ public class ShipperAuthController extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if ("/shipper/logout".equals(path)) {
-            if (session != null) session.removeAttribute("shipperUser");
+            if (session != null) {
+                session.removeAttribute("shipperUser");
+                request.changeSessionId();
+            }
             response.sendRedirect(request.getContextPath() + "/shipper/login");
             return;
         }

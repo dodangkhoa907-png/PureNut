@@ -118,6 +118,20 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public boolean updateProfileImage(int userId, String profileImage) {
+        String sql = "UPDATE Users SET ProfileImage = ? WHERE UserID = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setNString(1, profileImage);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
     public boolean updateLoginInfo(int userId, String ip) {
         String sql = "UPDATE Users SET LastLoginIP = ?, LastLoginAt = DATEADD(HOUR,7,GETUTCDATE()) WHERE UserID = ?";
         try (Connection conn = Database.getConnection();
@@ -173,6 +187,7 @@ public class UserDaoImpl implements UserDao {
         user.setLastLoginIP(rs.getString("LastLoginIP"));
         user.setLastLoginAt(rs.getTimestamp("LastLoginAt"));
         user.setAgreedTermsAt(rs.getTimestamp("AgreedTermsAt"));
+        try { user.setProfileImage(rs.getNString("ProfileImage")); } catch (SQLException ignored) {}
         return user;
     }
 }

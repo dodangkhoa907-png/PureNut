@@ -12,6 +12,9 @@ public interface ShipperDao {
     /** Danh sách shipper ACTIVE cho dropdown điều phối */
     List<Shipper> findActive();
 
+    /** Tất cả shipper (cả OFFLINE) cho command center */
+    List<Shipper> findAll();
+
     /** Tự tạo hồ sơ nếu user SHIPPER chưa có (đăng nhập lần đầu sau migration) */
     void ensureProfile(int userId, String fullName, String phone);
 
