@@ -1,30 +1,31 @@
 # --- Giai đoạn 1: Build file .war bằng Maven ---
-# Dùng ảnh chứa Maven và JDK mới nhất (tương thích ngược với mã của bạn)
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 
-# Copy file cấu hình maven và source code vào
 COPY pom.xml .
+# Cache Maven dependencies trước khi copy source → build lại nhanh hơn
+RUN mvn dependency:go-offline -B
 COPY src ./src
 
-# Chạy lệnh build ra file .war (bỏ qua test để build nhanh hơn)
+# Build .war (skip tests)
 RUN mvn clean package -DskipTests
 
 # --- Giai đoạn 2: Chạy ứng dụng trên Tomcat ---
-# Dùng Tomcat 10 (hỗ trợ tốt các bản JDK mới)
 FROM tomcat:10.1-jdk21
 
-# Xóa sạch các app rác của Tomcat mặc định
+# Xóa app mặc định
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Đổi cổng mặc định của Tomcat từ 8080 sang 8081
+# Đổi port sang 8081
 RUN sed -i 's/port="8080"/port="8081"/' /usr/local/tomcat/conf/server.xml
 
-# Lấy file .war vừa build ở bước 1, đổi tên thành ROOT.war để chạy thẳng trang chủ
+# Deploy .war
 COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-# Mở cổng 8081
+# JVM tuning cho Render free tier (512MB RAM)
+ENV JAVA_OPTS="-Xms128m -Xmx384m -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -Djava.security.egd=file:/dev/urandom"
+ENV CATALINA_OPTS="${JAVA_OPTS}"
+
 EXPOSE 8081
 
-# Lệnh khởi động Tomcat
 CMD ["catalina.sh", "run"]

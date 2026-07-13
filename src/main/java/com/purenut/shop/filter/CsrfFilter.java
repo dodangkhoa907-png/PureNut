@@ -34,6 +34,11 @@ public class CsrfFilter implements Filter {
             session.setAttribute(TOKEN_ATTR, generateToken());
         }
 
+        if ("/health".equals(request.getServletPath())) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         String method = request.getMethod();
         if ("POST".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)
                 || "DELETE".equalsIgnoreCase(method)) {

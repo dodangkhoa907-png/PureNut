@@ -51,12 +51,14 @@ public final class Database {
         cfg.setPassword(props.getProperty("db.password"));
         cfg.setDriverClassName(props.getProperty("db.driver"));
         cfg.setPoolName("PureNutPool");
-        cfg.setMaximumPoolSize(12);
-        cfg.setMinimumIdle(2);  // Giảm từ 3 xuống 2 để khởi tạo nhanh hơn
-        cfg.setConnectionTimeout(30_000);
-        cfg.setIdleTimeout(600_000);
-        cfg.setMaxLifetime(1_800_000);
-        cfg.setKeepaliveTime(300_000); // giữ kết nối ấm, tránh handshake lại
+        cfg.setMaximumPoolSize(8);
+        cfg.setMinimumIdle(2);
+        cfg.setConnectionTimeout(10_000);
+        cfg.setIdleTimeout(300_000);
+        cfg.setMaxLifetime(900_000);
+        cfg.setKeepaliveTime(120_000);
+        cfg.setValidationTimeout(3_000);
+        cfg.setLeakDetectionThreshold(30_000);
 
         long t2 = System.currentTimeMillis();
         System.out.println("[DB] Creating HikariCP pool (MinIdle=2, MaxSize=12)...");

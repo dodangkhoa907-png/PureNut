@@ -27,6 +27,28 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- ══ GZIP Compression — nén HTML/CSS/JSON giảm 70-80% bandwidth ══ -->
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>com.purenut.shop.filter.GzipFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ══ Cache Headers — static assets (CSS/JS/img/font) ══ -->
+    <filter>
+        <filter-name>cacheHeaderFilter</filter-name>
+        <filter-class>com.purenut.shop.filter.CacheHeaderFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>cacheHeaderFilter</filter-name>
+        <url-pattern>/resources/*</url-pattern>
+    </filter-mapping>
+
     <!-- ══ Admin IP Whitelist — chỉ IP trong danh sách mới truy cập /admin/* ══ -->
     <filter>
         <filter-name>adminIpFilter</filter-name>
@@ -48,15 +70,7 @@
         <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
         <init-param>
             <param-name>development</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>checkInterval</param-name>
-            <param-value>0</param-value>
-        </init-param>
-        <init-param>
-            <param-name>modificationTestInterval</param-name>
-            <param-value>4</param-value>
+            <param-value>false</param-value>
         </init-param>
         <init-param>
             <param-name>trimSpaces</param-name>

@@ -94,8 +94,8 @@ public class PasswordResetController extends HttpServlet {
         Optional<User> userOpt = userDao.findByEmail(email);
 
         if (userOpt.isEmpty()) {
-            req.getSession().setAttribute("reset_generic_msg", true);
-            resp.sendRedirect(req.getContextPath() + "/forgot-password?sent=true");
+            req.setAttribute("errorMessage", "Email này chưa được đăng ký tài khoản PureNut.");
+            req.getRequestDispatcher("/WEB-INF/views/forgot-password.jsp").forward(req, resp);
             return;
         }
 
