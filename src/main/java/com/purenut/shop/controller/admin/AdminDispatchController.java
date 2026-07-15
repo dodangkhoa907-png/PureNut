@@ -67,7 +67,10 @@ public class AdminDispatchController extends HttpServlet {
         req.setAttribute("shipping", shipping);
         req.setAttribute("pendingCancel", pendingCancel);
         req.setAttribute("newOrders", newOrders);
-        req.setAttribute("shippers", userDao.findByRole("SHIPPER"));
+        List<com.purenut.shop.model.User> shipperUsers = userDao.findByRole("SHIPPER");
+        for (com.purenut.shop.model.User su : shipperUsers) {
+            shipperDao.ensureProfile(su.getUserId(), su.getFullName(), su.getPhone());
+        }
         req.setAttribute("shipperProfiles", shipperDao.findAll());
         req.setAttribute("pageTitle", "Điều phối giao hàng");
         req.getRequestDispatcher("/WEB-INF/views/admin/dispatch.jsp").forward(req, resp);

@@ -206,9 +206,7 @@
           <select id="sel${o.orderId}">
             <option value="">— Chọn shipper —</option>
             <c:forEach var="s" items="${shipperProfiles}">
-              <c:if test="${s.status == 'ACTIVE'}">
-                <option value="${s.shipperId}"><c:out value="${s.fullName}"/> (${s.activeOrders} đơn)</option>
-              </c:if>
+              <option value="${s.shipperId}" ${s.status != 'ACTIVE' ? 'disabled' : ''}><c:out value="${s.fullName}"/> (${s.activeOrders} đơn)${s.status != 'ACTIVE' ? ' — Offline' : ''}</option>
             </c:forEach>
           </select>
           <button class="dp-b assign" onclick="assign(${o.orderId})"><i class="fa-solid fa-paper-plane"></i> Gán</button>
@@ -227,22 +225,37 @@
   </div>
   <div class="order-grid">
     <c:forEach var="o" items="${shipping}">
-      <div class="order-card">
+      <div class="order-card" id="ship${o.orderId}">
         <div class="oc-head">
           <span class="oc-id">#${o.orderId}</span>
           <span class="oc-amt"><fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true"/> đ</span>
         </div>
         <div class="oc-customer">
-          <b><c:out value="${o.fullName}"/></b>
+          <b><c:out value="${o.fullName}"/> &middot; <c:out value="${o.phone}"/></b>
           <small><c:out value="${o.address}"/></small>
         </div>
         <div class="oc-meta">
-          <span class="dp-pill shipping"><i class="fa-solid fa-motorcycle"></i> <c:out value="${not empty o.shipperName ? o.shipperName : 'Shipper'}"/></span>
+          <c:choose>
+            <c:when test="${not empty o.shipperName}">
+              <span class="dp-pill shipping"><i class="fa-solid fa-motorcycle"></i> <c:out value="${o.shipperName}"/></span>
+            </c:when>
+            <c:otherwise>
+              <span class="dp-pill cod"><i class="fa-solid fa-exclamation-triangle"></i> Chưa gán shipper</span>
+            </c:otherwise>
+          </c:choose>
           <c:if test="${not empty o.deliveryStatus}">
-            <span class="dp-pill transfer">${o.deliveryStatus}</span>
+            <c:set var="dsLabel" value="${o.deliveryStatus == 'ASSIGNED' ? 'Đã gán' : o.deliveryStatus == 'PICKING_UP' ? 'Đang lấy hàng' : o.deliveryStatus == 'DELIVERING' ? 'Đang giao' : o.deliveryStatus == 'COMPLETED' ? 'Hoàn thành' : o.deliveryStatus == 'FAILED' ? 'Thất bại' : o.deliveryStatus}"/>
+            <span class="dp-pill ${o.deliveryStatus == 'FAILED' ? 'cod' : 'transfer'}"><i class="fa-solid ${o.deliveryStatus == 'COMPLETED' ? 'fa-check-circle' : o.deliveryStatus == 'FAILED' ? 'fa-times-circle' : 'fa-spinner fa-spin'}"></i> ${dsLabel}</span>
           </c:if>
         </div>
         <div class="oc-actions">
+          <select id="resel${o.orderId}">
+            <option value="">— Đổi shipper —</option>
+            <c:forEach var="s" items="${shipperProfiles}">
+              <option value="${s.shipperId}" ${s.shipperId == o.shipperId ? 'selected disabled' : ''} ${s.status != 'ACTIVE' ? 'disabled' : ''}><c:out value="${s.fullName}"/> (${s.activeOrders} đơn)${s.shipperId == o.shipperId ? ' ← hiện tại' : ''}${s.status != 'ACTIVE' ? ' — Offline' : ''}</option>
+            </c:forEach>
+          </select>
+          <button class="dp-b assign" onclick="reassign(${o.orderId})"><i class="fa-solid fa-people-arrows"></i> Đổi</button>
           <button class="dp-b note" onclick="openNotes(${o.orderId})"><i class="fa-regular fa-comment"></i> Ghi chú</button>
         </div>
       </div>
@@ -340,6 +353,16 @@ window.assign=function(orderId){
   ajax('/admin/dieu-phoi/gan-don',{orderId:orderId,shipperId:sel.value},function(d){
     if(d.ok){fadeOut(document.getElementById('asg'+orderId));setTimeout(function(){location.reload()},600)}
     else alert(d.msg||'Không gán được');
+  });
+};
+
+window.reassign=function(orderId){
+  var sel=document.getElementById('resel'+orderId);
+  if(!sel.value){alert('Chọn shipper mới trước nhé!');return}
+  if(!confirm('Đổi shipper cho đơn #'+orderId+'?'))return;
+  ajax('/admin/dieu-phoi/gan-don',{orderId:orderId,shipperId:sel.value},function(d){
+    if(d.ok){fadeOut(document.getElementById('ship'+orderId));setTimeout(function(){location.reload()},600)}
+    else alert(d.msg||'Không đổi được');
   });
 };
 

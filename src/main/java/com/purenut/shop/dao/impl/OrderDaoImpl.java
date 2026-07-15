@@ -123,6 +123,7 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
                      "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
                      "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
+                     "o.DeliveryStatus, " +
                      "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
                      "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
                      "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
@@ -148,6 +149,7 @@ public class OrderDaoImpl implements OrderDao {
                 int sid = rs.getInt("ShipperID");
                 o.setShipperId(rs.wasNull() ? null : sid);
                 o.setShipperName(rs.getNString("ShipperName"));
+                o.setDeliveryStatus(rs.getString("DeliveryStatus"));
                 o.setEmail(rs.getString("UserEmail"));
                 o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                 list.add(o);
@@ -469,6 +471,7 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
                      "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
                      "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
+                     "o.DeliveryStatus, " +
                      "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
                      "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
                      "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
@@ -495,6 +498,7 @@ public class OrderDaoImpl implements OrderDao {
                     int sid = rs.getInt("ShipperID");
                     o.setShipperId(rs.wasNull() ? null : sid);
                     o.setShipperName(rs.getNString("ShipperName"));
+                    o.setDeliveryStatus(rs.getString("DeliveryStatus"));
                     o.setEmail(rs.getString("UserEmail"));
                     o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                     list.add(o);

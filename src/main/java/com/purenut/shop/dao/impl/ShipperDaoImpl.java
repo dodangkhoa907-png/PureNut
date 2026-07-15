@@ -68,7 +68,7 @@ public class ShipperDaoImpl implements ShipperDao {
     @Override
     public void ensureProfile(int userId, String fullName, String phone) {
         String sql = "IF NOT EXISTS (SELECT 1 FROM Shippers WHERE ShipperID = ?) " +
-                     "INSERT INTO Shippers (ShipperID, FullName, Phone) VALUES (?, ?, ?)";
+                     "INSERT INTO Shippers (ShipperID, FullName, Phone, Status) VALUES (?, ?, ?, 'ACTIVE')";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
