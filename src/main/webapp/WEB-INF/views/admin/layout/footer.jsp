@@ -136,6 +136,105 @@
 
     // SSE Connection
     var evtSource;
+
+    function getShipperMsg(data) {
+        var action = "";
+        var icon = "fa-truck-fast";
+        var colorClass = "";
+        switch (data.status) {
+            case "PICKING_UP":
+                action = "đang nhận bàn giao";
+                icon = "fa-boxes-stacked";
+                colorClass = "orange";
+                break;
+            case "DELIVERING":
+                action = "đang đi giao";
+                icon = "fa-truck-ramp-box";
+                colorClass = "blue";
+                break;
+            case "COMPLETED":
+                action = "đã giao thành công ✓";
+                icon = "fa-circle-check";
+                colorClass = "green";
+                break;
+            case "FAILED":
+                action = "báo giao thất bại ✗";
+                icon = "fa-circle-xmark";
+                colorClass = "red";
+                break;
+            default:
+                action = "cập nhật trạng thái " + data.status;
+        }
+        return { msg: "Shipper <strong>" + data.shipper + "</strong> " + action + " đơn <strong>#" + data.orderId + "</strong>", icon: icon, color: colorClass };
+    }
+
+    function addShipperNotification(data) {
+        empty.style.display = 'none';
+        count++;
+        badge.textContent = count > 9 ? '9+' : count;
+        badge.classList.add('show');
+
+        var info = getShipperMsg(data);
+        var item = document.createElement('a');
+        item.className = 'noti-item unread';
+        item.href = ctx + '/admin/don-hang/chi-tiet?id=' + data.orderId;
+        item.innerHTML =
+            '<div class="noti-ic ' + info.color + '"><i class="fa-solid ' + info.icon + '"></i></div>' +
+            '<div class="noti-body">' +
+                '<div class="noti-text">' + info.msg + '</div>' +
+                '<div class="noti-text" style="font-weight:500;font-size:12.5px">Khách hàng: ' + data.customer + '</div>' +
+                '<div class="noti-time">' + timeAgo(data.time) + '</div>' +
+            '</div>';
+        list.insertBefore(item, list.firstChild);
+
+        notifications.unshift(data);
+        if (notifications.length > 20) {
+            notifications.pop();
+            if (list.lastElementChild && list.lastElementChild.classList.contains('noti-item')) {
+                list.removeChild(list.lastElementChild);
+            }
+        }
+    }
+
+    function showShipperToast(data) {
+        var info = getShipperMsg(data);
+        var t = document.createElement('div');
+        t.className = 'admin-toast-item';
+        t.innerHTML =
+            '<div class="toast-ic ' + info.color + '"><i class="fa-solid ' + info.icon + '"></i></div>' +
+            '<div class="toast-body">' +
+                '<div class="toast-title">Cập nhật vận chuyển</div>' +
+                '<div class="toast-desc">' + info.msg + '</div>' +
+            '</div>' +
+            '<button class="toast-close" onclick="this.parentNode.classList.add(\'out\')">&times;</button>';
+        toastBox.appendChild(t);
+
+        t.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+                location.href = ctx + '/admin/don-hang/chi-tiet?id=' + data.orderId;
+            }
+        });
+
+        setTimeout(function() {
+            t.classList.add('out');
+            setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+        }, 6000);
+
+        try {
+            var ac = new (window.AudioContext || window.webkitAudioContext)();
+            var osc = ac.createOscillator();
+            var gain = ac.createGain();
+            osc.connect(gain);
+            gain.connect(ac.destination);
+            osc.frequency.value = 660;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.15, ac.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+            osc.start(ac.currentTime);
+            osc.stop(ac.currentTime + 0.5);
+        } catch(e) {}
+    }
+
     function connectSSE() {
         if (evtSource) { try { evtSource.close(); } catch(e) {} }
         evtSource = new EventSource(ctx + '/admin/notifications/stream');
@@ -145,6 +244,21 @@
                 var data = JSON.parse(e.data);
                 addNotification(data);
                 showToast(data);
+            } catch(err) { console.error('SSE parse error', err); }
+        });
+
+        evtSource.addEventListener('shipper-update', function(e) {
+            try {
+                var data = JSON.parse(e.data);
+                addShipperNotification(data);
+                showShipperToast(data);
+                // Tự động tải lại trang sau 1.5s nếu admin đang ở trang điều phối hoặc quản lý đơn để cập nhật số liệu
+                var p = window.location.pathname;
+                if (p.indexOf('/admin/dieu-phoi') !== -1 || p.indexOf('/admin/don-hang') !== -1) {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                }
             } catch(err) { console.error('SSE parse error', err); }
         });
 

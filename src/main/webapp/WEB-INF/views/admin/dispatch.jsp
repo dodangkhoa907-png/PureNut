@@ -244,7 +244,7 @@
             </c:otherwise>
           </c:choose>
           <c:if test="${not empty o.deliveryStatus}">
-            <c:set var="dsLabel" value="${o.deliveryStatus == 'ASSIGNED' ? 'Đã gán' : o.deliveryStatus == 'PICKING_UP' ? 'Đang lấy hàng' : o.deliveryStatus == 'DELIVERING' ? 'Đang giao' : o.deliveryStatus == 'COMPLETED' ? 'Hoàn thành' : o.deliveryStatus == 'FAILED' ? 'Thất bại' : o.deliveryStatus}"/>
+            <c:set var="dsLabel" value="${o.deliveryStatus == 'ASSIGNED' ? 'Chờ bàn giao' : o.deliveryStatus == 'PICKING_UP' ? 'Đang bàn giao' : o.deliveryStatus == 'DELIVERING' ? 'Đang giao' : o.deliveryStatus == 'COMPLETED' ? 'Hoàn thành' : o.deliveryStatus == 'FAILED' ? 'Thất bại' : o.deliveryStatus}"/>
             <span class="dp-pill ${o.deliveryStatus == 'FAILED' ? 'cod' : 'transfer'}"><i class="fa-solid ${o.deliveryStatus == 'COMPLETED' ? 'fa-check-circle' : o.deliveryStatus == 'FAILED' ? 'fa-times-circle' : 'fa-spinner fa-spin'}"></i> ${dsLabel}</span>
           </c:if>
         </div>

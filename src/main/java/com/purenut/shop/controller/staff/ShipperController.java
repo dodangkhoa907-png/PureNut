@@ -142,6 +142,24 @@ public class ShipperController extends HttpServlet {
         if (n > 0) {
             AuditLogger.log(req, shipper.getUserId(), "DELIVERY_" + to,
                     "Đơn #" + orderId, "Shipper chuyển " + from + " → " + to);
+            
+            Order updatedOrder = orderDao.findOrderById(orderId);
+            if (updatedOrder != null) {
+                com.purenut.shop.util.OrderEventBus.publish(
+                    new com.purenut.shop.util.OrderEventBus.OrderEvent(
+                        orderId,
+                        updatedOrder.getFullName(),
+                        updatedOrder.getPhone(),
+                        updatedOrder.getTotalAmount().longValue(),
+                        updatedOrder.getPaymentMethod(),
+                        System.currentTimeMillis(),
+                        "shipper-update",
+                        shipper.getFullName(),
+                        to
+                    )
+                );
+            }
+
             writeJson(resp, "{\"ok\":true,\"status\":\"" + to + "\"}");
         } else {
             writeJson(resp, "{\"ok\":false,\"msg\":\"Đơn không thuộc quyền xử lý hoặc trạng thái đã thay đổi. Tải lại trang.\"}");

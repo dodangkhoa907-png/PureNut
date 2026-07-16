@@ -55,7 +55,7 @@
         <filter-class>com.purenut.shop.filter.AdminIpFilter</filter-class>
         <init-param>
             <param-name>allowedIps</param-name>
-            <param-value>192.168.0.101</param-value>
+            <param-value>192.168.0.101, 192.168.0.100</param-value>
         </init-param>
         <async-supported>true</async-supported>
     </filter>
@@ -99,7 +99,7 @@
         <session-timeout>120</session-timeout>
         <cookie-config>
             <http-only>true</http-only>
-            <secure>true</secure>
+            <secure>false</secure>
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>

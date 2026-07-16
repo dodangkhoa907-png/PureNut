@@ -11,163 +11,279 @@
 <meta name="theme-color" content="#111111">
 <title>Shipper — PureNut</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{--yellow:#FFC400;--yellow-dark:#E6A800;--black:#111;--gray:#1E1E1E;--gray-2:#2A2A2A;--white:#FFF;--muted:#9E9E9E;--green:#22C55E;--red:#EF4444;--blue:#3B82F6}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"><style>
+:root{
+  --yellow:#FFC400;--yellow-dark:#E6A800;--black:#111;--gray:#181818;--gray-2:#282828;--white:#FFF;
+  --muted:#A0A0A0;--green:#22C55E;--red:#EF4444;--blue:#3B82F6;--gradient:linear-gradient(135deg,#FFC400,#FF9100)
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
-body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);min-height:100vh;padding-bottom:90px;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
 
-/* ===== HEADER ===== */
-.hd{position:sticky;top:0;z-index:50;background:var(--yellow);color:var(--black);padding:14px 16px calc(14px + env(safe-area-inset-top)) 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.hd-l{display:flex;align-items:center;gap:10px}
-.hd-avatar{width:44px;height:44px;border-radius:14px;background:var(--black);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
-.hd-name{font-weight:800;font-size:16px;line-height:1.2}
-.hd-sub{font-size:12px;font-weight:600;opacity:.75}
+/* ===== LAYOUT ===== */
+.shipper-layout{display:flex;min-height:100vh;background:var(--black);width:100%}
+
+/* Sidebar */
+.shipper-sidebar{
+  width:280px;background:var(--gray);border-right:1px solid var(--gray-2);
+  display:flex;flex-direction:column;flex-shrink:0;padding:24px 16px;position:sticky;top:0;height:100vh
+}
+.sb-brand{
+  font-size:22px;font-weight:900;color:var(--yellow);letter-spacing:.5px;
+  margin-bottom:32px;display:flex;align-items:center;gap:10px;padding-left:8px;
+  font-family:'Inter',sans-serif
+}
+.sb-brand b{color:var(--white)}
+.sb-nav{display:flex;flex-direction:column;gap:8px}
+.sb-item{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;border:none;background:transparent;padding:14px 16px;
+  border-radius:14px;color:var(--muted);font-size:15px;font-weight:700;
+  cursor:pointer;text-align:left;transition:all .2s;font-family:inherit
+}
+.sb-item i{font-size:16px;width:22px}
+.sb-item:hover{background:rgba(255,255,255,.05);color:var(--white)}
+.sb-item.active{background:var(--yellow);color:var(--black)}
+.sb-badge{
+  font-size:11px;font-weight:800;padding:3px 9px;border-radius:8px;
+  background:var(--gray-2);color:var(--white)
+}
+.sb-item.active .sb-badge{background:var(--black);color:var(--yellow)}
+
+/* Main Content */
+.shipper-main{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* Header */
+.hd{
+  position:sticky;top:0;z-index:50;background:var(--yellow);color:var(--black);
+  padding:14px 20px calc(14px + env(safe-area-inset-top));
+  padding-top:calc(14px + env(safe-area-inset-top));
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 20px rgba(0,0,0,.35)
+}
+.hd-l{display:flex;align-items:center;gap:12px}
+.hd-avatar{width:46px;height:46px;border-radius:14px;background:var(--black);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px}
+.hd-name{font-weight:800;font-size:16.5px;line-height:1.25}
+.hd-sub{font-size:12.5px;font-weight:600;opacity:.75}
 .hd-r{display:flex;align-items:center;gap:8px}
-.hd-toggle{border:none;border-radius:99px;padding:10px 14px;font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.hd-toggle{border:none;border-radius:99px;padding:10px 16px;font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer;transition:all .2s;white-space:nowrap}
 .hd-toggle.on{background:var(--black);color:var(--green)}
 .hd-toggle.off{background:rgba(0,0,0,.15);color:var(--black)}
 .hd-logout{width:40px;height:40px;flex-shrink:0;border-radius:12px;background:var(--black);color:var(--yellow);display:flex;align-items:center;justify-content:center;font-size:18px;text-decoration:none}
 .hd-logout:active{transform:scale(.94)}
 
-/* ===== STATS ===== */
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
-.stat{background:var(--gray);border-radius:18px;padding:14px;text-align:center;border:1px solid var(--gray-2)}
-.stat b{display:block;font-size:26px;font-weight:900;color:var(--yellow)}
-.stat span{font-size:12px;font-weight:600;color:var(--muted)}
+/* Mobile Tab bar */
+.mobile-tabs{
+  display:none;background:rgba(20,20,20,.85);backdrop-filter:blur(12px);
+  position:sticky;top:72px;z-index:40;border-bottom:1px solid var(--gray-2);
+  padding:4px 8px
+}
+.m-tab{
+  flex:1;border:none;background:transparent;color:var(--muted);
+  padding:12px 6px;font-family:inherit;font-size:12px;font-weight:800;
+  text-align:center;cursor:pointer;border-bottom:3.5px solid transparent;
+  transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px
+}
+.m-tab i{font-size:15px}
+.m-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
 
-/* ===== ORDER CARD ===== */
-.wrap{padding:0 16px;max-width:520px;margin:0 auto}
-.card{background:var(--gray);border-radius:22px;margin-bottom:16px;overflow:hidden;border:1px solid var(--gray-2)}
-.card.done{opacity:.55}
-.card-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray-2)}
-.card-id{font-weight:900;font-size:17px}
-.chip{border-radius:99px;padding:5px 12px;font-size:11px;font-weight:800;letter-spacing:.3px}
+/* Stats Box */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;max-width:600px;width:100%;margin:0 auto}
+.stat{background:var(--gray);border-radius:20px;padding:16px;text-align:center;border:1px solid var(--gray-2)}
+.stat b{display:block;font-size:28px;font-weight:900;color:var(--yellow)}
+.stat span{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px;display:block}
+
+/* Order wrap */
+.wrap{padding:4px 20px 100px;max-width:600px;margin:0 auto;width:100%}
+
+/* Card */
+.card{
+  background:var(--gray);border-radius:24px;margin-bottom:20px;
+  overflow:hidden;border:1.5px solid var(--gray-2);
+  transition:transform .3s,box-shadow .3s,border-color .3s;
+}
+.card:hover{
+  border-color:var(--gray-2);box-shadow:0 12px 30px rgba(0,0,0,.45);
+}
+.card.done{opacity:.5}
+.card-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--gray-2)}
+.card-id{font-weight:900;font-size:18px}
+.chip{border-radius:99px;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:.5px}
 .chip-ASSIGNED{background:rgba(59,130,246,.18);color:var(--blue)}
 .chip-PICKING_UP{background:rgba(255,196,0,.15);color:var(--yellow)}
 .chip-DELIVERING{background:rgba(255,196,0,.25);color:var(--yellow)}
 .chip-COMPLETED{background:rgba(34,197,94,.18);color:var(--green)}
 .chip-FAILED{background:rgba(239,68,68,.18);color:var(--red)}
-.card-body{padding:14px 16px}
-.cust{font-size:17px;font-weight:800;margin-bottom:2px}
-.addr{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:10px}
-.money{display:flex;align-items:center;gap:8px;background:var(--gray-2);border-radius:14px;padding:10px 14px;margin-bottom:12px}
-.money.cod{background:rgba(255,196,0,.12);border:1.5px dashed var(--yellow)}
-.money b{font-size:18px;font-weight:900;color:var(--yellow)}
-.money small{font-size:11.5px;font-weight:700;color:var(--muted)}
+
+.card-body{padding:18px 20px}
+.cust{font-size:18px;font-weight:900;margin-bottom:4px}
+.addr{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.money{display:flex;align-items:center;gap:10px;background:var(--gray-2);border-radius:16px;padding:12px 16px;margin-bottom:14px}
+.money.cod{background:rgba(255,196,0,.08);border:1.5px dashed rgba(255,196,0,.35)}
+.money b{font-size:20px;font-weight:900;color:var(--yellow)}
+.money small{font-size:12px;font-weight:700;color:var(--muted)}
 .money.cod small{color:var(--yellow)}
 
-/* Map */
-.map-box{border-radius:16px;overflow:hidden;margin-bottom:12px;border:1px solid var(--gray-2);position:relative}
-.map-box iframe{display:block;width:100%;height:170px;border:0;filter:saturate(1.05)}
+/* Maps */
+.map-box{border-radius:18px;overflow:hidden;margin-bottom:14px;border:1.5px solid var(--gray-2);position:relative}
+.map-box iframe{display:block;width:100%;height:180px;border:0;filter:grayscale(1) invert(0.9) contrast(1.2)}
 
-/* Action row: call + direction */
-.act-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.act{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:15px 10px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .15s}
+/* Action row */
+.act-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.act{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:16px;padding:16px 10px;font-size:15px;font-weight:800;text-decoration:none;transition:transform .15s}
 .act:active{transform:scale(.96)}
 .act-call{background:var(--gray-2);color:var(--white)}
 .act-dir{background:var(--blue);color:#fff}
 
-/* Big state button + ripple */
-.big-btn{position:relative;overflow:hidden;width:100%;border:none;border-radius:18px;padding:19px;font-family:inherit;font-size:17px;font-weight:900;letter-spacing:.3px;cursor:pointer;color:var(--black);background:var(--yellow);transition:transform .15s;text-transform:uppercase}
+/* Big button */
+.big-btn{position:relative;overflow:hidden;width:100%;border:none;border-radius:18px;padding:20px;font-family:inherit;font-size:16.5px;font-weight:900;letter-spacing:.3px;cursor:pointer;color:var(--black);background:var(--yellow);transition:transform .15s;text-transform:uppercase}
 .big-btn:active{transform:scale(.97)}
 .big-btn:disabled{opacity:.5}
 .ripple{position:absolute;border-radius:50%;background:rgba(0,0,0,.25);transform:scale(0);animation:rip .55s ease-out;pointer-events:none}
 @keyframes rip{to{transform:scale(3.2);opacity:0}}
 
-/* Camera proof */
-.proof-row{display:flex;gap:10px;margin-bottom:12px}
-.proof-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--yellow);background:transparent;color:var(--yellow);border-radius:16px;padding:14px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
-.proof-thumb{width:56px;height:56px;border-radius:14px;object-fit:cover;border:2px solid var(--green);display:none}
+/* Camera */
+.proof-row{display:flex;gap:10px;margin-bottom:14px}
+.proof-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--yellow);background:transparent;color:var(--yellow);border-radius:16px;padding:16px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.proof-thumb{width:60px;height:60px;border-radius:14px;object-fit:cover;border:2px solid var(--green);display:none}
 .proof-thumb.show{display:block}
 
-/* Swipe to complete */
-.swipe{position:relative;height:64px;background:var(--gray-2);border-radius:99px;overflow:hidden;user-select:none;touch-action:pan-y}
+/* Swipe */
+.swipe{position:relative;height:68px;background:var(--gray-2);border-radius:99px;overflow:hidden;user-select:none;touch-action:pan-y}
 .swipe-fill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,rgba(34,197,94,.35),rgba(34,197,94,.65));transition:width .1s}
-.swipe-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--muted);letter-spacing:.5px}
-.swipe-knob{position:absolute;top:5px;left:5px;width:54px;height:54px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:left .25s cubic-bezier(.2,.8,.3,1)}
+.swipe-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14.5px;font-weight:800;color:var(--muted);letter-spacing:.5px}
+.swipe-knob{position:absolute;top:5px;left:5px;width:58px;height:58px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:left .25s cubic-bezier(.2,.8,.3,1)}
 .swipe.locked{opacity:.45;pointer-events:none}
 .swipe.done .swipe-fill{width:100%}
 .swipe.done .swipe-txt{color:#fff}
 
-/* Fail link */
-.fail-link{display:block;text-align:center;margin-top:10px;background:none;border:none;color:var(--red);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:8px;width:100%}
+.fail-link{display:block;text-align:center;margin-top:12px;background:none;border:none;color:var(--red);font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;padding:8px;width:100%}
+.proof-view{width:100%;border-radius:16px;margin-top:10px;max-height:180px;object-fit:cover}
 
-/* Proof image view (completed) */
-.proof-view{width:100%;border-radius:14px;margin-top:8px;max-height:160px;object-fit:cover}
-
-/* Empty state */
-.empty{text-align:center;padding:60px 20px;color:var(--muted)}
-.empty b{display:block;font-size:40px;margin-bottom:10px}
+/* Empty */
+.empty{text-align:center;padding:80px 20px;color:var(--muted);font-weight:600}
+.empty b{display:block;font-size:48px;margin-bottom:14px}
 
 /* Toast */
-.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--black);font-size:14px;font-weight:700;padding:12px 22px;border-radius:99px;opacity:0;transition:all .3s;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--black);font-size:14px;font-weight:800;padding:14px 26px;border-radius:99px;opacity:0;transition:all .3s;z-index:200;box-shadow:0 12px 36px rgba(0,0,0,.6);max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Chat FAB + sheet */
-.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;background:var(--yellow);color:var(--black);border:none;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(255,196,0,.35);z-index:90}
+/* Chat */
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));width:64px;height:64px;border-radius:50%;background:var(--yellow);color:var(--black);border:none;font-size:26px;cursor:pointer;box-shadow:0 8px 24px rgba(255,196,0,.4);z-index:90;display:flex;align-items:center;justify-content:center}
 .sheet{position:fixed;inset:0;z-index:100;display:none}
 .sheet.show{display:block}
-.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.6)}
-.sheet-body{position:absolute;left:0;right:0;bottom:0;background:var(--gray);border-radius:24px 24px 0 0;max-height:80vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
-.sheet-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--gray-2);font-weight:800}
-.sheet-hd button{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
-.msgs{flex:1;overflow-y:auto;padding:14px;min-height:220px;max-height:46vh}
-.m{max-width:80%;margin-bottom:10px;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;word-break:break-word}
+.sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,.7)}
+.sheet-body{position:absolute;left:0;right:0;bottom:0;background:var(--gray);border-radius:24px 24px 0 0;max-height:80vh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom);border:1px solid var(--gray-2)}
+.sheet-hd{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--gray-2);font-weight:800;font-size:17px}
+.sheet-hd button{background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer}
+.msgs{flex:1;overflow-y:auto;padding:16px;min-height:240px;max-height:46vh}
+.m{max-width:80%;margin-bottom:12px;padding:12px 16px;border-radius:18px;font-size:14.5px;line-height:1.45;word-break:break-word}
 .m.them{background:var(--gray-2)}
 .m.mine{background:var(--yellow);color:var(--black);margin-left:auto;font-weight:600}
-.m small{display:block;font-size:10.5px;opacity:.6;margin-top:3px}
-.m .who{font-size:11px;font-weight:800;color:var(--yellow);margin-bottom:2px}
+.m small{display:block;font-size:10.5px;opacity:.6;margin-top:4px}
+.m .who{font-size:11.5px;font-weight:800;color:var(--yellow);margin-bottom:3px}
 .m.mine .who{display:none}
-.chat-in{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--gray-2)}
-.chat-in input{flex:1;background:var(--gray-2);border:none;border-radius:99px;padding:13px 18px;color:#fff;font-family:inherit;font-size:14px;outline:none}
-.chat-in button{background:var(--yellow);color:var(--black);border:none;border-radius:99px;width:48px;font-size:18px;cursor:pointer}
+.chat-in{display:flex;gap:10px;padding:14px;border-top:1px solid var(--gray-2)}
+.chat-in input{flex:1;background:var(--gray-2);border:none;border-radius:99px;padding:14px 20px;color:#fff;font-family:inherit;font-size:14.5px;outline:none}
+.chat-in button{background:var(--yellow);color:var(--black);border:none;border-radius:99px;width:52px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+@media(max-width:767.98px){
+  .shipper-sidebar{display:none}
+  .mobile-tabs{display:flex}
+  .hd{position:sticky;top:0;z-index:50}
+}
 </style>
 </head>
 <body>
 <c:set var="me" value="${not empty sessionScope.shipperUser ? sessionScope.shipperUser : sessionScope.adminUser}"/>
+<jsp:useBean id="now" class="java.util.Date"/>
+<fmt:formatDate var="todayDate" value="${now}" pattern="yyyy-MM-dd"/>
 
-<header class="hd">
-  <div class="hd-l">
-    <div class="hd-avatar">${fn:toUpperCase(fn:substring(me.fullName,0,1))}</div>
-    <div>
-      <div class="hd-name"><c:out value="${me.fullName}"/></div>
-      <div class="hd-sub">
-        <c:if test="${not empty profile.vehiclePlate}">🏍 <c:out value="${profile.vehiclePlate}"/> · </c:if>Shipper PureNut
-      </div>
+<div class="shipper-layout">
+  <!-- Sidebar cho màn hình Desktop/Tablet -->
+  <aside class="shipper-sidebar">
+    <div class="sb-brand">
+      Pure<b>Nut</b> Shipper
     </div>
-  </div>
-  <div class="hd-r">
-    <button type="button" id="statusToggle"
-            class="hd-toggle ${profile.status == 'ACTIVE' ? 'on' : 'off'}"
-            data-status="${profile.status}">
-      ${profile.status == 'ACTIVE' ? '● Đang nhận đơn' : '○ Tạm nghỉ'}
-    </button>
-    <a class="hd-logout" href="${ctx}/shipper/logout" title="Đăng xuất" aria-label="Đăng xuất">⏻</a>
-  </div>
-</header>
+    <nav class="sb-nav">
+      <button type="button" class="sb-item active" data-tab="active">
+        <span><i class="fa-solid fa-truck-fast"></i> Đang giao</span>
+        <span class="sb-badge badge-active">${activeCount}</span>
+      </button>
+      <button type="button" class="sb-item" data-tab="today">
+        <span><i class="fa-solid fa-calendar-day"></i> Đơn hôm nay</span>
+        <span class="sb-badge badge-today">0</span>
+      </button>
+      <button type="button" class="sb-item" data-tab="completed">
+        <span><i class="fa-solid fa-circle-check"></i> Đơn đã giao</span>
+        <span class="sb-badge badge-completed">${doneCount}</span>
+      </button>
+    </nav>
+  </aside>
 
-<div class="stats">
-  <div class="stat"><b>${activeCount}</b><span>Đơn đang chạy</span></div>
-  <div class="stat"><b>${doneCount}</b><span>Đã hoàn thành</span></div>
-</div>
+  <!-- Vùng nội dung chính -->
+  <div class="shipper-main">
+    <header class="hd">
+      <div class="hd-l">
+        <div class="hd-avatar">${fn:toUpperCase(fn:substring(me.fullName,0,1))}</div>
+        <div>
+          <div class="hd-name"><c:out value="${me.fullName}"/></div>
+          <div class="hd-sub">
+            <c:if test="${not empty profile.vehiclePlate}">🏍 <c:out value="${profile.vehiclePlate}"/> · </c:if>Shipper PureNut
+          </div>
+        </div>
+      </div>
+      <div class="hd-r">
+        <button type="button" id="statusToggle"
+                class="hd-toggle ${profile.status == 'ACTIVE' ? 'on' : 'off'}"
+                data-status="${profile.status}">
+          ${profile.status == 'ACTIVE' ? '● Đang nhận đơn' : '○ Tạm nghỉ'}
+        </button>
+        <a class="hd-logout" href="${ctx}/shipper/logout" title="Đăng xuất" aria-label="Đăng xuất">⏻</a>
+      </div>
+    </header>
 
-<div class="wrap">
-<c:if test="${empty orders}">
-  <div class="empty"><b>📭</b>Chưa có đơn nào được gán.<br>Chờ điều phối từ PureNut nhé!</div>
-</c:if>
+    <!-- Tab bar cho Mobile -->
+    <div class="mobile-tabs">
+      <button type="button" class="m-tab active" data-tab="active">
+        <i class="fa-solid fa-truck-fast"></i>
+        <div>Đang giao (<span class="badge-active">${activeCount}</span>)</div>
+      </button>
+      <button type="button" class="m-tab" data-tab="today">
+        <i class="fa-solid fa-calendar-day"></i>
+        <div>Hôm nay (<span class="badge-today">0</span>)</div>
+      </button>
+      <button type="button" class="m-tab" data-tab="completed">
+        <i class="fa-solid fa-circle-check"></i>
+        <div>Đã giao (<span class="badge-completed">${doneCount}</span>)</div>
+      </button>
+    </div>
 
-<c:forEach var="o" items="${orders}">
-  <c:set var="ds" value="${empty o.deliveryStatus ? 'ASSIGNED' : o.deliveryStatus}"/>
-  <c:set var="isActive" value="${ds == 'ASSIGNED' || ds == 'PICKING_UP' || ds == 'DELIVERING'}"/>
-  <div class="card ${isActive ? '' : 'done'}" id="card${o.orderId}" data-status="${ds}">
+    <div class="stats">
+      <div class="stat"><b>${activeCount}</b><span>Đơn đang chạy</span></div>
+      <div class="stat"><b>${doneCount}</b><span>Đã hoàn thành</span></div>
+    </div>
+
+    <div class="wrap">
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="empty"><b>📭</b>Chưa có đơn nào trong mục này.</div>
+      </div>
+      <c:if test="${empty orders}">
+        <div class="empty" id="noOrdersAtAll"><b>📭</b>Chưa có đơn nào được gán.<br>Chờ điều phối từ PureNut nhé!</div>
+      </c:if>
+
+      <c:forEach var="o" items="${orders}">
+        <fmt:formatDate var="orderDate" value="${o.createdAt}" pattern="yyyy-MM-dd"/>
+        <c:set var="isToday" value="${orderDate == todayDate}"/>
+        <c:set var="ds" value="${empty o.deliveryStatus ? 'ASSIGNED' : o.deliveryStatus}"/>
+        <c:set var="isActive" value="${ds == 'ASSIGNED' || ds == 'PICKING_UP' || ds == 'DELIVERING'}"/>
+        <div class="card ${isActive ? '' : 'done'}" id="card${o.orderId}" data-status="${ds}" data-today="${isToday}">
     <div class="card-hd">
       <span class="card-id">#${o.orderId}</span>
       <span class="chip chip-${ds}" id="chip${o.orderId}">
         <c:choose>
-          <c:when test="${ds == 'ASSIGNED'}">CHỜ LẤY HÀNG</c:when>
-          <c:when test="${ds == 'PICKING_UP'}">ĐANG LẤY HÀNG</c:when>
+          <c:when test="${ds == 'ASSIGNED'}">CHỜ BÀN GIAO</c:when>
+          <c:when test="${ds == 'PICKING_UP'}">ĐANG BÀN GIAO</c:when>
           <c:when test="${ds == 'DELIVERING'}">ĐANG GIAO</c:when>
           <c:when test="${ds == 'COMPLETED'}">HOÀN THÀNH ✓</c:when>
           <c:otherwise>THẤT BẠI</c:otherwise>
@@ -217,11 +333,11 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
         <%-- ===== STATE MACHINE UI ===== --%>
         <div id="stage${o.orderId}">
           <c:if test="${ds == 'ASSIGNED'}">
-            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'ASSIGNED','PICKING_UP')">🏪 Bắt đầu lấy hàng</button>
+            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'ASSIGNED','PICKING_UP')">🏪 Xác nhận & qua lấy hàng</button>
           </c:if>
 
           <c:if test="${ds == 'PICKING_UP'}">
-            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'PICKING_UP','DELIVERING')">🛵 Đã lấy hàng — Bắt đầu giao</button>
+            <button type="button" class="big-btn" onclick="transition(this,${o.orderId},'PICKING_UP','DELIVERING')">🛵 Đã nhận được hàng — Bắt đầu giao</button>
             <button type="button" class="fail-link" onclick="markFail(${o.orderId},'PICKING_UP')">✕ Không lấy được hàng</button>
           </c:if>
 
@@ -268,6 +384,9 @@ body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);m
   </div>
 </div>
 
+  </div> <!-- .shipper-main -->
+</div> <!-- .shipper-layout -->
+
 <script>
 var CTX='${ctx}',CSRF='${sessionScope._csrf}';
 var lastChatId=0,chatTimer=null;
@@ -297,7 +416,19 @@ window.transition=function(btn,orderId,from,to){
   if(btn)btn.disabled=true;
   post('/shipper/cap-nhat',{orderId:orderId,from:from,to:to},function(d){
     if(d.ok){toast('Đã cập nhật ✓');setTimeout(function(){location.reload()},500)}
-    else{if(btn)btn.disabled=false;toast(d.msg||'Không cập nhật được')}
+    else{
+      if(btn)btn.disabled=false;
+      toast(d.msg||'Không cập nhật được');
+      // Reset nút vuốt nếu giao dịch thất bại và bị kẹt chữ ĐANG CHỐT ĐƠN
+      var sw=document.getElementById('swipe'+orderId);
+      if(sw){
+        sw.classList.remove('done');
+        var knob=sw.querySelector('.swipe-knob'),fill=sw.querySelector('.swipe-fill'),txt=sw.querySelector('.swipe-txt');
+        if(knob)knob.style.left='5px';
+        if(fill)fill.style.width='0';
+        if(txt)txt.textContent='VUỐT ĐỂ HOÀN THÀNH ĐƠN →';
+      }
+    }
   });
 };
 window.markFail=function(orderId,from){
@@ -414,6 +545,129 @@ window.sendChat=function(){
   post('/staff/chat',{message:v},function(d){if(d.ok)pollChat();else toast(d.msg||'Không gửi được')});
 };
 document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendChat()});
+
+/* ===== Tabs / Filtering Logic ===== */
+(function() {
+  var currentTab = 'active';
+
+  function filterOrders() {
+    var cards = document.querySelectorAll('.wrap .card');
+    var visibleCount = 0;
+
+    cards.forEach(function(card) {
+      var status = card.getAttribute('data-status');
+      var isToday = card.getAttribute('data-today') === 'true';
+      var show = false;
+
+      if (currentTab === 'active') {
+        show = (status === 'ASSIGNED' || status === 'PICKING_UP' || status === 'DELIVERING');
+      } else if (currentTab === 'today') {
+        show = isToday;
+      } else if (currentTab === 'completed') {
+        show = (status === 'COMPLETED' || status === 'FAILED');
+      }
+
+      if (show) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Handle empty state
+    var emptyState = document.getElementById('emptyState');
+    var noOrders = document.getElementById('noOrdersAtAll');
+    if (noOrders) {
+      if (currentTab === 'active') {
+        noOrders.style.display = (cards.length === 0) ? '' : 'none';
+        emptyState.style.display = 'none';
+      } else {
+        noOrders.style.display = 'none';
+        emptyState.style.display = (visibleCount === 0) ? '' : 'none';
+      }
+    } else {
+      emptyState.style.display = (visibleCount === 0) ? '' : 'none';
+    }
+  }
+
+  function updateBadgeCounts() {
+    var cards = document.querySelectorAll('.wrap .card');
+    var activeCnt = 0;
+    var todayCnt = 0;
+    var completedCnt = 0;
+
+    cards.forEach(function(card) {
+      var status = card.getAttribute('data-status');
+      var isToday = card.getAttribute('data-today') === 'true';
+
+      if (status === 'ASSIGNED' || status === 'PICKING_UP' || status === 'DELIVERING') {
+        activeCnt++;
+      }
+      if (isToday) {
+        todayCnt++;
+      }
+      if (status === 'COMPLETED' || status === 'FAILED') {
+        completedCnt++;
+      }
+    });
+
+    // Update all badges
+    document.querySelectorAll('.badge-active').forEach(function(el) { el.textContent = activeCnt; });
+    document.querySelectorAll('.badge-today').forEach(function(el) { el.textContent = todayCnt; });
+    document.querySelectorAll('.badge-completed').forEach(function(el) { el.textContent = completedCnt; });
+    
+    // Also update stats if they exist
+    var statActive = document.querySelector('.stat b');
+    if (statActive) {
+      statActive.textContent = activeCnt;
+      var statCompleted = document.querySelectorAll('.stat b')[1];
+      if (statCompleted) statCompleted.textContent = completedCnt;
+    }
+  }
+
+  function switchTab(tabId) {
+    currentTab = tabId;
+    
+    // Update active class on Sidebar items
+    document.querySelectorAll('.sb-item').forEach(function(btn) {
+      if (btn.getAttribute('data-tab') === tabId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update active class on Mobile tabs
+    document.querySelectorAll('.m-tab').forEach(function(btn) {
+      if (btn.getAttribute('data-tab') === tabId) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    filterOrders();
+  }
+
+  // Bind click event listeners
+  document.querySelectorAll('.sb-item, .m-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      switchTab(tabId);
+    });
+  });
+
+  // Initial runs
+  updateBadgeCounts();
+  filterOrders();
+
+  // Expose function globally
+  window.refreshTabFilters = function() {
+    updateBadgeCounts();
+    filterOrders();
+  };
+})();
 </script>
 </body>
 </html>

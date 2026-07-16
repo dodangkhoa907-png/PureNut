@@ -78,13 +78,21 @@ public class ShipperIpFilter implements Filter {
 
         Set<String> allowed = allowedIpsOf(shipperUser.getUserId());
 
+        String ip = req.getRemoteAddr();
+        // Luôn cho phép IP localhost và các IP máy của bạn để test thuận tiện
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)
+                || "192.168.0.100".equals(ip) || "192.168.0.101".equals(ip)
+                || "192.168.56.1".equals(ip)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Chưa cấu hình IP cho shipper này → không khóa (admin cấp dần)
         if (allowed.isEmpty()) {
             chain.doFilter(request, response);
             return;
         }
 
-        String ip = req.getRemoteAddr();
         if (allowed.contains(ip)) {
             chain.doFilter(request, response);
             return;

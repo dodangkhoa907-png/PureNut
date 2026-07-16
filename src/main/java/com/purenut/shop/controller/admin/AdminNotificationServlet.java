@@ -41,9 +41,16 @@ public class AdminNotificationServlet extends HttpServlet {
                         + ",\"phone\":\"" + escJson(event.phone()) + "\""
                         + ",\"total\":" + event.totalAmount()
                         + ",\"payment\":\"" + escJson(event.paymentMethod()) + "\""
-                        + ",\"time\":" + event.timestamp() + "}";
+                        + ",\"time\":" + event.timestamp()
+                        + ",\"type\":\"" + escJson(event.eventType()) + "\""
+                        + ",\"shipper\":\"" + escJson(event.shipperName()) + "\""
+                        + ",\"status\":\"" + escJson(event.status()) + "\"}";
 
-                writer.write("event: new-order\ndata: " + json + "\n\n");
+                String eventName = "new-order";
+                if ("shipper-update".equals(event.eventType())) {
+                    eventName = "shipper-update";
+                }
+                writer.write("event: " + eventName + "\ndata: " + json + "\n\n");
                 writer.flush();
 
                 if (writer.checkError()) {

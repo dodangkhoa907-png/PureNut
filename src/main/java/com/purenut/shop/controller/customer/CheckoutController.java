@@ -212,7 +212,7 @@ public class CheckoutController extends HttpServlet {
                     new com.purenut.shop.util.OrderEventBus.OrderEvent(
                         orderId, fullName.trim(), phone.trim(),
                         totalAmount.longValue(), paymentMethod,
-                        System.currentTimeMillis()));
+                        System.currentTimeMillis(), "new-order", null, "PENDING"));
 
                 if (bankTransfer) {
                     // Lưu ánh xạ orderCode → orderId để xác nhận khi thanh toán thành công

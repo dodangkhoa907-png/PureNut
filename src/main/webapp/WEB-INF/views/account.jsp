@@ -836,7 +836,7 @@
             <c:forEach var="o" items="${orderHistory}">
                 <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING' || o.status == 'PENDING_CANCEL'}">
                     <c:set var="hasActive" value="true"/>
-                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
                         <div class="o-card-body">
                             <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
                                 <c:choose>
@@ -849,7 +849,7 @@
                             <div class="o-card-id">Đơn #${o.orderId}</div>
                             <div class="o-card-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</div>
                             <div class="o-card-date"><fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy"/></div>
-                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}">Đang giao</c:when><c:when test="${o.status == 'PENDING_CANCEL'}">Chờ duyệt hủy</c:when></c:choose></span></div>
+                            <div class="o-card-pill"><span class="s-pill s-${o.status}"><span class="s-dot"></span><c:choose><c:when test="${o.status == 'PENDING'}">Chờ xác nhận</c:when><c:when test="${o.status == 'CONFIRMED'}">Đã xác nhận</c:when><c:when test="${o.status == 'SHIPPING'}"><c:choose><c:when test="${o.deliveryStatus == 'ASSIGNED' || o.deliveryStatus == 'PICKING_UP'}">Chờ lấy hàng</c:when><c:when test="${o.deliveryStatus == 'DELIVERING'}">Đang giao hàng</c:when><c:otherwise>Đang giao</c:otherwise></c:choose></c:when><c:when test="${o.status == 'PENDING_CANCEL'}">Chờ duyệt hủy</c:when></c:choose></span></div>
                         </div>
                         <div class="o-card-hover">
                             <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><strong>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</strong></div>
@@ -886,7 +886,7 @@
             <c:forEach var="o" items="${orderHistory}">
                 <c:if test="${o.status == 'DONE' || o.status == 'CANCELLED'}">
                     <c:set var="hasHistory" value="true"/>
-                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
                         <div class="o-card-body">
                             <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
                                 <c:choose>
@@ -1344,18 +1344,28 @@
     var currentCancelOid=null;
 
     window.openOrderOverlay=function(card){
-        var s=card.dataset.status,oid=card.dataset.oid;
+        var s=card.dataset.status,oid=card.dataset.oid,ds=card.dataset.deliv;
         var ov=document.getElementById('orderOverlay');
         var icon=document.getElementById('ovIcon');
         icon.className='o-card-icon ic-'+s.toLowerCase();
         icon.innerHTML=statusIcons[s]||'';
         document.getElementById('ovTitle').textContent='Đơn hàng #'+oid;
-        document.getElementById('ovMeta').innerHTML='<span class="s-pill s-'+s+'"><span class="s-dot"></span>'+statusNames[s]+'</span>';
+        
+        var displayStatusName = statusNames[s] || '';
+        if (s === 'SHIPPING') {
+            if (ds === 'ASSIGNED' || ds === 'PICKING_UP') {
+                displayStatusName = 'Chờ lấy hàng';
+            } else if (ds === 'DELIVERING') {
+                displayStatusName = 'Đang giao hàng';
+            }
+        }
+        
+        document.getElementById('ovMeta').innerHTML='<span class="s-pill s-'+s+'"><span class="s-dot"></span>'+displayStatusName+'</span>';
         document.getElementById('ovInfo').innerHTML=
             '<div class="o-detail-info-item"><div class="di-label">Tổng tiền</div><div class="di-val" style="font-size:17px;color:var(--navy);font-family:\'EB Garamond\',serif">'+card.dataset.total+'đ</div></div>'+
             '<div class="o-detail-info-item"><div class="di-label">Ngày đặt</div><div class="di-val">'+card.dataset.date+'</div></div>'+
             '<div class="o-detail-info-item"><div class="di-label">Thanh toán</div><div class="di-val">'+card.dataset.pay+'</div></div>'+
-            '<div class="o-detail-info-item"><div class="di-label">Trạng thái</div><div class="di-val">'+statusNames[s]+'</div></div>';
+            '<div class="o-detail-info-item"><div class="di-label">Trạng thái</div><div class="di-val">'+displayStatusName+'</div></div>';
         var tl='';
         if(s==='CANCELLED'){
             tl='<div class="track-timeline">'+
@@ -1371,7 +1381,11 @@
                 '</div>';
         } else {
             var rank=statusRank[s]||0;
-            var steps=[{l:'Đơn mới',r:0},{l:'Đã xác nhận',r:1},{l:'Đang giao',r:2},{l:'Giao thành công',r:3}];
+            var shippingStepLabel = 'Đang giao';
+            if (s === 'SHIPPING' && (ds === 'ASSIGNED' || ds === 'PICKING_UP')) {
+                shippingStepLabel = 'Chờ lấy hàng';
+            }
+            var steps=[{l:'Đơn mới',r:0},{l:'Đã xác nhận',r:1},{l:shippingStepLabel,r:2},{l:'Giao thành công',r:3}];
             tl='<div class="track-timeline">';
             for(var i=0;i<steps.length;i++){
                 var cls=steps[i].r<rank?'done':(steps[i].r===rank?'active':'');
@@ -1382,7 +1396,22 @@
         }
         document.getElementById('ovTimeline').innerHTML=tl;
         var shipAnim=document.getElementById('shipAnim');
-        if(shipAnim) shipAnim.className='ship-anim'+(s==='SHIPPING'?' show':'');
+        if(shipAnim) {
+            if (s === 'SHIPPING') {
+                shipAnim.classList.add('show');
+                var animText = shipAnim.querySelector('.ship-anim-text');
+                var animSub = shipAnim.querySelector('.ship-anim-sub');
+                if (ds === 'ASSIGNED' || ds === 'PICKING_UP') {
+                    if (animText) animText.innerHTML = 'Đang chuẩn bị bàn giao cho shipper<span class="ship-dots"></span>';
+                    if (animSub) animSub.textContent = 'Shipper đang chuẩn bị nhận hàng tại cửa hàng';
+                } else {
+                    if (animText) animText.innerHTML = 'Đơn hàng đang trên đường đến bạn<span class="ship-dots"></span>';
+                    if (animSub) animSub.textContent = 'Shipper sẽ liên hệ khi gần đến nơi';
+                }
+            } else {
+                shipAnim.classList.remove('show');
+            }
+        }
         var cancelSec=document.getElementById('cancelSection');
         var pendingNotice=document.getElementById('pendingCancelNotice');
         if(cancelSec) cancelSec.style.display=(s==='PENDING'||s==='CONFIRMED')?'block':'none';

@@ -183,6 +183,14 @@ public class OrderDaoImpl implements OrderDao {
                     o.setCreatedAt(rs.getTimestamp("CreatedAt"));
                     o.setCancelReason(rs.getNString("CancelReason"));
                     o.setCancelledAt(rs.getTimestamp("CancelledAt"));
+                    int sid = rs.getInt("ShipperID");
+                    o.setShipperId(rs.wasNull() ? null : sid);
+                    o.setDeliveryStatus(rs.getString("DeliveryStatus"));
+                    o.setProofImage(rs.getNString("ProofImage"));
+                    java.math.BigDecimal lat = rs.getBigDecimal("Latitude");
+                    java.math.BigDecimal lng = rs.getBigDecimal("Longitude");
+                    o.setLatitude(lat != null ? lat.doubleValue() : null);
+                    o.setLongitude(lng != null ? lng.doubleValue() : null);
                     list.add(o);
                 }
             }
@@ -222,6 +230,12 @@ public class OrderDaoImpl implements OrderDao {
                         o.setCancelledAt(rs.getTimestamp("CancelledAt"));
                         int sid = rs.getInt("ShipperID");
                         o.setShipperId(rs.wasNull() ? null : sid);
+                        o.setDeliveryStatus(rs.getString("DeliveryStatus"));
+                        o.setProofImage(rs.getNString("ProofImage"));
+                        java.math.BigDecimal lat = rs.getBigDecimal("Latitude");
+                        java.math.BigDecimal lng = rs.getBigDecimal("Longitude");
+                        o.setLatitude(lat != null ? lat.doubleValue() : null);
+                        o.setLongitude(lng != null ? lng.doubleValue() : null);
                     }
                 }
             }
