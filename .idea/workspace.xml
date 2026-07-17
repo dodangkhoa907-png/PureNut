@@ -4,77 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/admin/AdminNotificationServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/admin/AdminNotificationServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CheckoutController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CheckoutController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/staff/ShipperController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/staff/ShipperController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/impl/OrderDaoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/impl/OrderDaoImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/filter/ShipperIpFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/filter/ShipperIpFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/util/OrderEventBus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/util/OrderEventBus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/account.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/account.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/dispatch.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/dispatch.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/layout/footer.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/layout/footer.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/shipper.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/staff/shipper.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/AppContextListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/AppContextListener.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/Database.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/Database.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuditController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuditController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminAuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminDashboardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminDashboardController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminLeadController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminLeadController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminOrderController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminOrderController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminProductController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminProductController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminSettingsController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/admin/AdminSettingsController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AboutController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AboutController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AccountController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AccountController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/HomeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/HomeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/PasswordResetController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/PasswordResetController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/ProductController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/ProductController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/SearchController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/SearchController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/AuditLogDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/AuditLogDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/CartItemDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/CartItemDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/CategoryDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/CategoryDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/DealerLeadDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/DealerLeadDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/OrderDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/OrderDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/ProductDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/ProductDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/UserAddressDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/UserAddressDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/UserDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/UserDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/AuditLogDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/AuditLogDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/CartItemDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/CartItemDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/CategoryDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/CategoryDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/DealerLeadDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/DealerLeadDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/OrderDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/OrderDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/ProductDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/ProductDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserAddressDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserAddressDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/UserDaoImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/exception/OutOfStockException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/exception/OutOfStockException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/AuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/AuthFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/SecurityHeadersFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/filter/SecurityHeadersFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/AuditLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/AuditLog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/CartItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/CartItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Category.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Category.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/DealerLead.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/DealerLead.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Order.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Order.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/OrderItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/OrderItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Product.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/Product.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/UserAddress.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/model/UserAddress.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/CategoryService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/CategoryService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/ProductService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/ProductService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/UserService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/CategoryServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/CategoryServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/ProductServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/ProductServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/service/impl/UserServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/AuditLogger.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/AuditLogger.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Coupons.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Coupons.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/EmailUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/EmailUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Passwords.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Passwords.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Validators.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/util/Validators.class" afterDir="false" />
-    </list>
+    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -131,7 +61,7 @@
     "Smart Tomcat.Unnamed.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "khoa",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
