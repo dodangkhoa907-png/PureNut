@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="isBean" value="${product.categorySlug == 'dau-nanh'}"/>
 <c:set var="accA" value="${isBean ? '#B9883A' : '#1877C4'}"/>
@@ -157,6 +158,28 @@
 .pcard-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 
 .section-divider{border:none;border-top:1px solid var(--line);margin:60px 0 0}
+
+/* ── Reviews ── */
+.reviews-sec{padding:50px 0 20px;margin:10px 0 0}
+.rev-summary{display:flex;align-items:center;gap:10px}
+.rev-avg{font-family:var(--fd);font-weight:800;font-size:22px;color:var(--ink)}
+.rev-stars{display:inline-flex;gap:2px}
+.rev-stars svg{width:16px;height:16px}
+.rev-stars svg.on{fill:#FFB800;stroke:#FFB800}
+.rev-stars svg.off{fill:none;stroke:rgba(0,0,0,.18)}
+.rev-count{font-size:13px;color:var(--ink-soft);font-weight:600}
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
+.rev-card{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.rev-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rev-avatar{width:38px;height:38px;border-radius:50%;background:${accGrad};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden}
+.rev-avatar img{width:100%;height:100%;object-fit:cover}
+.rev-name{font-weight:700;font-size:13.5px;color:var(--ink)}
+.rev-date{font-size:11.5px;color:var(--ink-soft)}
+.rev-verified{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#12B76A;margin-top:2px}
+.rev-verified svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rev-comment{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.rev-empty{text-align:center;padding:40px 20px;color:var(--ink-soft);font-size:14px;background:var(--paper);border-radius:18px;border:1.5px dashed var(--line)}
+@media(max-width:880px){.rev-grid{grid-template-columns:1fr}}
 
 /* Toast & Fly */
 .fly{position:fixed;z-index:300;width:24px;height:24px;border-radius:50%;background:var(--red);box-shadow:0 6px 16px rgba(0,0,0,.28);pointer-events:none;transition:transform .8s cubic-bezier(.5,-.25,.35,1),opacity .8s;will-change:transform,opacity}
@@ -347,8 +370,15 @@
     <div class="price-sub">/ chai ${product.volumeMl}ml · Đã bao gồm VAT</div>
     <!-- Mobile Social Proof -->
     <div class="pd-social-proof">
-      <span class="stars">★★★★★</span>
-      <span>4.9 (120 đánh giá)</span>
+      <c:choose>
+        <c:when test="${reviewCount > 0}">
+          <span class="stars">★★★★★</span>
+          <span>${avgRating} (${reviewCount} đánh giá)</span>
+        </c:when>
+        <c:otherwise>
+          <span style="color:var(--ink-soft)">Chưa có đánh giá</span>
+        </c:otherwise>
+      </c:choose>
       <span class="sep">|</span>
       <span class="pd-sold">Đã bán 2k+</span>
     </div>
@@ -463,6 +493,56 @@
     <button class="bs-confirm add" id="bsConfirmBtn">Thêm vào giỏ</button>
   </div>
 </div>
+
+<hr class="section-divider">
+<section class="container reviews-sec">
+  <div class="rel-header">
+    <h2>Đánh giá từ khách hàng</h2>
+    <c:if test="${reviewCount > 0}">
+      <div class="rev-summary">
+        <span class="rev-avg">${avgRating}</span>
+        <span class="rev-stars">
+          <c:forEach begin="1" end="5" var="i">
+            <svg viewBox="0 0 24 24" class="${i <= (avgRating + 0.5) ? 'on' : 'off'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </c:forEach>
+        </span>
+        <span class="rev-count">${reviewCount} đánh giá</span>
+      </div>
+    </c:if>
+  </div>
+  <c:choose>
+    <c:when test="${not empty reviews}">
+      <div class="rev-grid">
+        <c:forEach var="rv" items="${reviews}">
+          <div class="rev-card">
+            <div class="rev-head">
+              <div class="rev-avatar">
+                <c:choose>
+                  <c:when test="${not empty rv.reviewerAvatar}"><img src="${fn:escapeXml(rv.reviewerAvatar)}" alt=""></c:when>
+                  <c:otherwise>${fn:substring(rv.reviewerName, 0, 1)}</c:otherwise>
+                </c:choose>
+              </div>
+              <div>
+                <div class="rev-name"><c:out value="${rv.reviewerName}"/></div>
+                <div class="rev-date"><fmt:formatDate value="${rv.createdAt}" pattern="dd/MM/yyyy"/></div>
+              </div>
+            </div>
+            <div class="rev-stars" style="margin-bottom:8px">
+              <c:forEach begin="1" end="5" var="i">
+                <svg viewBox="0 0 24 24" class="${i <= rv.rating ? 'on' : 'off'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </c:forEach>
+            </div>
+            <div class="rev-verified"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Đã mua hàng</div>
+            <c:if test="${not empty rv.comment}"><p class="rev-comment" style="margin-top:8px"><c:out value="${rv.comment}"/></p></c:if>
+          </div>
+        </c:forEach>
+      </div>
+    </c:when>
+    <c:otherwise>
+      <div class="rev-empty">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên trải nghiệm và chia sẻ cảm nhận!</div>
+    </c:otherwise>
+  </c:choose>
+</section>
 
 <c:if test="${not empty relatedProducts}">
   <hr class="section-divider">

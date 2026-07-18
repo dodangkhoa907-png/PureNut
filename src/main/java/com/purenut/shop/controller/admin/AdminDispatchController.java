@@ -62,11 +62,28 @@ public class AdminDispatchController extends HttpServlet {
         List<Order> newOrders = all.stream()
                 .filter(o -> "PENDING".equals(o.getStatus()))
                 .collect(Collectors.toList());
+        // Đã giao xong (shipper báo COMPLETED) — mới nhất trước, giới hạn 30 đơn gần nhất.
+        // Không lọc theo DeliveredAt != null vì đơn hoàn thành TRƯỚC khi cột này tồn tại
+        // sẽ bị NULL — chỉ dựa vào Status='DONE', fallback CreatedAt khi sắp xếp/hiển thị
+        // nếu DeliveredAt chưa có (đơn rất cũ chưa được backfill).
+        List<Order> delivered = all.stream()
+                .filter(o -> "DONE".equals(o.getStatus()))
+                .sorted((a, b) -> {
+                    java.util.Date da = a.getDeliveredAt() != null ? a.getDeliveredAt() : a.getCreatedAt();
+                    java.util.Date db = b.getDeliveredAt() != null ? b.getDeliveredAt() : b.getCreatedAt();
+                    return db.compareTo(da);
+                })
+                .limit(30)
+                .collect(Collectors.toList());
+        long deliveredAwaitingConfirm = delivered.stream()
+                .filter(o -> o.getReceivedConfirmedAt() == null).count();
 
         req.setAttribute("needAssign", needAssign);
         req.setAttribute("shipping", shipping);
         req.setAttribute("pendingCancel", pendingCancel);
         req.setAttribute("newOrders", newOrders);
+        req.setAttribute("delivered", delivered);
+        req.setAttribute("deliveredAwaitingConfirm", deliveredAwaitingConfirm);
         List<com.purenut.shop.model.User> shipperUsers = userDao.findByRole("SHIPPER");
         for (com.purenut.shop.model.User su : shipperUsers) {
             shipperDao.ensureProfile(su.getUserId(), su.getFullName(), su.getPhone());

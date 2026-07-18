@@ -1,7 +1,10 @@
 package com.purenut.shop.controller.customer;
 
+import com.purenut.shop.dao.ReviewDao;
+import com.purenut.shop.dao.impl.ReviewDaoImpl;
 import com.purenut.shop.model.Category;
 import com.purenut.shop.model.Product;
+import com.purenut.shop.model.Review;
 import com.purenut.shop.service.CategoryService;
 import com.purenut.shop.service.ProductService;
 import com.purenut.shop.service.impl.CategoryServiceImpl;
@@ -21,11 +24,13 @@ public class ProductController extends HttpServlet {
 
     private ProductService productService;
     private CategoryService categoryService;
+    private ReviewDao reviewDao;
 
     @Override
     public void init() throws ServletException {
         productService = new ProductServiceImpl();
         categoryService = new CategoryServiceImpl();
+        reviewDao = new ReviewDaoImpl();
     }
 
     @Override
@@ -72,7 +77,19 @@ public class ProductController extends HttpServlet {
             // Sản phẩm liên quan
             List<Product> relatedProducts = productService.getRelatedProducts(product.getCategoryId(), product.getProductId(), 4);
             request.setAttribute("relatedProducts", relatedProducts);
-            
+
+            // Đánh giá từ khách hàng đã mua (ghi tự động khi khách xác nhận nhận hàng)
+            List<Review> reviews = reviewDao.findByProductId(product.getProductId());
+            request.setAttribute("reviews", reviews);
+            double avgRating = 0;
+            if (!reviews.isEmpty()) {
+                int sum = 0;
+                for (Review r : reviews) sum += r.getRating();
+                avgRating = Math.round((sum / (double) reviews.size()) * 10) / 10.0;
+            }
+            request.setAttribute("avgRating", avgRating);
+            request.setAttribute("reviewCount", reviews.size());
+
             request.getRequestDispatcher("/WEB-INF/views/product-detail.jsp").forward(request, response);
         } else {
             // Không tìm thấy sản phẩm -> 404

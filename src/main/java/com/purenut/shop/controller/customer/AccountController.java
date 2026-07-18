@@ -1,13 +1,16 @@
 package com.purenut.shop.controller.customer;
 
 import com.purenut.shop.dao.OrderDao;
+import com.purenut.shop.dao.ReviewDao;
 import com.purenut.shop.dao.UserAddressDao;
 import com.purenut.shop.dao.UserDao;
 import com.purenut.shop.dao.impl.OrderDaoImpl;
+import com.purenut.shop.dao.impl.ReviewDaoImpl;
 import com.purenut.shop.dao.impl.UserAddressDaoImpl;
 import com.purenut.shop.dao.impl.UserDaoImpl;
 import com.purenut.shop.model.Order;
-import com.purenut.shop.model.Order;
+import com.purenut.shop.model.OrderItem;
+import com.purenut.shop.model.Review;
 import com.purenut.shop.model.User;
 import com.purenut.shop.model.UserAddress;
 import com.purenut.shop.util.AuditLogger;
@@ -29,18 +32,20 @@ import java.util.List;
 @WebServlet(name = "AccountController",
         urlPatterns = {"/account", "/account/profile", "/account/password",
                        "/account/address", "/account/address/delete", "/account/address/default",
-                       "/account/order/cancel", "/account/avatar"})
+                       "/account/order/cancel", "/account/order/confirm", "/account/avatar"})
 public class AccountController extends HttpServlet {
 
     private OrderDao orderDao;
     private UserDao userDao;
     private UserAddressDao addressDao;
+    private ReviewDao reviewDao;
 
     @Override
     public void init() throws ServletException {
         orderDao = new OrderDaoImpl();
         userDao = new UserDaoImpl();
         addressDao = new UserAddressDaoImpl();
+        reviewDao = new ReviewDaoImpl();
     }
 
     @Override
@@ -54,12 +59,19 @@ public class AccountController extends HttpServlet {
         int totalOrders = orderHistory.size();
         BigDecimal totalSpent = BigDecimal.ZERO;
         int pendingCount = 0;
-        int doneCount = 0;
+        int doneCount = 0;          // DONE đã xác nhận — khớp với tab Lịch sử
+        int totalDoneCount = 0;     // toàn bộ DONE (đã xác nhận + chờ xác nhận) — dùng cho thẻ thống kê "Hoàn thành"
+        int awaitingConfirmCount = 0;
 
         for (Order o : orderHistory) {
             if ("DONE".equals(o.getStatus())) {
                 totalSpent = totalSpent.add(o.getTotalAmount());
-                doneCount++;
+                totalDoneCount++;
+                if (o.getReceivedConfirmedAt() != null) {
+                    doneCount++;
+                } else {
+                    awaitingConfirmCount++;
+                }
             }
             if ("PENDING".equals(o.getStatus()) || "CONFIRMED".equals(o.getStatus()) || "SHIPPING".equals(o.getStatus()) || "PENDING_CANCEL".equals(o.getStatus())) {
                 pendingCount++;
@@ -70,6 +82,8 @@ public class AccountController extends HttpServlet {
         req.setAttribute("totalSpent", totalSpent);
         req.setAttribute("pendingCount", pendingCount);
         req.setAttribute("doneCount", doneCount);
+        req.setAttribute("totalDoneCount", totalDoneCount);
+        req.setAttribute("awaitingConfirmCount", awaitingConfirmCount);
 
         String tier;
         if (totalSpent.compareTo(new BigDecimal("5000000")) >= 0) tier = "KIM_CUONG";
@@ -98,6 +112,7 @@ public class AccountController extends HttpServlet {
             case "/account/address/delete"  -> handleDeleteAddress(req, resp, user);
             case "/account/address/default" -> handleSetDefaultAddress(req, resp, user);
             case "/account/order/cancel"    -> handleCancelOrder(req, resp, user);
+            case "/account/order/confirm"   -> handleConfirmReceived(req, resp, user);
             case "/account/avatar"         -> handleUpdateAvatar(req, resp, user);
             default -> resp.sendRedirect(req.getContextPath() + "/account");
         }
@@ -245,6 +260,64 @@ public class AccountController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             writeJson(resp, 500, "{\"error\":\"Có lỗi hệ thống. Vui lòng thử lại.\"}");
+        }
+    }
+
+    /** Khách hàng xác nhận đã nhận hàng cho đơn DONE, kèm đánh giá sao tùy chọn (1-5) + nhận xét tùy chọn. */
+    private void handleConfirmReceived(HttpServletRequest req, HttpServletResponse resp, User user) throws IOException {
+        int orderId = Validators.parsePositiveInt(req.getParameter("orderId"), 0);
+        if (orderId <= 0) { writeJson(resp, 400, "{\"error\":\"ID đơn hàng không hợp lệ.\"}"); return; }
+
+        Order order = orderDao.findOrderById(orderId);
+        if (order == null) { writeJson(resp, 404, "{\"error\":\"Đơn hàng không tồn tại.\"}"); return; }
+        if (order.getUserId() != user.getUserId()) {
+            writeJson(resp, 403, "{\"error\":\"Bạn không có quyền xác nhận đơn này.\"}");
+            return;
+        }
+        if (!"DONE".equals(order.getStatus())) {
+            writeJson(resp, 400, "{\"error\":\"Đơn hàng chưa được giao xong.\"}");
+            return;
+        }
+        if (order.getReceivedConfirmedAt() != null) {
+            writeJson(resp, 400, "{\"error\":\"Đơn hàng này đã được xác nhận trước đó.\"}");
+            return;
+        }
+
+        Integer rating = null;
+        String ratingParam = req.getParameter("rating");
+        if (ratingParam != null && !ratingParam.isBlank()) {
+            int r = Validators.parsePositiveInt(ratingParam, 0);
+            if (r < 1 || r > 5) { writeJson(resp, 400, "{\"error\":\"Số sao không hợp lệ (1-5).\"}"); return; }
+            rating = r;
+        }
+        String review = req.getParameter("review");
+        if (review != null) {
+            review = review.trim();
+            if (review.length() > 500) review = review.substring(0, 500);
+            if (review.isEmpty()) review = null;
+        }
+
+        int n = orderDao.confirmReceived(orderId, user.getUserId(), rating, review);
+        if (n > 0) {
+            AuditLogger.log(req, user.getUserId(), "CONFIRM_RECEIVED",
+                    "Đơn #" + orderId, rating != null ? "Khách xác nhận nhận hàng, đánh giá " + rating + " sao" : "Khách xác nhận nhận hàng");
+
+            if (rating != null && order.getItems() != null) {
+                java.util.Set<Integer> reviewedProducts = new java.util.HashSet<>();
+                for (OrderItem item : order.getItems()) {
+                    if (!reviewedProducts.add(item.getProductId())) continue;
+                    Review r = new Review();
+                    r.setProductId(item.getProductId());
+                    r.setUserId(user.getUserId());
+                    r.setRating(rating);
+                    r.setComment(review);
+                    reviewDao.insert(r);
+                }
+            }
+
+            writeJson(resp, 200, "{\"success\":true,\"message\":\"Cảm ơn bạn đã xác nhận!\"}");
+        } else {
+            writeJson(resp, 400, "{\"error\":\"Không thể xác nhận (đơn có thể đã được xác nhận ở nơi khác).\"}");
         }
     }
 

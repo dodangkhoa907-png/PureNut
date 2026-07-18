@@ -59,4 +59,13 @@ public interface OrderDao {
 
     List<Order> findAllOrdersPaged(int offset, int limit);
     int countOrders();
+
+    /**
+     * Khách hàng: xác nhận đã nhận hàng + đánh giá giao hàng (tùy chọn).
+     * Chỉ áp dụng khi đơn đã DONE và chưa từng xác nhận trước đó (chống ghi đè).
+     * @param rating 1-5 sao, null nếu khách chỉ xác nhận mà không đánh giá
+     * @param review nhận xét tùy chọn, có thể null
+     * @return số dòng update (0 = không phải chủ đơn / đơn chưa DONE / đã xác nhận rồi)
+     */
+    int confirmReceived(int orderId, int userId, Integer rating, String review);
 }

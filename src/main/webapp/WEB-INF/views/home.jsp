@@ -252,14 +252,36 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 
 /* =================== 11. PROMO =================== */
 .promo{margin-top:-40px;position:relative;z-index:2}
-.promo-card{background:var(--paper);border-radius:var(--r-lg);padding:40px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;box-shadow:0 30px 60px -20px rgba(20,30,20,.15);border:1px solid var(--line)}
+.promo-card{background:var(--paper);border-radius:var(--r-lg);padding:44px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;box-shadow:0 30px 60px -20px rgba(20,30,20,.15);border:1px solid var(--line);position:relative;overflow:hidden}
+.promo-card::before{content:'';position:absolute;top:-90px;left:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(206,46,46,.07),transparent 70%);pointer-events:none}
+.promo-badge{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--red),#A31F1F);color:#fff;font-family:var(--fd);font-weight:800;font-size:15px;line-height:1.1;flex-direction:column;box-shadow:0 12px 26px -10px rgba(206,46,46,.55);margin-bottom:16px}
+.promo-badge b{font-size:19px}
 .promo-card h2{font-size:clamp(24px,3vw,34px);margin-bottom:10px}
 .promo-card h2 em{font-style:italic;color:var(--navy)}
-.promo-card p{color:var(--ink-soft);margin-bottom:20px}
-.ticket{background:var(--cream);border-radius:20px;padding:28px;text-align:center}
+.promo-card p{color:var(--ink-soft);margin-bottom:24px;max-width:420px}
+.promo-cta-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.promo-expiry{font-size:12.5px;color:var(--ink-soft);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.promo-expiry svg{width:14px;height:14px;opacity:.6}
+
+.ticket{position:relative;background:var(--cream);border-radius:20px;padding:26px 24px;text-align:center;box-shadow:inset 0 0 0 1px var(--line)}
+.ticket::before,.ticket::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line)}
+.ticket::before{left:-14px}
+.ticket::after{right:-14px}
 .ticket small{color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:11.5px}
-.ticket .code{border:1.5px dashed var(--navy);border-radius:14px;padding:14px;font-family:var(--fd);font-weight:700;font-size:22px;color:var(--navy);letter-spacing:1.5px;margin:12px 0;cursor:pointer;transition:background .2s}
-.ticket .code:hover{background:rgba(27,79,158,.06)}
+.ticket .code-row{display:flex;align-items:center;gap:8px;margin:14px 0;padding:6px 6px 6px 18px;border:1.5px dashed var(--navy);border-radius:14px;transition:border-color .25s,background .25s,transform .15s}
+.ticket .code-row:active{transform:scale(.98)}
+.ticket .code{flex:1;background:none;border:none;font-family:var(--fd);font-weight:700;font-size:21px;color:var(--navy);letter-spacing:1.5px;cursor:pointer;text-align:left;padding:0;-webkit-appearance:none}
+.ticket .copy-btn{flex-shrink:0;width:38px;height:38px;border-radius:10px;background:rgba(27,79,158,.08);color:var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:background .2s,color .2s,transform .2s}
+.ticket .copy-btn:hover{background:rgba(27,79,158,.14)}
+.ticket .copy-btn svg{width:16px;height:16px}
+.ticket .copy-btn .ic-check{display:none}
+.ticket.copied .code-row{border-color:var(--green);background:rgba(43,172,98,.06)}
+.ticket.copied .code{color:var(--green)}
+.ticket.copied .copy-btn{background:var(--green);color:#fff}
+.ticket.copied .copy-btn .ic-copy{display:none}
+.ticket.copied .copy-btn .ic-check{display:flex}
+.ticket #copyNote{transition:color .2s}
+.ticket.copied #copyNote{color:var(--green);font-weight:700}
 
 /* =================== 12. FOOTER (giữ nguyên) =================== */
 footer{background:var(--navy-darker);color:#C9D6EA;padding:60px 0 26px}
@@ -735,14 +757,24 @@ footer{background:var(--navy-darker);color:#C9D6EA;padding:60px 0 26px}
 <section class="container promo rv" style="padding-bottom:80px">
   <div class="promo-card">
     <div>
+      <div class="promo-badge"><b>-20%</b>OFF</div>
       <span class="eyebrow" style="color:var(--navy)">Ưu đãi tháng này</span>
       <h2>Giảm ngay 20% <em>đơn đầu tiên</em></h2>
       <p>Áp dụng cho mọi sản phẩm khi đặt hàng lần đầu qua website. Nhập mã khi thanh toán.</p>
-      <a href="${ctx}/products" class="btn btn-red">Mua ngay →</a>
+      <div class="promo-cta-row">
+        <a href="${ctx}/products" class="btn btn-red">Mua ngay →</a>
+        <span class="promo-expiry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Áp dụng đến hết tháng</span>
+      </div>
     </div>
-    <div class="ticket">
+    <div class="ticket" id="ticket">
       <small>Mã ưu đãi</small>
-      <div class="code" id="coupon" title="Bấm để sao chép">PURENUT20</div>
+      <div class="code-row">
+        <button type="button" class="code" id="coupon" title="Bấm để sao chép">PURENUT20</button>
+        <button type="button" class="copy-btn" id="copyBtn" aria-label="Sao chép mã">
+          <svg class="ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 01-1-1V4a1 1 0 011-1h10a1 1 0 011 1v1"/></svg>
+          <svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+      </div>
       <small id="copyNote" style="text-transform:none;letter-spacing:0">Bấm để sao chép</small>
     </div>
   </div>
@@ -784,8 +816,18 @@ document.addEventListener('DOMContentLoaded',function(){
   chips.forEach(function(c){c.addEventListener('click',function(){chips.forEach(function(x){x.classList.remove('on');});c.classList.add('on');var f=c.dataset.f;cards.forEach(function(k){k.classList.toggle('hide',!(f==='all'||k.dataset.cat===f));});});});
 
   /* ─── Coupon copy ─── */
-  var cp=document.getElementById('coupon'),note=document.getElementById('copyNote');
-  if(cp)cp.addEventListener('click',function(){navigator.clipboard.writeText('PURENUT20').then(function(){note.textContent='Đã sao chép!';setTimeout(function(){note.textContent='Bấm để sao chép';},2000);}).catch(function(){});});
+  var cp=document.getElementById('coupon'),copyBtn=document.getElementById('copyBtn'),
+      ticket=document.getElementById('ticket'),note=document.getElementById('copyNote');
+  function copyCoupon(){
+    navigator.clipboard.writeText('PURENUT20').then(function(){
+      ticket.classList.add('copied');
+      note.textContent='Đã sao chép mã!';
+      clearTimeout(copyCoupon._t);
+      copyCoupon._t=setTimeout(function(){ticket.classList.remove('copied');note.textContent='Bấm để sao chép';},2200);
+    }).catch(function(){});
+  }
+  if(cp)cp.addEventListener('click',copyCoupon);
+  if(copyBtn)copyBtn.addEventListener('click',copyCoupon);
 
   /* ─── Add to cart + fly animation ─── */
   var toast=document.getElementById('toast'),tm=document.getElementById('toastMsg'),tt;

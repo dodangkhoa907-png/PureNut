@@ -27,6 +27,11 @@ public class Order {
     private Double longitude;
     private String proofImage;       // ảnh bằng chứng giao hàng
 
+    private Date deliveredAt;            // thời điểm shipper báo hoàn thành
+    private Date receivedConfirmedAt;    // thời điểm khách xác nhận đã nhận hàng
+    private Integer deliveryRating;      // 1..5 sao, null = chưa đánh giá
+    private String deliveryReview;       // nhận xét tùy chọn
+
     private List<OrderItem> items;
 
     public Order() {}
@@ -90,6 +95,18 @@ public class Order {
 
     public String getProofImage() { return proofImage; }
     public void setProofImage(String proofImage) { this.proofImage = proofImage; }
+
+    public Date getDeliveredAt() { return deliveredAt; }
+    public void setDeliveredAt(Date deliveredAt) { this.deliveredAt = deliveredAt; }
+
+    public Date getReceivedConfirmedAt() { return receivedConfirmedAt; }
+    public void setReceivedConfirmedAt(Date receivedConfirmedAt) { this.receivedConfirmedAt = receivedConfirmedAt; }
+
+    public Integer getDeliveryRating() { return deliveryRating; }
+    public void setDeliveryRating(Integer deliveryRating) { this.deliveryRating = deliveryRating; }
+
+    public String getDeliveryReview() { return deliveryReview; }
+    public void setDeliveryReview(String deliveryReview) { this.deliveryReview = deliveryReview; }
 
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }

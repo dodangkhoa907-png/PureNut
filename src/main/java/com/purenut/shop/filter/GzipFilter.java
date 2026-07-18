@@ -24,6 +24,15 @@ public class GzipFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
+        // SSE (text/event-stream) là response async, mở vô thời hạn — không được đệm/nén
+        // toàn bộ vào bộ nhớ rồi flush 1 lần như GzipResponseWrapper làm, nếu không các sự
+        // kiện gửi sau req.startAsync() (vd shipper báo cập nhật) sẽ bị kẹt trong buffer và
+        // không bao giờ tới trình duyệt (admin không thấy thông báo real-time).
+        if ("/admin/notifications/stream".equals(request.getServletPath())) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         String ae = request.getHeader("Accept-Encoding");
         if (ae == null || !ae.contains("gzip")) {
             chain.doFilter(req, res);

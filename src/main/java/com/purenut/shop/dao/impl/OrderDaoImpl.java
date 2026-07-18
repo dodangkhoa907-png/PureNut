@@ -123,7 +123,7 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
                      "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
                      "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
-                     "o.DeliveryStatus, " +
+                     "o.DeliveryStatus, o.DeliveredAt, o.ReceivedConfirmedAt, o.DeliveryRating, o.DeliveryReview, " +
                      "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
                      "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
                      "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
@@ -150,6 +150,11 @@ public class OrderDaoImpl implements OrderDao {
                 o.setShipperId(rs.wasNull() ? null : sid);
                 o.setShipperName(rs.getNString("ShipperName"));
                 o.setDeliveryStatus(rs.getString("DeliveryStatus"));
+                o.setDeliveredAt(rs.getTimestamp("DeliveredAt"));
+                o.setReceivedConfirmedAt(rs.getTimestamp("ReceivedConfirmedAt"));
+                int rating = rs.getInt("DeliveryRating");
+                o.setDeliveryRating(rs.wasNull() ? null : rating);
+                o.setDeliveryReview(rs.getNString("DeliveryReview"));
                 o.setEmail(rs.getString("UserEmail"));
                 o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                 list.add(o);
@@ -191,6 +196,11 @@ public class OrderDaoImpl implements OrderDao {
                     java.math.BigDecimal lng = rs.getBigDecimal("Longitude");
                     o.setLatitude(lat != null ? lat.doubleValue() : null);
                     o.setLongitude(lng != null ? lng.doubleValue() : null);
+                    o.setDeliveredAt(rs.getTimestamp("DeliveredAt"));
+                    o.setReceivedConfirmedAt(rs.getTimestamp("ReceivedConfirmedAt"));
+                    int rating = rs.getInt("DeliveryRating");
+                    o.setDeliveryRating(rs.wasNull() ? null : rating);
+                    o.setDeliveryReview(rs.getNString("DeliveryReview"));
                     list.add(o);
                 }
             }
@@ -236,6 +246,11 @@ public class OrderDaoImpl implements OrderDao {
                         java.math.BigDecimal lng = rs.getBigDecimal("Longitude");
                         o.setLatitude(lat != null ? lat.doubleValue() : null);
                         o.setLongitude(lng != null ? lng.doubleValue() : null);
+                        o.setDeliveredAt(rs.getTimestamp("DeliveredAt"));
+                        o.setReceivedConfirmedAt(rs.getTimestamp("ReceivedConfirmedAt"));
+                        int rating = rs.getInt("DeliveryRating");
+                        o.setDeliveryRating(rs.wasNull() ? null : rating);
+                        o.setDeliveryReview(rs.getNString("DeliveryReview"));
                     }
                 }
             }
@@ -445,20 +460,42 @@ public class OrderDaoImpl implements OrderDao {
     public int updateDeliveryStatus(int orderId, int shipperId, String from, String to) {
         // CAS atomic: WHERE khóa cả chủ đơn lẫn trạng thái nguồn → không thể nhảy cóc,
         // không thể race (2 request cùng lúc chỉ 1 cái thắng).
-        // COMPLETED đồng bộ Status='DONE'; FAILED giữ Status='SHIPPING' để admin xử lý tiếp.
+        // COMPLETED đồng bộ Status='DONE' + ghi nhận DeliveredAt (thời điểm shipper báo hoàn thành);
+        // FAILED giữ Status='SHIPPING' để admin xử lý tiếp.
         String sql = "UPDATE Orders SET DeliveryStatus = ?, " +
-                     "Status = CASE WHEN ? = 'COMPLETED' THEN 'DONE' ELSE Status END " +
+                     "Status = CASE WHEN ? = 'COMPLETED' THEN 'DONE' ELSE Status END, " +
+                     "DeliveredAt = CASE WHEN ? = 'COMPLETED' THEN DATEADD(HOUR,7,GETUTCDATE()) ELSE DeliveredAt END " +
                      "WHERE OrderID = ? AND ShipperID = ? AND DeliveryStatus = ?";
         try (Connection con = Database.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, to);
             ps.setString(2, to);
-            ps.setInt(3, orderId);
-            ps.setInt(4, shipperId);
-            ps.setString(5, from);
+            ps.setString(3, to);
+            ps.setInt(4, orderId);
+            ps.setInt(5, shipperId);
+            ps.setString(6, from);
             return ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("[OrderDao] updateDeliveryStatus: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public int confirmReceived(int orderId, int userId, Integer rating, String review) {
+        // Chỉ chủ đơn + đơn đã DONE mới xác nhận được; không cho xác nhận lại (chặn spam đổi đánh giá qua endpoint này)
+        String sql = "UPDATE Orders SET ReceivedConfirmedAt = DATEADD(HOUR,7,GETUTCDATE()), " +
+                     "DeliveryRating = ?, DeliveryReview = ? " +
+                     "WHERE OrderID = ? AND UserID = ? AND Status = 'DONE' AND ReceivedConfirmedAt IS NULL";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            if (rating != null) ps.setInt(1, rating); else ps.setNull(1, Types.INTEGER);
+            ps.setNString(2, review);
+            ps.setInt(3, orderId);
+            ps.setInt(4, userId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("[OrderDao] confirmReceived: " + e.getMessage());
         }
         return 0;
     }
@@ -485,7 +522,7 @@ public class OrderDaoImpl implements OrderDao {
         String sql = "SELECT o.OrderID, o.UserID, o.FullName, o.Phone, o.Address, " +
                      "o.TotalAmount, o.PaymentMethod, o.Status, o.CouponCode, o.CreatedAt, " +
                      "o.CancelReason, o.CancelledAt, o.ShipperID, s.FullName AS ShipperName, " +
-                     "o.DeliveryStatus, " +
+                     "o.DeliveryStatus, o.DeliveredAt, o.ReceivedConfirmedAt, o.DeliveryRating, o.DeliveryReview, " +
                      "u.Email AS UserEmail, u.CreatedAt AS AccountCreatedAt " +
                      "FROM Orders o LEFT JOIN Users u ON o.UserID = u.UserID " +
                      "LEFT JOIN Users s ON o.ShipperID = s.UserID " +
@@ -513,6 +550,11 @@ public class OrderDaoImpl implements OrderDao {
                     o.setShipperId(rs.wasNull() ? null : sid);
                     o.setShipperName(rs.getNString("ShipperName"));
                     o.setDeliveryStatus(rs.getString("DeliveryStatus"));
+                    o.setDeliveredAt(rs.getTimestamp("DeliveredAt"));
+                    o.setReceivedConfirmedAt(rs.getTimestamp("ReceivedConfirmedAt"));
+                    int rating = rs.getInt("DeliveryRating");
+                    o.setDeliveryRating(rs.wasNull() ? null : rating);
+                    o.setDeliveryReview(rs.getNString("DeliveryReview"));
                     o.setEmail(rs.getString("UserEmail"));
                     o.setAccountCreatedAt(rs.getTimestamp("AccountCreatedAt"));
                     list.add(o);

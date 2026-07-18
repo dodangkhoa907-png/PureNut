@@ -362,6 +362,56 @@
         border:1px solid rgba(234,179,8,.2);font-size:13px;color:#92400E
     }
 
+    /* ── Rate / Confirm Receipt Section ── */
+    .rate-section{text-align:center;margin-top:18px;padding-top:16px;border-top:1px dashed rgba(0,0,0,.08)}
+    .rate-btn{
+        display:inline-flex;align-items:center;gap:7px;
+        padding:11px 30px;border-radius:12px;font-size:13.5px;font-weight:700;
+        color:#fff;background:#12B76A;border:1.5px solid #12B76A;
+        cursor:pointer;transition:all .2s
+    }
+    .rate-btn:hover{background:#0D9C5A}
+    .rate-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .rate-done{
+        text-align:center;padding:14px 18px;border-radius:12px;
+        background:rgba(43,172,98,.07);border:1px solid rgba(43,172,98,.18);
+    }
+    .rate-done-title{font-size:12.5px;font-weight:700;color:#0D9C5A;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px}
+    .rate-done-title svg{width:15px;height:15px}
+    .rate-stars-view{display:flex;align-items:center;justify-content:center;gap:3px;margin-bottom:6px}
+    .rate-stars-view svg{width:20px;height:20px}
+    .rate-stars-view svg.on{fill:#F2B705;stroke:#F2B705}
+    .rate-stars-view svg.off{fill:none;stroke:rgba(0,0,0,.18)}
+    .rate-done-review{font-size:12.5px;color:var(--ink-soft);font-style:italic;max-width:340px;margin:0 auto}
+
+    /* ── Awaiting Confirmation Widget (Overview tab) ── */
+    .awaiting-card{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1.5px solid rgba(217,119,6,.25);box-shadow:0 8px 28px -14px rgba(217,119,6,.2)}
+    .awaiting-card .acc-card-h{border-bottom-color:rgba(217,119,6,.2)}
+    .awaiting-card .acc-card-t{color:#B45309}
+    .awaiting-card .acc-card-t svg{stroke:#D97706}
+    .awaiting-note{font-size:13px;color:#92400E;margin:-10px 0 16px;line-height:1.5}
+    .awaiting-count-badge{min-width:26px;height:26px;padding:0 8px;border-radius:99px;background:#D97706;color:#fff;font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(217,119,6,.3)}
+    .s-AWAITING{background:rgba(217,119,6,.12);color:#D97706}.s-AWAITING .s-dot{background:#D97706;animation:pulseDot 1.6s infinite}
+    @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* ── Rate Modal (đánh giá + xác nhận đã nhận hàng) ── */
+    .rate-modal{
+        position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;
+        display:none;align-items:center;justify-content:center;
+        background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+        opacity:0;transition:opacity .25s
+    }
+    .rate-modal.open{display:flex;opacity:1}
+    .rate-modal .cm-panel{transform:translateY(20px);transition:transform .3s}
+    .rate-modal.open .cm-panel{transform:translateY(0)}
+    .rm-stars{display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 4px}
+    .rm-star{background:none;border:none;cursor:pointer;padding:4px}
+    .rm-star svg{width:34px;height:34px;fill:none;stroke:rgba(0,0,0,.2);stroke-width:1.6;transition:all .15s}
+    .rm-star.on svg{fill:#F2B705;stroke:#F2B705;transform:scale(1.05)}
+    .rm-star-label{text-align:center;font-size:12.5px;font-weight:600;color:var(--ink-soft);min-height:18px;margin-bottom:14px}
+    .rm-skip{text-align:center;margin-top:10px}
+    .rm-skip button{background:none;border:none;color:var(--ink-soft);font-size:12.5px;font-weight:600;text-decoration:underline;cursor:pointer}
+
     /* ── Cancel Modal ── */
     .cancel-modal{
         position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;
@@ -741,13 +791,13 @@
 <!-- ════════ STATS ════════ -->
 <div class="acc-stats">
     <div class="st-card c1"><div class="st-ic c1"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div><div class="st-lb">Tổng đơn hàng</div><div class="st-val acc-num">${totalOrders}</div></div></div>
-    <div class="st-card c3"><div class="st-ic c3"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="st-lb">Hoàn thành</div><div class="st-val acc-num">${doneCount}</div></div></div>
+    <div class="st-card c3"><div class="st-ic c3"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="st-lb">Hoàn thành</div><div class="st-val acc-num">${totalDoneCount}</div></div></div>
     <div class="st-card c4"><div class="st-ic c4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="st-lb">Đang xử lý</div><div class="st-val acc-num">${pendingCount}</div></div></div>
 </div>
 
 <!-- ════════ Mobile Strip ════════ -->
 <div class="mob-strip" id="mobStrip">
-    <button class="mob-btn active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan</button>
+    <button class="mob-btn active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan<c:if test="${awaitingConfirmCount > 0}"><span class="side-badge" style="margin-left:4px">${awaitingConfirmCount}</span></c:if></button>
     <button class="mob-btn" data-tab="orders"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lịch sử</button>
     <button class="mob-btn" data-tab="taste"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Khẩu vị</button>
     <button class="mob-btn" onclick="openOverlay()"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Tài khoản</button>
@@ -761,7 +811,7 @@
 <aside class="acc-side">
     <div class="side-lbl">Mua sắm</div>
     <ul class="side-nav">
-        <li><a href="#" class="active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan</a></li>
+        <li><a href="#" class="active" data-tab="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Tổng quan<c:if test="${awaitingConfirmCount > 0}"><span class="side-badge">${awaitingConfirmCount}</span></c:if></a></li>
         <li><a href="#" data-tab="orders"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lịch sử đơn hàng<c:if test="${doneCount > 0}"><span class="side-badge" style="background:var(--navy)">${doneCount}</span></c:if></a></li>
     </ul>
     <div class="side-lbl">Cá nhân</div>
@@ -818,6 +868,41 @@
         </div>
     </div>
 
+    <!-- Đơn hàng chờ xác nhận -->
+    <c:if test="${awaitingConfirmCount > 0}">
+    <div class="acc-card awaiting-card">
+        <div class="acc-card-h">
+            <div class="acc-card-t">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                Đơn hàng chờ xác nhận
+            </div>
+            <span class="awaiting-count-badge">${awaitingConfirmCount}</span>
+        </div>
+        <p class="awaiting-note">Đơn đã được giao xong — xác nhận đã nhận hàng và đánh giá để đơn chuyển vào lịch sử.</p>
+        <div class="o-cards">
+        <c:forEach var="o" items="${orderHistory}">
+            <c:if test="${o.status == 'DONE' && empty o.receivedConfirmedAt}">
+                <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}" data-received="${o.receivedConfirmedAt != null}" data-rating="${o.deliveryRating != null ? o.deliveryRating : 0}" data-review="${fn:escapeXml(o.deliveryReview)}">
+                    <div class="o-card-body">
+                        <div class="o-card-icon ic-done">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="o-card-id">Đơn #${o.orderId}</div>
+                        <div class="o-card-price"><fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>đ</div>
+                        <div class="o-card-date"><fmt:formatDate value="${not empty o.deliveredAt ? o.deliveredAt : o.createdAt}" pattern="dd/MM/yyyy"/></div>
+                        <div class="o-card-pill"><span class="s-pill s-AWAITING"><span class="s-dot"></span>Chờ bạn xác nhận</span></div>
+                    </div>
+                    <div class="o-card-hover">
+                        <div class="o-card-hover-row"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><strong>${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}</strong></div>
+                        <div class="o-card-hover-cta" style="color:#D97706"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Nhấn để xác nhận đã nhận hàng</div>
+                    </div>
+                </div>
+            </c:if>
+        </c:forEach>
+        </div>
+    </div>
+    </c:if>
+
     <!-- Đơn hàng đang xử lý -->
     <div class="acc-card">
         <div class="acc-card-h">
@@ -836,7 +921,7 @@
             <c:forEach var="o" items="${orderHistory}">
                 <c:if test="${o.status == 'PENDING' || o.status == 'CONFIRMED' || o.status == 'SHIPPING' || o.status == 'PENDING_CANCEL'}">
                     <c:set var="hasActive" value="true"/>
-                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}" data-received="${o.receivedConfirmedAt != null}" data-rating="${o.deliveryRating != null ? o.deliveryRating : 0}" data-review="${fn:escapeXml(o.deliveryReview)}">
                         <div class="o-card-body">
                             <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
                                 <c:choose>
@@ -884,9 +969,9 @@
         <c:if test="${not empty orderHistory}">
             <div class="o-cards">
             <c:forEach var="o" items="${orderHistory}">
-                <c:if test="${o.status == 'DONE' || o.status == 'CANCELLED'}">
+                <c:if test="${(o.status == 'DONE' && not empty o.receivedConfirmedAt) || o.status == 'CANCELLED'}">
                     <c:set var="hasHistory" value="true"/>
-                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}">
+                    <div class="o-card" onclick="openOrderOverlay(this)" data-oid="${o.orderId}" data-status="${o.status}" data-deliv="${o.deliveryStatus}" data-total="<fmt:formatNumber value="${o.totalAmount}" type="number" maxFractionDigits="0"/>" data-date="<fmt:formatDate value="${o.createdAt}" pattern="dd/MM/yyyy HH:mm"/>" data-pay="${o.paymentMethod == 'COD' ? 'Khi nhận hàng' : 'Chuyển khoản'}" data-received="${o.receivedConfirmedAt != null}" data-rating="${o.deliveryRating != null ? o.deliveryRating : 0}" data-review="${fn:escapeXml(o.deliveryReview)}">
                         <div class="o-card-body">
                             <div class="o-card-icon ic-${fn:toLowerCase(o.status)}">
                                 <c:choose>
@@ -996,6 +1081,20 @@
         <div class="pending-cancel-notice" id="pendingCancelNotice" style="display:none">
             Yêu cầu hủy đã được gửi. Đang chờ admin duyệt hoàn tiền.
         </div>
+        <div class="rate-section" id="rateSection" style="display:none">
+            <button class="rate-btn" id="rateBtn" onclick="showRateModal()">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Xác nhận đã nhận hàng
+            </button>
+            <div class="rate-done" id="rateDone" style="display:none">
+                <div class="rate-done-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Bạn đã xác nhận nhận hàng
+                </div>
+                <div class="rate-stars-view" id="rateStarsView"></div>
+                <div class="rate-done-review" id="rateReviewView"></div>
+            </div>
+        </div>
         <div class="ship-anim" id="shipAnim">
             <div class="mini-loader">
                 <div class="ml-box ml-b0"><div></div></div>
@@ -1033,6 +1132,31 @@
             <button class="cm-cancel-confirm" id="cmConfirmBtn" disabled onclick="submitCancel()">Xác nhận hủy</button>
         </div>
         <div class="cm-msg" id="cmMsg"></div>
+    </div>
+</div>
+
+<!-- ════════ Xác nhận nhận hàng + Đánh giá Modal ════════ -->
+<div class="rate-modal" id="rateModal">
+    <div class="cm-panel">
+        <button class="cm-close" onclick="closeRateModal()">&times;</button>
+        <div class="cm-title">Xác nhận đã nhận hàng</div>
+        <div class="cm-sub">Đơn hàng đến tay bạn thế nào? Đánh giá sao là tùy chọn.</div>
+        <div class="rm-stars" id="rmStars">
+            <button type="button" class="rm-star" data-v="1"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></button>
+            <button type="button" class="rm-star" data-v="2"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></button>
+            <button type="button" class="rm-star" data-v="3"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></button>
+            <button type="button" class="rm-star" data-v="4"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></button>
+            <button type="button" class="rm-star" data-v="5"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg></button>
+        </div>
+        <div class="rm-star-label" id="rmStarLabel"></div>
+        <div class="cm-other" id="rmReviewWrap" style="display:block">
+            <textarea id="rmReviewText" placeholder="Viết vài dòng nhận xét (không bắt buộc)..." maxlength="500"></textarea>
+        </div>
+        <div class="cm-actions">
+            <button class="cm-cancel-back" onclick="closeRateModal()">Để sau</button>
+            <button class="cm-cancel-confirm" id="rmConfirmBtn" style="background:#12B76A" onclick="submitConfirmReceived()">Xác nhận</button>
+        </div>
+        <div class="cm-msg" id="rmMsg"></div>
     </div>
 </div>
 
@@ -1147,10 +1271,12 @@
                     <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <p>Mật khẩu được mã hóa <strong>BCrypt</strong> — không ai có thể đọc được, kể cả quản trị viên.</p>
                 </div>
-                <div class="ov-field"><label class="ov-label">Mật khẩu hiện tại</label><input type="password" class="ov-input" id="secOldPw"></div>
-                <div class="ov-field"><label class="ov-label">Mật khẩu mới</label><input type="password" class="ov-input" id="secNewPw"><div style="font-size:11.5px;color:var(--ink-soft);margin-top:5px">Ít nhất 8 ký tự, gồm hoa, thường, số và ký tự đặc biệt.</div></div>
-                <div class="ov-field"><label class="ov-label">Xác nhận mật khẩu mới</label><input type="password" class="ov-input" id="secConfirmPw"></div>
-                <button class="ov-btn primary" onclick="changePw()">Đổi mật khẩu</button>
+                <form id="secForm" autocomplete="off" onsubmit="event.preventDefault();changePw()">
+                <div class="ov-field"><label class="ov-label">Mật khẩu hiện tại</label><input type="password" class="ov-input" id="secOldPw" name="oldPassword" autocomplete="current-password"></div>
+                <div class="ov-field"><label class="ov-label">Mật khẩu mới</label><input type="password" class="ov-input" id="secNewPw" name="newPassword" autocomplete="new-password"><div style="font-size:11.5px;color:var(--ink-soft);margin-top:5px">Ít nhất 8 ký tự, gồm hoa, thường, số và ký tự đặc biệt.</div></div>
+                <div class="ov-field"><label class="ov-label">Xác nhận mật khẩu mới</label><input type="password" class="ov-input" id="secConfirmPw" name="confirmPassword" autocomplete="new-password"></div>
+                <button type="submit" class="ov-btn primary">Đổi mật khẩu</button>
+                </form>
             </div>
         </div>
     </div>
@@ -1416,12 +1542,40 @@
         var pendingNotice=document.getElementById('pendingCancelNotice');
         if(cancelSec) cancelSec.style.display=(s==='PENDING'||s==='CONFIRMED')?'block':'none';
         if(pendingNotice) pendingNotice.style.display=(s==='PENDING_CANCEL')?'block':'none';
+
+        var rateSec=document.getElementById('rateSection');
+        if(rateSec){
+            if(s==='DONE'){
+                rateSec.style.display='block';
+                var received=card.dataset.received==='true';
+                var rateBtn=document.getElementById('rateBtn');
+                var rateDone=document.getElementById('rateDone');
+                if(received){
+                    rateBtn.style.display='none';
+                    rateDone.style.display='block';
+                    var rating=parseInt(card.dataset.rating||'0',10);
+                    var starsHtml='';
+                    for(var si=1;si<=5;si++){
+                        starsHtml+='<svg class="'+(si<=rating?'on':'off')+'" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>';
+                    }
+                    document.getElementById('rateStarsView').innerHTML=rating>0?starsHtml:'';
+                    var review=card.dataset.review||'';
+                    document.getElementById('rateReviewView').textContent=review?'"'+review+'"':'';
+                } else {
+                    rateBtn.style.display='inline-flex';
+                    rateDone.style.display='none';
+                }
+            } else {
+                rateSec.style.display='none';
+            }
+        }
+
         currentCancelOid=oid;
         ov.classList.add('open');
     };
     window.closeOrderOverlay=function(){document.getElementById('orderOverlay').classList.remove('open')};
     document.getElementById('orderOverlay').addEventListener('click',function(e){if(e.target===this)closeOrderOverlay()});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeCancelModal();closeOrderOverlay();closeOverlay()}});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeCancelModal();closeRateModal();closeOrderOverlay();closeOverlay()}});
 
     window.showCancelModal=function(){
         var m=document.getElementById('cancelModal');
@@ -1473,6 +1627,63 @@
             var msg=document.getElementById('cmMsg');
             msg.className='cm-msg error';msg.textContent='Lỗi kết nối. Vui lòng thử lại.';
             btn.disabled=false;btn.textContent='Xác nhận hủy';
+        });
+    };
+
+    /* ═══ Xác nhận nhận hàng + Đánh giá sao ═══ */
+    var rmSelectedStars=0;
+    var rmStarLabels=['','Rất tệ','Không hài lòng','Bình thường','Hài lòng','Tuyệt vời!'];
+
+    window.showRateModal=function(){
+        rmSelectedStars=0;
+        document.querySelectorAll('.rm-star').forEach(function(b){b.classList.remove('on')});
+        document.getElementById('rmStarLabel').textContent='';
+        document.getElementById('rmReviewText').value='';
+        var msg=document.getElementById('rmMsg');msg.className='cm-msg';msg.textContent='';
+        var btn=document.getElementById('rmConfirmBtn');btn.disabled=false;btn.textContent='Xác nhận';
+        document.getElementById('rateModal').classList.add('open');
+    };
+    window.closeRateModal=function(){document.getElementById('rateModal').classList.remove('open')};
+    document.getElementById('rateModal').addEventListener('click',function(e){if(e.target===this)closeRateModal()});
+
+    document.querySelectorAll('.rm-star').forEach(function(star){
+        var v=parseInt(star.dataset.v,10);
+        star.addEventListener('mouseenter',function(){paintStars(v)});
+        star.addEventListener('click',function(){rmSelectedStars=v;paintStars(v);document.getElementById('rmStarLabel').textContent=rmStarLabels[v]});
+    });
+    document.getElementById('rmStars').addEventListener('mouseleave',function(){paintStars(rmSelectedStars);document.getElementById('rmStarLabel').textContent=rmStarLabels[rmSelectedStars]||''});
+    function paintStars(v){
+        document.querySelectorAll('.rm-star').forEach(function(b){
+            b.classList.toggle('on',parseInt(b.dataset.v,10)<=v);
+        });
+    }
+
+    window.submitConfirmReceived=function(){
+        var btn=document.getElementById('rmConfirmBtn');
+        btn.disabled=true;btn.textContent='Đang xử lý...';
+        var review=document.getElementById('rmReviewText').value.trim();
+        var body='_csrf='+encodeURIComponent('${sessionScope._csrf}')+'&orderId='+currentCancelOid;
+        if(rmSelectedStars>0) body+='&rating='+rmSelectedStars;
+        if(review) body+='&review='+encodeURIComponent(review);
+        fetch(CTX+'/account/order/confirm',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest'},
+            body:body
+        }).then(function(r){return r.json()}).then(function(d){
+            var msg=document.getElementById('rmMsg');
+            if(d.success){
+                msg.className='cm-msg success';
+                msg.textContent=d.message;
+                setTimeout(function(){closeRateModal();closeOrderOverlay();location.reload()},1200);
+            } else {
+                msg.className='cm-msg error';
+                msg.textContent=d.error||'Có lỗi xảy ra';
+                btn.disabled=false;btn.textContent='Xác nhận';
+            }
+        }).catch(function(){
+            var msg=document.getElementById('rmMsg');
+            msg.className='cm-msg error';msg.textContent='Lỗi kết nối. Vui lòng thử lại.';
+            btn.disabled=false;btn.textContent='Xác nhận';
         });
     };
 

@@ -7,12 +7,21 @@
 
 <style>
 /* ── Stats ── */
-.dp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.dp-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:28px}
 .dp-stat{background:var(--admin-surface);border-radius:16px;padding:22px;text-align:center;border:1px solid var(--admin-border);box-shadow:0 6px 18px -10px rgba(43,54,116,.15);transition:transform .2s}
 .dp-stat:hover{transform:translateY(-2px)}
 .dp-stat b{display:block;font-family:var(--fd);font-size:32px;margin-bottom:4px}
-.dp-stat.amber b{color:var(--status-pending)}.dp-stat.blue b{color:var(--admin-primary)}.dp-stat.green b{color:var(--status-done)}.dp-stat.red b{color:var(--admin-red)}
+.dp-stat.amber b{color:var(--status-pending)}.dp-stat.blue b{color:var(--admin-primary)}.dp-stat.green b{color:var(--status-done)}.dp-stat.red b{color:var(--admin-red)}.dp-stat.purple b{color:var(--status-shipping)}
 .dp-stat span{font-size:12px;color:var(--admin-text-light);font-weight:600}
+
+/* ── Đơn đã giao: xác nhận + đánh giá ── */
+.oc-stars{display:inline-flex;gap:1px}
+.oc-stars i{font-size:11px;color:#E0E0E8}
+.oc-stars i.on{color:var(--status-pending)}
+.dp-pill.confirmed{background:rgba(18,183,106,.1);color:var(--status-done)}
+.dp-pill.awaiting{background:rgba(245,165,36,.1);color:var(--status-pending)}
+.oc-review{font-size:12.5px;color:var(--admin-text-light);font-style:italic;background:var(--admin-bg);border-radius:8px;padding:8px 12px;margin-top:8px;line-height:1.5}
+.oc-deliver-time{font-size:11.5px;color:var(--admin-text-light);display:flex;align-items:center;gap:4px}
 
 /* ── Shipper Command Center ── */
 .shipper-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:8px}
@@ -99,6 +108,9 @@
 .sheet.show{display:flex}
 .sheet-card{background:var(--admin-surface);border-radius:18px;width:100%;max-width:460px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 60px -16px rgba(14,46,92,.35)}
 
+@media(max-width:1100px){
+  .dp-stats{grid-template-columns:repeat(3,1fr);gap:10px}
+}
 @media(max-width:900px){
   .dp-stats{grid-template-columns:1fr 1fr;gap:10px}
   .shipper-grid{grid-template-columns:1fr 1fr}
@@ -114,6 +126,7 @@
   <div class="dp-stat amber"><b>${fn:length(newOrders) + 0}</b><span>Đơn mới chờ xác nhận</span></div>
   <div class="dp-stat blue"><b>${fn:length(needAssign) + 0}</b><span>Cần gán shipper</span></div>
   <div class="dp-stat green"><b>${fn:length(shipping) + 0}</b><span>Đang giao</span></div>
+  <div class="dp-stat purple"><b>${deliveredAwaitingConfirm + 0}</b><span>Đã giao, chờ khách xác nhận</span></div>
   <div class="dp-stat red"><b>${fn:length(pendingCancel) + 0}</b><span>Chờ duyệt hủy</span></div>
 </div>
 
@@ -262,6 +275,52 @@
     </c:forEach>
   </div>
   <c:if test="${empty shipping}"><div class="dp-muted">Chưa có đơn đang giao.</div></c:if>
+</div>
+
+<!-- Đơn đã giao — shipper báo hoàn thành + khách xác nhận nhận hàng + đánh giá -->
+<div class="card">
+  <div class="dp-section-title"><i class="fa-solid fa-clipboard-check" style="color:var(--status-shipping)"></i> Đơn đã giao
+    <c:if test="${not empty delivered}"><span class="dp-badge-n" style="background:var(--status-shipping)">${fn:length(delivered)}</span></c:if>
+    <span style="font-size:11.5px;font-weight:500;color:var(--admin-text-light);margin-left:auto">30 đơn gần nhất</span>
+  </div>
+  <div class="order-grid">
+    <c:forEach var="o" items="${delivered}">
+      <div class="order-card">
+        <div class="oc-head">
+          <span class="oc-id">#${o.orderId}</span>
+          <span class="oc-amt"><fmt:formatNumber value="${o.totalAmount}" type="number" groupingUsed="true"/> đ</span>
+        </div>
+        <div class="oc-customer">
+          <b><c:out value="${o.fullName}"/> &middot; <c:out value="${o.phone}"/></b>
+        </div>
+        <div class="oc-meta">
+          <span class="dp-pill shipping"><i class="fa-solid fa-motorcycle"></i> <c:out value="${empty o.shipperName ? 'Không rõ shipper' : o.shipperName}"/></span>
+          <span class="oc-deliver-time"><i class="fa-regular fa-clock"></i> Báo giao <fmt:formatDate value="${not empty o.deliveredAt ? o.deliveredAt : o.createdAt}" pattern="HH:mm dd/MM"/></span>
+        </div>
+        <c:choose>
+          <c:when test="${not empty o.receivedConfirmedAt}">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="dp-pill confirmed"><i class="fa-solid fa-circle-check"></i> Khách đã xác nhận</span>
+              <c:if test="${not empty o.deliveryRating}">
+                <span class="oc-stars">
+                  <c:forEach begin="1" end="5" var="i">
+                    <i class="fa-solid fa-star ${i <= o.deliveryRating ? 'on' : ''}"></i>
+                  </c:forEach>
+                </span>
+              </c:if>
+            </div>
+            <c:if test="${not empty o.deliveryReview}">
+              <div class="oc-review"><i class="fa-solid fa-quote-left" style="font-size:9px;margin-right:4px;opacity:.5"></i><c:out value="${o.deliveryReview}"/></div>
+            </c:if>
+          </c:when>
+          <c:otherwise>
+            <span class="dp-pill awaiting"><i class="fa-solid fa-hourglass-half"></i> Chờ khách xác nhận</span>
+          </c:otherwise>
+        </c:choose>
+      </div>
+    </c:forEach>
+  </div>
+  <c:if test="${empty delivered}"><div class="dp-muted">Chưa có đơn nào được giao xong.</div></c:if>
 </div>
 
 <!-- Chờ duyệt hủy -->
