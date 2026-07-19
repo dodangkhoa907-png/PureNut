@@ -4,14 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H" />
+    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/ReviewDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/impl/ReviewDaoImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AccountController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/AccountController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/ProductController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/ProductController.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="181" />
+    <option name="cachedIndexableFilesCount" value="185" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -77,7 +83,7 @@
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Smart Tomcat.Unnamed (1)">
+  <component name="RunManager">
     <configuration name="Unnamed (1)" type="com.poratu.idea.plugins.tomcat" nameIsGenerated="true">
       <predefined_log_file enabled="true" id="Tomcat Localhost Log" />
       <predefined_log_file enabled="true" id="Tomcat Access Log" />
@@ -102,33 +108,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Unnamed" type="com.poratu.idea.plugins.tomcat" nameIsGenerated="true">
-      <predefined_log_file enabled="true" id="Tomcat Localhost Log" />
-      <predefined_log_file enabled="true" id="Tomcat Access Log" />
-      <predefined_log_file id="Tomcat Catalina Log" />
-      <predefined_log_file id="Tomcat Manager Log" />
-      <predefined_log_file id="Tomcat Host Manager Log" />
-      <option name="catalinaBase" value="C:\Users\KHOA\.SmartTomcat\Sua_Hat\Sua_Hat" />
-      <option name="contextPath" value="/Sua_Hat" />
-      <option name="docBase" value="$PROJECT_DIR$/src/main/webapp" />
-      <option name="extraClassPath" value="" />
-      <option name="tomcatInfo">
-        <TomcatInfo>
-          <option name="name" value="Apache Tomcat/10.1.54" />
-          <option name="path" value="$PROJECT_DIR$/../../../../SAVE_KHOA/apache-tomcat-10.1.54-windows-x64/apache-tomcat-10.1.54" />
-          <option name="version" value="10.1.54.0" />
-        </TomcatInfo>
-      </option>
-      <option name="vmOptions" value="" />
-      <module name="purenut-shop" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Smart Tomcat.Unnamed" />
-      <item itemvalue="Smart Tomcat.Unnamed (1)" />
-    </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -218,7 +197,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784125202422</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="H">
+      <option name="closed" value="true" />
+      <created>1784344883121</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1784344883121</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
