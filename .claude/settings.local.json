@@ -64,7 +64,8 @@
       "PowerShell($env:PATH -split ';' | Where-Object {$_ -match 'maven|mvn'})",
       "Bash(mvn compile *)",
       "PowerShell(Start-Process powershell -Verb RunAs -ArgumentList '-Command \"netsh advfirewall firewall add rule name=\\\\\"Tomcat 8081\\\\\" dir=in action=allow protocol=TCP localport=8081; pause\"')",
-      "PowerShell(netsh advfirewall firewall show rule name=\"Tomcat 8081\" 2>$null)"
+      "PowerShell(netsh advfirewall firewall show rule name=\"Tomcat 8081\" 2>$null)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
