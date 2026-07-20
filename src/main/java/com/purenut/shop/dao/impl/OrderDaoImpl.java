@@ -1,8 +1,11 @@
 package com.purenut.shop.dao.impl;
 
+import com.google.gson.Gson;
 import com.purenut.shop.config.Database;
 import com.purenut.shop.dao.OrderDao;
+import com.purenut.shop.model.CartComboItem;
 import com.purenut.shop.model.CartItem;
+import com.purenut.shop.model.ComboSelectionItem;
 import com.purenut.shop.model.Order;
 
 import java.sql.*;
@@ -10,24 +13,31 @@ import java.util.List;
 
 public class OrderDaoImpl implements OrderDao {
 
+    private static final Gson GSON = new Gson();
+
     @Override
-    public int placeOrder(Order order, List<CartItem> cartItems) throws Exception {
+    public int placeOrder(Order order, List<CartItem> cartItems, List<CartComboItem> comboItems) throws Exception {
         Connection conn = null;
         PreparedStatement psOrder = null;
         PreparedStatement psOrderItem = null;
         PreparedStatement psUpdateStock = null;
         PreparedStatement psDeleteCart = null;
+        PreparedStatement psOrderCombo = null;
+        PreparedStatement psDeleteCartCombo = null;
         ResultSet rsKeys = null;
-        
+
         int orderId = 0;
-        
+        boolean isBankTransfer = "BANK_TRANSFER".equals(order.getPaymentMethod());
+
         try {
             conn = Database.getConnection();
             conn.setAutoCommit(false); // Bắt đầu Transaction
-            
-            // 1. Lưu Order (kèm tọa độ Google Maps của khách nếu có)
-            String sqlOrder = "INSERT INTO Orders (UserID, FullName, Phone, Address, TotalAmount, PaymentMethod, Status, CouponCode, Latitude, Longitude) " +
-                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            // 1. Lưu Order (kèm tọa độ Google Maps của khách nếu có).
+            //    ExpiresAt chỉ set cho BANK_TRANSFER — đơn PENDING chờ chuyển khoản
+            //    sẽ bị sweep job tự hủy + hoàn kho sau 15 phút nếu khách bỏ ngang.
+            String sqlOrder = "INSERT INTO Orders (UserID, FullName, Phone, Address, TotalAmount, PaymentMethod, Status, CouponCode, Latitude, Longitude, ExpiresAt) " +
+                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             psOrder = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
             psOrder.setInt(1, order.getUserId());
             psOrder.setNString(2, order.getFullName());
@@ -41,7 +51,9 @@ public class OrderDaoImpl implements OrderDao {
             else                              psOrder.setNull(9,  java.sql.Types.DECIMAL);
             if (order.getLongitude() != null) psOrder.setBigDecimal(10, java.math.BigDecimal.valueOf(order.getLongitude()));
             else                              psOrder.setNull(10, java.sql.Types.DECIMAL);
-            
+            if (isBankTransfer) psOrder.setTimestamp(11, new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000L));
+            else                psOrder.setNull(11, java.sql.Types.TIMESTAMP);
+
             psOrder.executeUpdate();
             rsKeys = psOrder.getGeneratedKeys();
             if (rsKeys.next()) {
@@ -49,7 +61,7 @@ public class OrderDaoImpl implements OrderDao {
             } else {
                 throw new SQLException("Không thể lấy OrderID");
             }
-            
+
             // 2. Lưu OrderItem & Trừ tồn kho (CÓ KIỂM TRA đủ hàng để chống bán quá kho)
             String sqlOrderItem = "INSERT INTO OrderItems (OrderID, ProductID, Quantity, PriceAtPurchase) VALUES (?, ?, ?, ?)";
             psOrderItem = conn.prepareStatement(sqlOrderItem);
@@ -81,7 +93,7 @@ public class OrderDaoImpl implements OrderDao {
             }
 
             psOrderItem.executeBatch();
-            
+
             // 3. Xóa CartItems
             String sqlDeleteCart = "DELETE FROM CartItems WHERE CartItemID = ?";
             psDeleteCart = conn.prepareStatement(sqlDeleteCart);
@@ -90,11 +102,63 @@ public class OrderDaoImpl implements OrderDao {
                 psDeleteCart.addBatch();
             }
             psDeleteCart.executeBatch();
-            
+
+            // 4. Combo (fixed-bundle): nội dung combo (sản phẩm+số lượng) KHÔNG do
+            //    khách chọn — lấy đích danh từ ComboItems ngay trong transaction này
+            //    (không tin dữ liệu từ tầng trên), rồi trừ kho + ghi snapshot JSON
+            //    vào OrderComboItems.SelectionJson để restoreStock dùng lại sau này.
+            if (comboItems != null && !comboItems.isEmpty()) {
+                String sqlOrderCombo = "INSERT INTO OrderComboItems (OrderID, ComboID, ComboName, Quantity, PriceAtPurchase, SelectionJson) " +
+                                       "VALUES (?, ?, ?, ?, ?, ?)";
+                psOrderCombo = conn.prepareStatement(sqlOrderCombo);
+
+                try (PreparedStatement psComboItems = conn.prepareStatement(
+                        "SELECT ProductID, Quantity FROM ComboItems WHERE ComboID = ?")) {
+                    for (CartComboItem cci : comboItems) {
+                        List<ComboSelectionItem> fixedItems = new java.util.ArrayList<>();
+                        psComboItems.setInt(1, cci.getComboId());
+                        try (ResultSet rsItems = psComboItems.executeQuery()) {
+                            while (rsItems.next()) {
+                                fixedItems.add(new ComboSelectionItem(rsItems.getInt("ProductID"), rsItems.getInt("Quantity")));
+                            }
+                        }
+
+                        for (ComboSelectionItem sel : fixedItems) {
+                            int totalQty = sel.getQty() * cci.getQuantity();
+                            psUpdateStock.setInt(1, totalQty);
+                            psUpdateStock.setInt(2, sel.getProductId());
+                            psUpdateStock.setInt(3, totalQty);
+                            int affected = psUpdateStock.executeUpdate();
+                            if (affected == 0) {
+                                throw new com.purenut.shop.exception.OutOfStockException(
+                                        cci.getComboName() != null ? cci.getComboName() : ("Combo #" + cci.getComboId()));
+                            }
+                        }
+
+                        psOrderCombo.setInt(1, orderId);
+                        psOrderCombo.setInt(2, cci.getComboId());
+                        psOrderCombo.setNString(3, cci.getComboName());
+                        psOrderCombo.setInt(4, cci.getQuantity());
+                        psOrderCombo.setBigDecimal(5, cci.getComboPrice());
+                        psOrderCombo.setString(6, GSON.toJson(fixedItems));
+                        psOrderCombo.addBatch();
+                    }
+                }
+                psOrderCombo.executeBatch();
+
+                String sqlDeleteCartCombo = "DELETE FROM CartComboItems WHERE CartComboItemID = ?";
+                psDeleteCartCombo = conn.prepareStatement(sqlDeleteCartCombo);
+                for (CartComboItem cci : comboItems) {
+                    psDeleteCartCombo.setInt(1, cci.getCartComboItemId());
+                    psDeleteCartCombo.addBatch();
+                }
+                psDeleteCartCombo.executeBatch();
+            }
+
             // Nếu mọi thứ OK -> Commit
             conn.commit();
             return orderId;
-            
+
         } catch (Exception e) {
             if (conn != null) {
                 try {
@@ -110,6 +174,8 @@ public class OrderDaoImpl implements OrderDao {
             if (psOrderItem != null) psOrderItem.close();
             if (psUpdateStock != null) psUpdateStock.close();
             if (psDeleteCart != null) psDeleteCart.close();
+            if (psOrderCombo != null) psOrderCombo.close();
+            if (psDeleteCartCombo != null) psDeleteCartCombo.close();
             if (conn != null) {
                 conn.setAutoCommit(true); // Trả lại trạng thái mặc định
                 conn.close();
@@ -594,6 +660,88 @@ public class OrderDaoImpl implements OrderDao {
                     upd.executeBatch();
                 }
             }
+        }
+        restoreComboStock(conn, orderId);
+    }
+
+    /** Hoàn kho cho các sản phẩm cụ thể nằm trong combo đã đặt của đơn này. */
+    private void restoreComboStock(Connection conn, int orderId) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "SELECT Quantity, SelectionJson FROM OrderComboItems WHERE OrderID = ?")) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                try (PreparedStatement upd = conn.prepareStatement(
+                        "UPDATE Products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?")) {
+                    while (rs.next()) {
+                        int comboQty = rs.getInt("Quantity");
+                        ComboSelectionItem[] items = GSON.fromJson(rs.getString("SelectionJson"), ComboSelectionItem[].class);
+                        if (items == null) continue;
+                        for (ComboSelectionItem item : items) {
+                            upd.setInt(1, item.getQty() * comboQty);
+                            upd.setInt(2, item.getProductId());
+                            upd.addBatch();
+                        }
+                    }
+                    upd.executeBatch();
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<Integer> findExpiredPendingBankTransferOrderIds() {
+        List<Integer> ids = new java.util.ArrayList<>();
+        String sql = "SELECT OrderID FROM Orders " +
+                     "WHERE Status='PENDING' AND PaymentMethod='BANK_TRANSFER' AND ExpiresAt < GETDATE()";
+        try (Connection con = Database.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) ids.add(rs.getInt("OrderID"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ids;
+    }
+
+    @Override
+    public boolean expireOrder(int orderId) throws Exception {
+        Connection conn = null;
+        try {
+            conn = Database.getConnection();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "SELECT Status, PaymentMethod, ExpiresAt FROM Orders WITH (UPDLOCK, ROWLOCK) WHERE OrderID = ?")) {
+                ps.setInt(1, orderId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) return false;
+                    // Re-check bên trong lock — tránh race với qr-status polling vừa CONFIRMED đơn.
+                    boolean stillPending = "PENDING".equals(rs.getString("Status"))
+                            && "BANK_TRANSFER".equals(rs.getString("PaymentMethod"));
+                    Timestamp expiresAt = rs.getTimestamp("ExpiresAt");
+                    if (!stillPending || expiresAt == null || expiresAt.after(new Timestamp(System.currentTimeMillis()))) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE Orders SET Status='CANCELLED', CancelReason=N'Hết hạn thanh toán tự động', " +
+                    "CancelledAt=DATEADD(HOUR,7,GETUTCDATE()) WHERE OrderID=?")) {
+                ps.setInt(1, orderId);
+                ps.executeUpdate();
+            }
+
+            restoreStock(conn, orderId);
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            throw e;
+        } finally {
+            if (conn != null) { conn.setAutoCommit(true); conn.close(); }
         }
     }
 }

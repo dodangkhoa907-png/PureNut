@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H" />
+    <list default="true" id="0b78822a-b004-4be5-bac1-5e5aad7064d0" name="Changes" comment="H">
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/combo-detail.jsp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/combo-list.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/config/AppContextListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/config/AppContextListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CheckoutController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/controller/customer/CheckoutController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/OrderDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/OrderDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/impl/OrderDaoImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/purenut/shop/dao/impl/OrderDaoImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/layout/header.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/admin/layout/header.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/cart.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/cart.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/home.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/home.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/layout/navbar.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/views/layout/navbar.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/AppContextListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/config/AppContextListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CartController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/controller/customer/CheckoutController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/OrderDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/OrderDao.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/OrderDaoImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/purenut/shop/dao/impl/OrderDaoImpl.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,7 +79,7 @@
     "Smart Tomcat.Unnamed.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "khoa",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
@@ -87,6 +105,9 @@
       <option name="catalinaBase" value="C:\Users\KHOA\.SmartTomcat\Sua_Hat\Sua_Hat" />
       <option name="contextPath" value="/Sua_Hat" />
       <option name="docBase" value="$PROJECT_DIR$/src/main/webapp" />
+      <option name="envOptions">
+        <map />
+      </option>
       <option name="extraClassPath" value="" />
       <option name="port" value="8081" />
       <option name="tomcatInfo">

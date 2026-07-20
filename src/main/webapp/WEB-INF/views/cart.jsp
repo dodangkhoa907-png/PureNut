@@ -302,7 +302,7 @@
 
 <div class="cart-body">
 <c:choose>
-<c:when test="${empty cartItems}">
+<c:when test="${empty cartItems and empty comboItems}">
     <div class="cart-empty">
         <div class="ce-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
         <h2>Giỏ hàng đang trống</h2>
@@ -315,6 +315,7 @@
 </c:when>
 <c:otherwise>
     <!-- Items -->
+    <c:if test="${not empty cartItems}">
     <div class="cart-items">
         <div class="ci-header">
             <div class="ci-check-wrap"><label class="checkbox-container"><input class="custom-checkbox" id="checkAll" type="checkbox" checked><span class="checkmark"></span></label></div>
@@ -365,6 +366,49 @@
             </div>
         </c:forEach>
     </div>
+    </c:if>
+
+    <!-- Combo trong giỏ -->
+    <c:if test="${not empty comboItems}">
+    <div class="cart-items" style="margin-top:${empty cartItems ? '0' : '20px'}">
+        <div class="ci-header">
+            <span style="grid-column:1/3">Combo đã chọn</span><span>Số lượng</span><span>Thành tiền</span><span></span>
+        </div>
+        <c:forEach var="cbi" items="${comboItems}">
+            <div class="ci-row">
+                <div class="ci-prod" style="grid-column:1/3">
+                    <a href="${ctx}/combo/${cbi.comboSlug}" class="ci-thumb" style="background:#E9DCBE">
+                        <c:choose>
+                            <c:when test="${not empty cbi.imageUrl}">
+                                <img src="${ctx}${cbi.imageUrl}" alt="${fn:escapeXml(cbi.comboName)}" onerror="this.style.display='none'">
+                            </c:when>
+                            <c:otherwise><span class="ci-thumb-emoji">🎁</span></c:otherwise>
+                        </c:choose>
+                    </a>
+                    <div class="ci-info">
+                        <div class="ci-name"><a href="${ctx}/combo/${cbi.comboSlug}"><c:out value="${cbi.comboName}"/></a></div>
+                        <div class="ci-meta">
+                            <c:forEach var="it" items="${cbi.items}" varStatus="st">
+                                <c:out value="${it.productName}"/> ×${it.quantity}<c:if test="${!st.last}">, </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+                <div class="ci-actions-wrap">
+                    <div class="ci-qty" style="pointer-events:none">${cbi.quantity}</div>
+                    <div class="ci-total">${cbi.formattedTotalPrice} đ</div>
+                </div>
+                <form action="${ctx}/cart/remove-combo" method="POST" style="margin:0" class="del-form">
+                    <input type="hidden" name="_csrf" value="${sessionScope._csrf}">
+                    <input type="hidden" name="cartComboItemId" value="${cbi.cartComboItemId}">
+                    <button class="ci-del" title="Xóa combo">
+                        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </c:forEach>
+    </div>
+    </c:if>
 
     <!-- Summary -->
     <aside class="cart-summary">

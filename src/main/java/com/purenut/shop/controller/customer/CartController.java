@@ -1,7 +1,10 @@
 package com.purenut.shop.controller.customer;
 
+import com.purenut.shop.dao.CartComboItemDao;
 import com.purenut.shop.dao.CartItemDao;
+import com.purenut.shop.dao.impl.CartComboItemDaoImpl;
 import com.purenut.shop.dao.impl.CartItemDaoImpl;
+import com.purenut.shop.model.CartComboItem;
 import com.purenut.shop.model.CartItem;
 import com.purenut.shop.model.User;
 import com.purenut.shop.util.Validators;
@@ -18,14 +21,16 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 @WebServlet(name = "CartController",
-        urlPatterns = {"/cart", "/cart/add", "/cart/update", "/cart/remove", "/cart/count"})
+        urlPatterns = {"/cart", "/cart/add", "/cart/update", "/cart/remove", "/cart/remove-combo", "/cart/count"})
 public class CartController extends HttpServlet {
 
     private CartItemDao cartItemDao;
+    private CartComboItemDao cartComboItemDao;
 
     @Override
     public void init() throws ServletException {
         cartItemDao = new CartItemDaoImpl();
+        cartComboItemDao = new CartComboItemDaoImpl();
     }
 
     @Override
@@ -54,9 +59,13 @@ public class CartController extends HttpServlet {
             }
 
             List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
+            List<CartComboItem> comboItems = cartComboItemDao.findByUserId(user.getUserId());
 
             BigDecimal totalAmount = BigDecimal.ZERO;
             for (CartItem item : cartItems) {
+                totalAmount = totalAmount.add(item.getTotalPrice());
+            }
+            for (CartComboItem item : comboItems) {
                 totalAmount = totalAmount.add(item.getTotalPrice());
             }
 
@@ -64,6 +73,7 @@ public class CartController extends HttpServlet {
             String formattedTotal = df.format(totalAmount).replace(',', '.');
 
             request.setAttribute("cartItems", cartItems);
+            request.setAttribute("comboItems", comboItems);
             request.setAttribute("totalAmount", totalAmount);
             request.setAttribute("formattedTotal", formattedTotal);
 
@@ -91,8 +101,24 @@ public class CartController extends HttpServlet {
             case "/cart/add":   handleAdd(request, response, user);    break;
             case "/cart/update": handleUpdate(request, response, user); break;
             case "/cart/remove":    handleDelete(request, response, user); break;
+            case "/cart/remove-combo": handleDeleteCombo(request, response, user); break;
             default: response.sendRedirect(request.getContextPath() + "/cart");
         }
+    }
+
+    private void handleDeleteCombo(HttpServletRequest request, HttpServletResponse response, User user)
+            throws IOException {
+
+        int cartComboItemId = Validators.parsePositiveInt(request.getParameter("cartComboItemId"), 0);
+        if (cartComboItemId > 0) {
+            cartComboItemDao.delete(cartComboItemId, user.getUserId());
+
+            if (isAjax(request)) {
+                writeJson(response, "{\"success\":true}");
+                return;
+            }
+        }
+        response.sendRedirect(request.getContextPath() + "/cart");
     }
 
     private void handleAdd(HttpServletRequest request, HttpServletResponse response, User user)

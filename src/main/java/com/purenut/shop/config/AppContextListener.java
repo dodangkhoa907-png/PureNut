@@ -1,5 +1,7 @@
 package com.purenut.shop.config;
 
+import com.purenut.shop.dao.OrderDao;
+import com.purenut.shop.dao.impl.OrderDaoImpl;
 import com.purenut.shop.util.Passwords;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -9,16 +11,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Khởi tạo connection pool khi web app start và seed 2 tài khoản mẫu
  * (admin + customer) với mật khẩu hash BCrypt nếu chưa tồn tại.
  * Bảng phải được tạo trước bằng database/schema.sql trong SSMS.
- * 
+ *
  * OPTIMIZATION: Seeding chạy async để không block startup.
+ *
+ * Ngoài ra khởi động sweep job hủy đơn PENDING/BANK_TRANSFER quá hạn 15 phút
+ * + hoàn kho — vá lỗ hổng đơn chuyển khoản bị bỏ ngang không tự giải phóng
+ * tồn kho (trước đây chỉ có QR PayOS tự hết hạn phía client, không có dọn
+ * dẹp phía server). Pattern daemon ScheduledExecutorService mirror
+ * FeedbackController, promote lên cấp application vì cần Database.init()
+ * đã sẵn sàng.
  */
 @WebListener
 public class AppContextListener implements ServletContextListener {
+
+    private ScheduledExecutorService expirySweeper;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -27,15 +41,42 @@ public class AppContextListener implements ServletContextListener {
         Database.init();
         long t1 = System.currentTimeMillis();
         System.out.println("[AppInit] Database pool ready in " + (t1 - t0) + "ms");
-        
+
         // Seed users async - không block Tomcat startup
         new Thread(this::seedUsers, "UserSeedThread").start();
         System.out.println("[AppInit] Seeding users in background thread");
+
+        expirySweeper = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "order-expiry-sweep");
+            t.setDaemon(true);
+            return t;
+        });
+        expirySweeper.scheduleAtFixedRate(this::sweepExpiredOrders, 1, 1, TimeUnit.MINUTES);
+        System.out.println("[AppInit] Order expiry sweep scheduled mỗi 1 phút");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        if (expirySweeper != null) expirySweeper.shutdownNow();
         Database.close();
+    }
+
+    /** Hủy các đơn PENDING/BANK_TRANSFER quá hạn ExpiresAt + hoàn kho. Mỗi đơn xử lý độc lập. */
+    private void sweepExpiredOrders() {
+        try {
+            OrderDao orderDao = new OrderDaoImpl();
+            for (int orderId : orderDao.findExpiredPendingBankTransferOrderIds()) {
+                try {
+                    if (orderDao.expireOrder(orderId)) {
+                        System.out.println("[ExpirySweep] Đã hủy đơn hết hạn #" + orderId);
+                    }
+                } catch (Exception e) {
+                    System.err.println("[ExpirySweep] Lỗi hủy đơn #" + orderId + ": " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[ExpirySweep] Lỗi truy vấn đơn hết hạn: " + e.getMessage());
+        }
     }
 
     private void seedUsers() {

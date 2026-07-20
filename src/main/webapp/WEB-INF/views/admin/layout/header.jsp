@@ -147,6 +147,7 @@
             <ul class="sidebar-menu">
                 <li><a href="${ctx}/admin/don-hang" class="${uri.contains('/don-hang') ? 'active' : ''}"><i class="fa-solid fa-cart-shopping"></i> Quản lý Đơn hàng</a></li>
                 <li><a href="${ctx}/admin/san-pham" class="${uri.contains('/san-pham') ? 'active' : ''}"><i class="fa-solid fa-box"></i> Quản lý Sản phẩm</a></li>
+                <li><a href="${ctx}/admin/combo" class="${uri.contains('/combo') ? 'active' : ''}"><i class="fa-solid fa-boxes-packing"></i> Quản lý Combo</a></li>
                 <li><a href="${ctx}/admin/phan-hoi" class="${uri.contains('/phan-hoi') ? 'active' : ''}"><i class="fa-solid fa-comment-dots"></i> Phản hồi khách hàng</a></li>
                 <li><a href="${ctx}/admin/nhan-su" class="${uri.contains('/nhan-su') ? 'active' : ''}"><i class="fa-solid fa-user-group"></i> Quản lý Nhân sự</a></li>
                 <li><a href="${ctx}/admin/dieu-phoi" class="${uri.contains('/dieu-phoi') ? 'active' : ''}"><i class="fa-solid fa-truck-fast"></i> Điều phối giao hàng</a></li>

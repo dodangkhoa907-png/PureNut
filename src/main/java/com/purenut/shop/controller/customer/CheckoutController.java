@@ -1,15 +1,21 @@
 package com.purenut.shop.controller.customer;
 
+import com.purenut.shop.dao.CartComboItemDao;
 import com.purenut.shop.dao.CartItemDao;
 import com.purenut.shop.dao.OrderDao;
 import com.purenut.shop.dao.UserAddressDao;
+import com.purenut.shop.dao.impl.CartComboItemDaoImpl;
 import com.purenut.shop.dao.impl.CartItemDaoImpl;
 import com.purenut.shop.dao.impl.OrderDaoImpl;
 import com.purenut.shop.dao.impl.UserAddressDaoImpl;
+import com.purenut.shop.model.CartComboItem;
 import com.purenut.shop.model.CartItem;
+import com.purenut.shop.model.Combo;
 import com.purenut.shop.model.Order;
 import com.purenut.shop.model.User;
 import com.purenut.shop.model.UserAddress;
+import com.purenut.shop.service.ComboService;
+import com.purenut.shop.service.impl.ComboServiceImpl;
 import com.purenut.shop.util.Coupons;
 import com.purenut.shop.util.Validators;
 
@@ -37,14 +43,18 @@ import java.util.stream.Collectors;
 public class CheckoutController extends HttpServlet {
 
     private CartItemDao cartItemDao;
+    private CartComboItemDao cartComboItemDao;
     private OrderDao orderDao;
     private UserAddressDao addressDao;
+    private ComboService comboService;
 
     @Override
     public void init() throws ServletException {
         cartItemDao = new CartItemDaoImpl();
+        cartComboItemDao = new CartComboItemDaoImpl();
         orderDao = new OrderDaoImpl();
         addressDao = new UserAddressDaoImpl();
+        comboService = new ComboServiceImpl();
     }
 
     @Override
@@ -60,6 +70,7 @@ public class CheckoutController extends HttpServlet {
         
         User user = (User) request.getSession().getAttribute("user");
         List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
+        List<CartComboItem> comboItems = cartComboItemDao.findByUserId(user.getUserId());
 
         String itemsParam = request.getParameter("items");
         if (itemsParam != null && !itemsParam.trim().isEmpty()) {
@@ -72,21 +83,36 @@ public class CheckoutController extends HttpServlet {
                     .filter(ci -> selectedIds.contains(ci.getCartItemId()))
                     .collect(Collectors.toList());
         }
+        String combosParam = request.getParameter("combos");
+        if (combosParam != null && !combosParam.trim().isEmpty()) {
+            Set<Integer> selectedComboIds = Arrays.stream(combosParam.split(","))
+                    .map(String::trim)
+                    .filter(s -> s.matches("\\d+"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+            comboItems = comboItems.stream()
+                    .filter(ci -> selectedComboIds.contains(ci.getCartComboItemId()))
+                    .collect(Collectors.toList());
+        }
 
-        if (cartItems.isEmpty()) {
+        if (cartItems.isEmpty() && comboItems.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
         }
-        
+
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (CartItem item : cartItems) {
             totalAmount = totalAmount.add(item.getTotalPrice());
         }
-        
+        for (CartComboItem item : comboItems) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
+
         DecimalFormat df = new DecimalFormat("#,###");
         String formattedTotal = df.format(totalAmount).replace(',', '.');
-        
+
         request.setAttribute("cartItems", cartItems);
+        request.setAttribute("comboItems", comboItems);
         request.setAttribute("totalAmount", totalAmount);
         request.setAttribute("formattedTotal", formattedTotal);
 
@@ -116,6 +142,7 @@ public class CheckoutController extends HttpServlet {
 
         User user = (User) request.getSession().getAttribute("user");
         List<CartItem> cartItems = cartItemDao.findByUserId(user.getUserId());
+        List<CartComboItem> comboItems = cartComboItemDao.findByUserId(user.getUserId());
 
         String itemsParam = request.getParameter("items");
         if (itemsParam != null && !itemsParam.trim().isEmpty()) {
@@ -128,10 +155,33 @@ public class CheckoutController extends HttpServlet {
                     .filter(ci -> selectedIds.contains(ci.getCartItemId()))
                     .collect(Collectors.toList());
         }
+        String combosParam = request.getParameter("combos");
+        if (combosParam != null && !combosParam.trim().isEmpty()) {
+            Set<Integer> selectedComboIds = Arrays.stream(combosParam.split(","))
+                    .map(String::trim)
+                    .filter(s -> s.matches("\\d+"))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+            comboItems = comboItems.stream()
+                    .filter(ci -> selectedComboIds.contains(ci.getCartComboItemId()))
+                    .collect(Collectors.toList());
+        }
 
-        if (cartItems.isEmpty()) {
+        if (cartItems.isEmpty() && comboItems.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart");
             return;
+        }
+
+        // Fixed-bundle: nội dung combo cố định, không có gì để khách "chọn sai" —
+        // chỉ cần xác nhận combo còn tồn tại/đang bán TRƯỚC khi tạo QR/đặt hàng
+        // (phòng trường hợp admin vừa ẩn/xoá combo trong lúc khách đang ở giỏ hàng).
+        for (CartComboItem cci : comboItems) {
+            boolean stillActive = comboService.getComboById(cci.getComboId())
+                    .map(Combo::isActive).orElse(false);
+            if (!stillActive) {
+                failCheckout(request, response, ajax, "Combo \"" + cci.getComboName() + "\" hiện không còn bán.");
+                return;
+            }
         }
 
         String fullName = request.getParameter("fullName");
@@ -152,6 +202,9 @@ public class CheckoutController extends HttpServlet {
         // ── Tính tổng + áp mã giảm giá PURENUT20 ──────────────
         BigDecimal subtotal = BigDecimal.ZERO;
         for (CartItem item : cartItems) {
+            subtotal = subtotal.add(item.getTotalPrice());
+        }
+        for (CartComboItem item : comboItems) {
             subtotal = subtotal.add(item.getTotalPrice());
         }
         boolean couponValid = Coupons.isValid(couponCode);
@@ -203,7 +256,7 @@ public class CheckoutController extends HttpServlet {
         }
 
         try {
-            int orderId = orderDao.placeOrder(order, cartItems);
+            int orderId = orderDao.placeOrder(order, cartItems, comboItems);
             if (orderId > 0) {
                 int newCartCount = cartItemDao.countItems(user.getUserId());
                 request.getSession().setAttribute("cartCount", newCartCount);

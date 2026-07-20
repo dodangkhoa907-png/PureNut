@@ -251,7 +251,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
 .plan .btn{width:100%;justify-content:center}
 
 /* =================== 11. PROMO =================== */
-.promo{margin-top:-40px;position:relative;z-index:2}
+.promo{margin:70px auto;position:relative;z-index:2}
 .promo-card{background:var(--paper);border-radius:var(--r-lg);padding:44px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;box-shadow:0 30px 60px -20px rgba(20,30,20,.15);border:1px solid var(--line);position:relative;overflow:hidden}
 .promo-card::before{content:'';position:absolute;top:-90px;left:-90px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(206,46,46,.07),transparent 70%);pointer-events:none}
 .promo-badge{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--red),#A31F1F);color:#fff;font-family:var(--fd);font-weight:800;font-size:15px;line-height:1.1;flex-direction:column;box-shadow:0 12px 26px -10px rgba(206,46,46,.55);margin-bottom:16px}
@@ -754,7 +754,7 @@ footer{background:var(--navy-darker);color:#C9D6EA;padding:60px 0 26px}
 </section>
 
 <!-- ===================== 11. PROMO ===================== -->
-<section class="container promo rv" style="padding-bottom:80px">
+<section class="container promo rv">
   <div class="promo-card">
     <div>
       <div class="promo-badge"><b>-20%</b>OFF</div>

@@ -6,8 +6,10 @@ import com.purenut.shop.model.Category;
 import com.purenut.shop.model.Product;
 import com.purenut.shop.model.Review;
 import com.purenut.shop.service.CategoryService;
+import com.purenut.shop.service.ComboService;
 import com.purenut.shop.service.ProductService;
 import com.purenut.shop.service.impl.CategoryServiceImpl;
+import com.purenut.shop.service.impl.ComboServiceImpl;
 import com.purenut.shop.service.impl.ProductServiceImpl;
 
 import jakarta.servlet.ServletException;
@@ -25,12 +27,14 @@ public class ProductController extends HttpServlet {
     private ProductService productService;
     private CategoryService categoryService;
     private ReviewDao reviewDao;
+    private ComboService comboService;
 
     @Override
     public void init() throws ServletException {
         productService = new ProductServiceImpl();
         categoryService = new CategoryServiceImpl();
         reviewDao = new ReviewDaoImpl();
+        comboService = new ComboServiceImpl();
     }
 
     @Override
@@ -89,6 +93,9 @@ public class ProductController extends HttpServlet {
             }
             request.setAttribute("avgRating", avgRating);
             request.setAttribute("reviewCount", reviews.size());
+
+            // Combo đang bán có chứa sản phẩm này — mục "Mua cùng Combo" ở cuối trang
+            request.setAttribute("relatedCombos", comboService.getCombosForProduct(product.getProductId()));
 
             request.getRequestDispatcher("/WEB-INF/views/product-detail.jsp").forward(request, response);
         } else {

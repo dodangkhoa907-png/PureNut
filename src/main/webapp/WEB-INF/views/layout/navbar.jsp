@@ -336,6 +336,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
       <a href="${pageContext.request.contextPath}/">Trang chủ</a>
       <a href="${pageContext.request.contextPath}/about">Giới thiệu</a>
       <a href="${pageContext.request.contextPath}/products">Sản phẩm</a>
+      <a href="${pageContext.request.contextPath}/combo">Combo</a>
     </nav>
 
     <!-- Actions -->
@@ -402,6 +403,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:600;letter-spacing:-.01em;line-height
   <a href="${pageContext.request.contextPath}/">Trang chủ</a>
   <a href="${pageContext.request.contextPath}/about">Giới thiệu</a>
   <a href="${pageContext.request.contextPath}/products">Sản phẩm</a>
+  <a href="${pageContext.request.contextPath}/combo">Combo</a>
   <c:choose>
     <c:when test="${not empty sessionScope.user}">
       <a href="${pageContext.request.contextPath}/account">Tài khoản của tôi</a>

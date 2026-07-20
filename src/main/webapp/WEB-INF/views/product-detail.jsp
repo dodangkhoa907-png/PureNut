@@ -544,6 +544,38 @@
   </c:choose>
 </section>
 
+<c:if test="${not empty relatedCombos}">
+  <hr class="section-divider">
+  <style>
+  .combo-cross-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+  .combo-cross-card{display:flex;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;transition:transform .25s,box-shadow .25s}
+  .combo-cross-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .combo-cross-thumb{width:76px;height:76px;border-radius:14px;object-fit:cover;background:#EDE6D2;flex-shrink:0}
+  .combo-cross-info{min-width:0}
+  .combo-cross-info h4{font-size:15.5px;margin-bottom:4px}
+  .combo-cross-info p{font-size:12.5px;color:var(--ink-soft);margin-bottom:8px}
+  .combo-cross-price{font-family:var(--fd);font-weight:700;font-size:17px;color:var(--navy)}
+  </style>
+  <section class="container rel">
+    <div class="rel-header">
+      <h2>🎁 Mua cùng Combo — Tiết kiệm hơn</h2>
+    </div>
+    <div class="combo-cross-grid">
+      <c:forEach var="cb" items="${relatedCombos}">
+        <a href="${ctx}/combo/${cb.slug}" class="combo-cross-card">
+          <img class="combo-cross-thumb" src="${ctx}${cb.imageUrl}" alt="${fn:escapeXml(cb.name)}"
+               onerror="this.style.visibility='hidden'">
+          <div class="combo-cross-info">
+            <h4><c:out value="${cb.name}"/></h4>
+            <p>Gồm ${fn:length(cb.items)} sản phẩm — giá tốt hơn mua lẻ</p>
+            <div class="combo-cross-price">${cb.formattedPrice}₫</div>
+          </div>
+        </a>
+      </c:forEach>
+    </div>
+  </section>
+</c:if>
+
 <c:if test="${not empty relatedProducts}">
   <hr class="section-divider">
   <section class="container rel">
